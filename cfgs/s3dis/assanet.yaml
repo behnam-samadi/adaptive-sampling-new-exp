@@ -6,8 +6,8 @@
 dataset:
   common:
     NAME: S3DIS
-    data_root: /dataset
-    data_raw: sparse
+    data_root: ./data/S3DIS/s3disfull
+    data_raw: raw
     test_area: 5
     voxel_size: 0.04
     rate: 0

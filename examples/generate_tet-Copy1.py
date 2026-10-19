@@ -6,8 +6,8 @@ from multiprocessing import Pool
 
 #part_num = 5000
 src_path = "/dataset/sparse/"
-data_path = "/userhome/GMM/S3DIS_node/"
-save_path = '/userhome/GMM/S3DIS/'
+data_path = "/mnt/clientshare/samadi/GMM/S3DIS_node/"
+save_path = '/mnt/clientshare/samadi/GMM/S3DIS/'
 file_name = 'Area_6_hallway_2.1.ele'
 file_path = os.path.join(data_path, file_name)
 tet = np.loadtxt(file_path,skiprows=1)

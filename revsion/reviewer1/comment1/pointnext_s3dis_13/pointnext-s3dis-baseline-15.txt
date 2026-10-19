@@ -1,0 +1,827 @@
+launch mp with 1 GPUs, current rank: 0
+[32m[06/12 15:04:46 S3DIS]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 8120
+epoch: 0
+epochs: 100
+ignore_index: 255
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.2
+  ignore_index: 255
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-S3DIS
+  tags: ['test']
+  name: s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: False
+test: False
+finetune: False
+mode: test
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/s3dis
+pretrained_path: checkpoints/s3dis_pointnext.pth
+datatransforms:
+  train: ['ChromaticAutoContrast', 'PointsToTensor', 'PointCloudScaling', 'PointCloudXYZAlign', 'PointCloudRotation', 'PointCloudJitter', 'ChromaticDropGPU', 'ChromaticNormalize']
+  val: ['PointsToTensor', 'PointCloudXYZAlign', 'ChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    scale: [0.9, 1.1]
+    angle: [0, 0, 1]
+    jitter_sigma: 0.005
+    jitter_clip: 0.02
+feature_keys: x,heights
+num_classes: 13
+batch_size: 8
+val_batch_size: 1
+dataloader:
+  num_workers: 6
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+sched: cosine
+warmup_epochs: 0
+min_lr: 1e-05
+lr: 0.01
+log_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2
+dataset:
+  common:
+    NAME: S3DIS
+    data_root: ./data/S3DIS/s3disfull
+    data_raw: raw
+    test_area: 5
+    voxel_size: 0.04
+    rate: 0
+  train:
+    split: train
+    voxel_max: 24000
+    loop: 30
+    presample: False
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: test
+    voxel_max: None
+    presample: False
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNextEncoder
+    blocks: [1, 3, 5, 3, 3]
+    strides: [1, 4, 4, 4, 4]
+    sa_layers: 1
+    sa_use_res: False
+    width: 32
+    in_channels: 4
+    expansion: 4
+    radius: 0.1
+    nsample: 32
+    aggr_args:
+      feature_type: dp_fj
+      reduction: max
+    group_args:
+      NAME: ballquery
+      normalize_dp: True
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNextDecoder
+  cls_args:
+    NAME: SegHead
+    num_classes: 13
+    in_channels: None
+    norm_args:
+      norm: bn
+no_label: True
+rank: 0
+distributed: False
+mp: False
+task_name: s3dis
+cfg_basename: pointnext-l
+opts: mode=test-dataset.test.split=test-no_label=True
+is_training: False
+run_name: s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2
+run_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2
+ckpt_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2/checkpoint
+code_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2/code
+log_path: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2.log
+cfg_path: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed8120-20260612-150446-nhLBtxuH7a3Gh3DzgBdVu2/cfg.yaml
+[32m[06/12 15:04:46 S3DIS]: [0mradius: [[0.1], [0.1, 0.2, 0.2], [0.2, 0.4, 0.4, 0.4, 0.4], [0.4, 0.8, 0.8], [0.8, 1.6, 1.6]],
+ nsample: [[32], [32, 32, 32], [32, 32, 32, 32, 32], [32, 32, 32], [32, 32, 32]]
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.1
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 1.6
+nsample: 32
+[32m[06/12 15:04:46 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 1.6
+nsample: 32
+[32m[06/12 15:04:50 S3DIS]: [0mBaseSeg(
+  (encoder): PointNextEncoder(
+    (encoder): Sequential(
+      (0): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(4, 32, kernel_size=(1,), stride=(1,))
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(35, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(64, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(64, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (2): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(67, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (3): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (4): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (3): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(131, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(256, 1024, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(1024, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(256, 1024, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(1024, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (4): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(259, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(515, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(512, 2048, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(2048, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(515, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(512, 2048, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(2048, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (decoder): PointNextDecoder(
+    (decoder): Sequential(
+      (0): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(96, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(192, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (2): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (3): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(32, 13, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[06/12 15:04:50 S3DIS]: [0mNumber of params: 7.1251 M
+[32m[06/12 15:04:50 S3DIS]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.encoder.0.0.convs.0.0.weight",
+      "encoder.encoder.1.0.convs.0.0.weight",
+      "encoder.encoder.1.1.convs.convs.0.0.weight",
+      "encoder.encoder.1.1.pwconv.0.0.weight",
+      "encoder.encoder.1.1.pwconv.1.0.weight",
+      "encoder.encoder.1.2.convs.convs.0.0.weight",
+      "encoder.encoder.1.2.pwconv.0.0.weight",
+      "encoder.encoder.1.2.pwconv.1.0.weight",
+      "encoder.encoder.2.0.convs.0.0.weight",
+      "encoder.encoder.2.1.convs.convs.0.0.weight",
+      "encoder.encoder.2.1.pwconv.0.0.weight",
+      "encoder.encoder.2.1.pwconv.1.0.weight",
+      "encoder.encoder.2.2.convs.convs.0.0.weight",
+      "encoder.encoder.2.2.pwconv.0.0.weight",
+      "encoder.encoder.2.2.pwconv.1.0.weight",
+      "encoder.encoder.2.3.convs.convs.0.0.weight",
+      "encoder.encoder.2.3.pwconv.0.0.weight",
+      "encoder.encoder.2.3.pwconv.1.0.weight",
+      "encoder.encoder.2.4.convs.convs.0.0.weight",
+      "encoder.encoder.2.4.pwconv.0.0.weight",
+      "encoder.encoder.2.4.pwconv.1.0.weight",
+      "encoder.encoder.3.0.convs.0.0.weight",
+      "encoder.encoder.3.1.convs.convs.0.0.weight",
+      "encoder.encoder.3.1.pwconv.0.0.weight",
+      "encoder.encoder.3.1.pwconv.1.0.weight",
+      "encoder.encoder.3.2.convs.convs.0.0.weight",
+      "encoder.encoder.3.2.pwconv.0.0.weight",
+      "encoder.encoder.3.2.pwconv.1.0.weight",
+      "encoder.encoder.4.0.convs.0.0.weight",
+      "encoder.encoder.4.1.convs.convs.0.0.weight",
+      "encoder.encoder.4.1.pwconv.0.0.weight",
+      "encoder.encoder.4.1.pwconv.1.0.weight",
+      "encoder.encoder.4.2.convs.convs.0.0.weight",
+      "encoder.encoder.4.2.pwconv.0.0.weight",
+      "encoder.encoder.4.2.pwconv.1.0.weight",
+      "decoder.decoder.0.0.convs.0.0.weight",
+      "decoder.decoder.0.0.convs.1.0.weight",
+      "decoder.decoder.1.0.convs.0.0.weight",
+      "decoder.decoder.1.0.convs.1.0.weight",
+      "decoder.decoder.2.0.convs.0.0.weight",
+      "decoder.decoder.2.0.convs.1.0.weight",
+      "decoder.decoder.3.0.convs.0.0.weight",
+      "decoder.decoder.3.0.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.encoder.0.0.convs.0.0.bias",
+      "encoder.encoder.1.0.convs.0.1.weight",
+      "encoder.encoder.1.0.convs.0.1.bias",
+      "encoder.encoder.1.1.convs.convs.0.1.weight",
+      "encoder.encoder.1.1.convs.convs.0.1.bias",
+      "encoder.encoder.1.1.pwconv.0.1.weight",
+      "encoder.encoder.1.1.pwconv.0.1.bias",
+      "encoder.encoder.1.1.pwconv.1.1.weight",
+      "encoder.encoder.1.1.pwconv.1.1.bias",
+      "encoder.encoder.1.2.convs.convs.0.1.weight",
+      "encoder.encoder.1.2.convs.convs.0.1.bias",
+      "encoder.encoder.1.2.pwconv.0.1.weight",
+      "encoder.encoder.1.2.pwconv.0.1.bias",
+      "encoder.encoder.1.2.pwconv.1.1.weight",
+      "encoder.encoder.1.2.pwconv.1.1.bias",
+      "encoder.encoder.2.0.convs.0.1.weight",
+      "encoder.encoder.2.0.convs.0.1.bias",
+      "encoder.encoder.2.1.convs.convs.0.1.weight",
+      "encoder.encoder.2.1.convs.convs.0.1.bias",
+      "encoder.encoder.2.1.pwconv.0.1.weight",
+      "encoder.encoder.2.1.pwconv.0.1.bias",
+      "encoder.encoder.2.1.pwconv.1.1.weight",
+      "encoder.encoder.2.1.pwconv.1.1.bias",
+      "encoder.encoder.2.2.convs.convs.0.1.weight",
+      "encoder.encoder.2.2.convs.convs.0.1.bias",
+      "encoder.encoder.2.2.pwconv.0.1.weight",
+      "encoder.encoder.2.2.pwconv.0.1.bias",
+      "encoder.encoder.2.2.pwconv.1.1.weight",
+      "encoder.encoder.2.2.pwconv.1.1.bias",
+      "encoder.encoder.2.3.convs.convs.0.1.weight",
+      "encoder.encoder.2.3.convs.convs.0.1.bias",
+      "encoder.encoder.2.3.pwconv.0.1.weight",
+      "encoder.encoder.2.3.pwconv.0.1.bias",
+      "encoder.encoder.2.3.pwconv.1.1.weight",
+      "encoder.encoder.2.3.pwconv.1.1.bias",
+      "encoder.encoder.2.4.convs.convs.0.1.weight",
+      "encoder.encoder.2.4.convs.convs.0.1.bias",
+      "encoder.encoder.2.4.pwconv.0.1.weight",
+      "encoder.encoder.2.4.pwconv.0.1.bias",
+      "encoder.encoder.2.4.pwconv.1.1.weight",
+      "encoder.encoder.2.4.pwconv.1.1.bias",
+      "encoder.encoder.3.0.convs.0.1.weight",
+      "encoder.encoder.3.0.convs.0.1.bias",
+      "encoder.encoder.3.1.convs.convs.0.1.weight",
+      "encoder.encoder.3.1.convs.convs.0.1.bias",
+      "encoder.encoder.3.1.pwconv.0.1.weight",
+      "encoder.encoder.3.1.pwconv.0.1.bias",
+      "encoder.encoder.3.1.pwconv.1.1.weight",
+      "encoder.encoder.3.1.pwconv.1.1.bias",
+      "encoder.encoder.3.2.convs.convs.0.1.weight",
+      "encoder.encoder.3.2.convs.convs.0.1.bias",
+      "encoder.encoder.3.2.pwconv.0.1.weight",
+      "encoder.encoder.3.2.pwconv.0.1.bias",
+      "encoder.encoder.3.2.pwconv.1.1.weight",
+      "encoder.encoder.3.2.pwconv.1.1.bias",
+      "encoder.encoder.4.0.convs.0.1.weight",
+      "encoder.encoder.4.0.convs.0.1.bias",
+      "encoder.encoder.4.1.convs.convs.0.1.weight",
+      "encoder.encoder.4.1.convs.convs.0.1.bias",
+      "encoder.encoder.4.1.pwconv.0.1.weight",
+      "encoder.encoder.4.1.pwconv.0.1.bias",
+      "encoder.encoder.4.1.pwconv.1.1.weight",
+      "encoder.encoder.4.1.pwconv.1.1.bias",
+      "encoder.encoder.4.2.convs.convs.0.1.weight",
+      "encoder.encoder.4.2.convs.convs.0.1.bias",
+      "encoder.encoder.4.2.pwconv.0.1.weight",
+      "encoder.encoder.4.2.pwconv.0.1.bias",
+      "encoder.encoder.4.2.pwconv.1.1.weight",
+      "encoder.encoder.4.2.pwconv.1.1.bias",
+      "decoder.decoder.0.0.convs.0.1.weight",
+      "decoder.decoder.0.0.convs.0.1.bias",
+      "decoder.decoder.0.0.convs.1.1.weight",
+      "decoder.decoder.0.0.convs.1.1.bias",
+      "decoder.decoder.1.0.convs.0.1.weight",
+      "decoder.decoder.1.0.convs.0.1.bias",
+      "decoder.decoder.1.0.convs.1.1.weight",
+      "decoder.decoder.1.0.convs.1.1.bias",
+      "decoder.decoder.2.0.convs.0.1.weight",
+      "decoder.decoder.2.0.convs.0.1.bias",
+      "decoder.decoder.2.0.convs.1.1.weight",
+      "decoder.decoder.2.0.convs.1.1.bias",
+      "decoder.decoder.3.0.convs.0.1.weight",
+      "decoder.decoder.3.0.convs.0.1.bias",
+      "decoder.decoder.3.0.convs.1.1.weight",
+      "decoder.decoder.3.0.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+./data/S3DIS/s3disfull raw ./data/S3DIS/s3disfull/raw
+./data/S3DIS/s3disfull/raw load successfully
+label rate is 100%
+./data/S3DIS/s3disfull/processed/s3dis_val_area5_0.040.pkl load successfully
+[32m[06/12 15:04:50 S3DIS]: [0m
+Totally 68 samples in val set
+[32m[06/12 15:04:50 S3DIS]: [0mlength of validation dataset: 68
+[32m[06/12 15:04:50 S3DIS]: [0mnumber of classes of the dataset: 13
+[32m[06/12 15:04:50 S3DIS]: [0mSuccessful Loading the ckpt from checkpoints/s3dis_pointnext.pth
+[32m[06/12 15:04:50 S3DIS]: [0mckpts @ 100 epoch( {'best_val': 67.57476806640625} )
+[32m[06/12 15:04:50 S3DIS]: [0mlength of test dataset: 68
+<class 'list'>
+[32m[06/12 15:04:50 S3DIS]: [0mTest [0]/[68] cloud
+[32m[06/12 15:05:07 S3DIS]: [0m[0]/[68] cloud,  test_oa , test_macc, test_miou: 92.79 97.24 87.98, 
+iou per cls is: [ 97.42  99.14  81.85 100.   100.   100.    97.83   0.   100.   100.
+ 100.   100.    67.52]
+so far miou is:  87.98210906982422
+[32m[06/12 15:05:07 S3DIS]: [0mTest [1]/[68] cloud
+[32m[06/12 15:05:18 S3DIS]: [0m[1]/[68] cloud,  test_oa , test_macc, test_miou: 93.42 97.67 88.37, 
+iou per cls is: [ 94.49  99.05  84.8  100.   100.   100.    97.82   0.   100.   100.
+ 100.   100.    72.68]
+so far miou is:  88.1658935546875
+[32m[06/12 15:05:18 S3DIS]: [0mTest [2]/[68] cloud
+[32m[06/12 15:05:42 S3DIS]: [0m[2]/[68] cloud,  test_oa , test_macc, test_miou: 90.13 88.53 70.06, 
+iou per cls is: [ 96.87  98.94  79.59   0.     8.5   71.42  97.12  92.72  94.69 100.
+   0.    95.5   75.39]
+so far miou is:  69.82477569580078
+[32m[06/12 15:05:42 S3DIS]: [0mTest [3]/[68] cloud
+[32m[06/12 15:08:09 S3DIS]: [0m[3]/[68] cloud,  test_oa , test_macc, test_miou: 92.51 90.29 85.80, 
+iou per cls is: [ 96.08  97.59  86.14 100.    40.94 100.    84.88  87.42  93.93  99.77
+  85.85  76.29  66.52]
+so far miou is:  76.01567077636719
+[32m[06/12 15:08:09 S3DIS]: [0mTest [4]/[68] cloud
+[32m[06/12 15:08:23 S3DIS]: [0m[4]/[68] cloud,  test_oa , test_macc, test_miou: 93.14 94.88 78.39, 
+iou per cls is: [ 98.52  99.    89.99 100.     0.   100.    48.11 100.   100.   100.
+   0.   100.    83.39]
+so far miou is:  74.05780029296875
+[32m[06/12 15:08:23 S3DIS]: [0mTest [5]/[68] cloud
+[32m[06/12 15:08:58 S3DIS]: [0m[5]/[68] cloud,  test_oa , test_macc, test_miou: 95.88 92.97 69.20, 
+iou per cls is: [ 97.58  98.15  94.37 100.     0.   100.    25.29 100.   100.   100.
+   0.     0.    84.19]
+so far miou is:  73.01222229003906
+[32m[06/12 15:08:58 S3DIS]: [0mTest [6]/[68] cloud
+[32m[06/12 15:09:22 S3DIS]: [0m[6]/[68] cloud,  test_oa , test_macc, test_miou: 95.23 89.87 70.18, 
+iou per cls is: [ 97.77  99.44  96.08 100.   100.   100.    88.82   0.     0.    52.54
+  47.32 100.    30.36]
+so far miou is:  70.28083038330078
+[32m[06/12 15:09:22 S3DIS]: [0mTest [7]/[68] cloud
+[32m[06/12 15:10:03 S3DIS]: [0m[7]/[68] cloud,  test_oa , test_macc, test_miou: 94.71 96.74 72.65, 
+iou per cls is: [ 98.21  99.33  91.3  100.     0.   100.    79.26 100.   100.   100.
+   0.     0.    76.34]
+so far miou is:  69.94496154785156
+[32m[06/12 15:10:03 S3DIS]: [0mTest [8]/[68] cloud
+[32m[06/12 15:10:46 S3DIS]: [0m[8]/[68] cloud,  test_oa , test_macc, test_miou: 95.05 83.44 65.73, 
+iou per cls is: [ 89.7   98.89  93.84   0.    10.41   0.    84.84 100.   100.   100.
+   0.   100.    76.78]
+so far miou is:  69.32054138183594
+[32m[06/12 15:10:46 S3DIS]: [0mTest [9]/[68] cloud
+[32m[06/12 15:11:04 S3DIS]: [0m[9]/[68] cloud,  test_oa , test_macc, test_miou: 92.13 88.54 68.82, 
+iou per cls is: [97.52 98.52 68.82  0.   57.84 83.44 97.72 89.89 96.36  0.   94.5  41.39
+ 68.71]
+so far miou is:  71.9124526977539
+[32m[06/12 15:11:04 S3DIS]: [0mTest [10]/[68] cloud
+[32m[06/12 15:11:24 S3DIS]: [0m[10]/[68] cloud,  test_oa , test_macc, test_miou: 90.64 90.76 77.13, 
+iou per cls is: [ 97.6   97.06  72.86   0.    53.2   78.12  78.64  85.91  82.08 100.
+  93.94 100.    63.33]
+so far miou is:  72.61907196044922
+[32m[06/12 15:11:24 S3DIS]: [0mTest [11]/[68] cloud
+[32m[06/12 15:12:08 S3DIS]: [0m[11]/[68] cloud,  test_oa , test_macc, test_miou: 86.50 84.76 70.88, 
+iou per cls is: [ 95.06  98.22  68.68   0.     0.48  62.59  95.05  63.03  91.23 100.
+  84.81  94.46  67.8 ]
+so far miou is:  71.79884338378906
+[32m[06/12 15:12:08 S3DIS]: [0mTest [12]/[68] cloud
+[32m[06/12 15:12:26 S3DIS]: [0m[12]/[68] cloud,  test_oa , test_macc, test_miou: 90.80 82.74 69.82, 
+iou per cls is: [ 98.52  97.77  87.96   0.    42.02 100.    93.02  88.11  89.78 100.
+  21.01  41.31  48.16]
+so far miou is:  71.44749450683594
+[32m[06/12 15:12:26 S3DIS]: [0mTest [13]/[68] cloud
+[32m[06/12 15:12:52 S3DIS]: [0m[13]/[68] cloud,  test_oa , test_macc, test_miou: 87.36 92.43 57.46, 
+iou per cls is: [ 97.42  98.26  94.75   0.     0.   100.    94.87  57.25   0.     0.
+  56.9  100.    47.56]
+so far miou is:  70.71543884277344
+[32m[06/12 15:12:52 S3DIS]: [0mTest [14]/[68] cloud
+[32m[06/12 15:16:49 S3DIS]: [0m[14]/[68] cloud,  test_oa , test_macc, test_miou: 77.71 85.58 59.58, 
+iou per cls is: [ 74.97  97.54  66.8    0.    42.11   0.    77.87  60.78  76.9   64.9
+  63.63 100.    49.08]
+so far miou is:  68.84253692626953
+FINAL
+tp = [2903443 2761914 5359573       0   85969  311309  381762  392502  269281
+   78785 1116137  140374 1636367]
+union = [3132750 2805649 6247386   57141  322694  431604  474532  508633  315327
+  110056 1624787  187736 2673597]
+ious = [9.2680328e+01 9.8441185e+01 8.5789047e+01 1.7500569e-13 2.6641029e+01
+ 7.2128387e+01 8.0450211e+01 7.7168015e+01 8.5397377e+01 7.1586281e+01
+ 6.8694359e+01 7.4772018e+01 6.1204700e+01]
+miou = 68.84253692626953
+[32m[06/12 15:16:49 S3DIS]: [0mBest ckpt @E100,  test_oa , test_macc, test_miou: 89.94 82.21 68.84, 
+iou per cls is: [92.68 98.44 85.79  0.   26.64 72.13 80.45 77.17 85.4  71.59 68.69 74.77
+ 61.2 ]

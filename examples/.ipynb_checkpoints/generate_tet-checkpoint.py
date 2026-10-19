@@ -6,8 +6,8 @@ from multiprocessing import Pool
 
 #part_num = 5000
 src_path = "/dataset/sparse/"
-data_path = "/userhome/GMM/S3DIS_node/"
-save_path = '/userhome/GMM/S3DIS/'
+data_path = "/mnt/clientshare/samadi/GMM/S3DIS_node/"
+save_path = '/mnt/clientshare/samadi/GMM/S3DIS/'
 
 def process_file(file_name):
     if file_name.split('.')[-1]=='ele' and not os.path.exists(os.path.join(save_path, file_name.split('.')[0]+'.npy')):

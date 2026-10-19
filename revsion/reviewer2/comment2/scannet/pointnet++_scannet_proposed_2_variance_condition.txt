@@ -1,0 +1,4205 @@
+launch mp with 1 GPUs, current rank: 0
+[32m[06/23 17:06:10 ScanNet]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 8024
+epoch: 0
+epochs: 100
+ignore_index: -100
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.0
+  ignore_index: -100
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-ScanNet
+  tags: ['test']
+  name: scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: True
+test: False
+finetune: False
+mode: test
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/scannet
+pretrained_path: checkpoints/pointne++_scannet_47.pth
+datatransforms:
+  train: ['RandomRotateZ', 'RandomScale', 'ChromaticAutoContrast', 'RandomDropFeature', 'NumpyChromaticNormalize']
+  val: ['NumpyChromaticNormalize']
+  test: ['PointsToTensor', 'NumpyChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    rotate_dim: 2
+    scale: [0.8, 1.2]
+    mirror: [0.2, -1, -1]
+    angle: 1
+    color_mean: [0.46259782, 0.46253258, 0.46253258]
+    color_std: [0.693565, 0.6852543, 0.68061745]
+feature_keys: pos,x,heights
+dataset:
+  common:
+    NAME: ScanNet
+    data_root: ./data/scannet
+    voxel_size: 0.02
+  train:
+    split: train
+    voxel_max: 64000
+    presample: True
+    loop: 6
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: val
+    voxel_max: None
+no_label: False
+num_classes: 20
+batch_size: 12
+val_batch_size: 1
+dataloader:
+  num_workers: 0
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+lr: 0.001
+min_lr: None
+sched: multistep
+decay_epochs: [70, 90]
+decay_rate: 0.1
+warmup_epochs: 0
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNet2Encoder
+    in_channels: 7
+    width: None
+    strides: [4, 4, 4, 4]
+    layers: 3
+    use_res: False
+    mlps: [[[32, 32, 64]], [[64, 64, 128]], [[128, 128, 256]], [[256, 256, 512]]]
+    radius: 0.05
+    num_samples: 32
+    sampler: fps
+    aggr_args:
+      NAME: convpool
+      feature_type: dp_fj
+      anisotropic: False
+      reduction: max
+    group_args:
+      NAME: ballquery
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNet2Decoder
+    fp_mlps: [[128, 128, 128], [256, 128], [256, 256], [256, 256]]
+  cls_args:
+    NAME: SegHead
+    num_classes: 20
+    in_channels: None
+rank: 0
+distributed: False
+mp: False
+task_name: scannet
+cfg_basename: pointnet++
+opts: mode=test
+is_training: False
+run_name: scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx
+run_dir: research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx
+log_dir: research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx
+ckpt_dir: research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx/checkpoint
+code_dir: research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx/code
+log_path: research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx.log
+cfg_path: research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx/cfg.yaml
+[32m[06/23 17:06:10 ScanNet]: [0mradius is modified to [[0.05], [0.1], [0.2], [0.4]]
+[32m[06/23 17:06:10 ScanNet]: [0mnum_samples is modified to [[32], [32], [32], [32]]
+[32m[06/23 17:06:10 ScanNet]: [0mNAME: ballquery
+radius: 0.05
+nsample: 32
+[32m[06/23 17:06:10 ScanNet]: [0mNAME: ballquery
+radius: 0.1
+nsample: 32
+[32m[06/23 17:06:10 ScanNet]: [0mNAME: ballquery
+radius: 0.2
+nsample: 32
+[32m[06/23 17:06:10 ScanNet]: [0mNAME: ballquery
+radius: 0.4
+nsample: 32
+[32m[06/23 17:06:14 ScanNet]: [0mBaseSeg(
+  (encoder): PointNet2Encoder(
+    (SA_modules): ModuleList(
+      (0): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(10, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(32, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (1): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (2): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (3): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+    )
+  )
+  (decoder): PointNet2Decoder(
+    (FP_modules): ModuleList(
+      (0): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(135, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (2): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (1): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(320, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (2): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(384, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (3): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(128, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[06/23 17:06:14 ScanNet]: [0mNumber of params: 0.9662 M
+[32m[06/23 17:06:14 ScanNet]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "decoder.FP_modules.0.convs.0.0.weight",
+      "decoder.FP_modules.0.convs.1.0.weight",
+      "decoder.FP_modules.0.convs.2.0.weight",
+      "decoder.FP_modules.1.convs.0.0.weight",
+      "decoder.FP_modules.1.convs.1.0.weight",
+      "decoder.FP_modules.2.convs.0.0.weight",
+      "decoder.FP_modules.2.convs.1.0.weight",
+      "decoder.FP_modules.3.convs.0.0.weight",
+      "decoder.FP_modules.3.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "decoder.FP_modules.0.convs.0.1.weight",
+      "decoder.FP_modules.0.convs.0.1.bias",
+      "decoder.FP_modules.0.convs.1.1.weight",
+      "decoder.FP_modules.0.convs.1.1.bias",
+      "decoder.FP_modules.0.convs.2.1.weight",
+      "decoder.FP_modules.0.convs.2.1.bias",
+      "decoder.FP_modules.1.convs.0.1.weight",
+      "decoder.FP_modules.1.convs.0.1.bias",
+      "decoder.FP_modules.1.convs.1.1.weight",
+      "decoder.FP_modules.1.convs.1.1.bias",
+      "decoder.FP_modules.2.convs.0.1.weight",
+      "decoder.FP_modules.2.convs.0.1.bias",
+      "decoder.FP_modules.2.convs.1.1.weight",
+      "decoder.FP_modules.2.convs.1.1.bias",
+      "decoder.FP_modules.3.convs.0.1.weight",
+      "decoder.FP_modules.3.convs.0.1.bias",
+      "decoder.FP_modules.3.convs.1.1.weight",
+      "decoder.FP_modules.3.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+val
+this recipt: ------------------------
+
+split = val
+data_root = ./data/scannet
+len(data_list) = 312
+first few = ['./data/scannet/val/scene0700_02_inst_nostuff.pth', './data/scannet/val/scene0377_01_inst_nostuff.pth', './data/scannet/val/scene0193_01_inst_nostuff.pth', './data/scannet/val/scene0686_01_inst_nostuff.pth', './data/scannet/val/scene0655_00_inst_nostuff.pth']
+len(self.data) = 312
+
+------------------------
+[32m[06/23 17:06:14 ScanNet]: [0mTotally 312 samples in val set.
+./data/scannet/processed/scannet_val_0.020.pkl load successfully
+[32m[06/23 17:06:15 ScanNet]: [0mlength of validation dataset: 312
+[32m[06/23 17:06:15 ScanNet]: [0mnumber of classes of the dataset: 20
+[32m[06/23 17:06:15 ScanNet]: [0mSuccessful Loading the ckpt from checkpoints/pointne++_scannet_47.pth
+[32m[06/23 17:06:15 ScanNet]: [0mckpts @ 43 epoch( {'best_val': 47.162261962890625} )
+[32m[06/23 17:06:15 ScanNet]: [0mlength of test dataset: 312
+<class 'list'>
+[32m[06/23 17:06:15 ScanNet]: [0mTest [0]/[312] cloud
+create chunks
+before:  (148642, 3)
+before:  (148642, 3)
+before:  (148642,)
+after:  (148642, 3)
+after:  (148642, 3)
+after:  (148642,)
+[32m[06/23 17:06:24 ScanNet]: [0m[0]/[312] cloud,  test_oa , test_macc, test_miou: 80.05 89.04 40.32, 
+iou per cls is: [ 65.14  93.1   46.81   0.    79.7    0.     0.    38.41  73.09   0.
+   0.     0.    41.36   0.     0.   100.     0.   100.   100.    68.86]
+so far miou is:  40.322696685791016
+[32m[06/23 17:06:24 ScanNet]: [0mTest [1]/[312] cloud
+create chunks
+before:  (131297, 3)
+before:  (131297, 3)
+before:  (131297,)
+after:  (131297, 3)
+after:  (131297, 3)
+after:  (131297,)
+[32m[06/23 17:06:30 ScanNet]: [0m[1]/[312] cloud,  test_oa , test_macc, test_miou: 78.21 95.43 46.33, 
+iou per cls is: [ 71.27  88.3    0.     0.    49.79 100.     0.     0.    66.33   0.
+   0.   100.     0.     0.     0.   100.   100.   100.   100.    50.82]
+so far miou is:  37.89247512817383
+[32m[06/23 17:06:30 ScanNet]: [0mTest [2]/[312] cloud
+create chunks
+before:  (93668, 3)
+before:  (93668, 3)
+before:  (93668,)
+after:  (93668, 3)
+after:  (93668, 3)
+after:  (93668,)
+[32m[06/23 17:06:36 ScanNet]: [0m[2]/[312] cloud,  test_oa , test_macc, test_miou: 78.56 87.30 57.40, 
+iou per cls is: [ 74.77  96.39   0.    72.27  75.56 100.     0.    22.94  53.38   0.
+ 100.   100.    39.89  12.88   0.   100.   100.   100.   100.     0.  ]
+so far miou is:  41.96141052246094
+[32m[06/23 17:06:36 ScanNet]: [0mTest [3]/[312] cloud
+create chunks
+before:  (91616, 3)
+before:  (91616, 3)
+before:  (91616,)
+after:  (91616, 3)
+after:  (91616, 3)
+after:  (91616,)
+[32m[06/23 17:06:41 ScanNet]: [0m[3]/[312] cloud,  test_oa , test_macc, test_miou: 87.09 93.45 61.32, 
+iou per cls is: [ 78.91  96.66   0.   100.     0.   100.   100.    37.84 100.   100.
+ 100.   100.   100.     0.     0.     0.    85.19  91.77   0.    35.98]
+so far miou is:  35.881317138671875
+[32m[06/23 17:06:41 ScanNet]: [0mTest [4]/[312] cloud
+create chunks
+before:  (139138, 3)
+before:  (139138, 3)
+before:  (139138,)
+after:  (139138, 3)
+after:  (139138, 3)
+after:  (139138,)
+[32m[06/23 17:06:48 ScanNet]: [0m[4]/[312] cloud,  test_oa , test_macc, test_miou: 96.18 99.07 58.77, 
+iou per cls is: [ 93.25  98.1    0.     0.    96.17   0.    87.79   0.   100.     0.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  39.95284652709961
+[32m[06/23 17:06:48 ScanNet]: [0mTest [5]/[312] cloud
+create chunks
+before:  (284801, 3)
+before:  (284801, 3)
+before:  (284801,)
+after:  (284801, 3)
+after:  (284801, 3)
+after:  (284801,)
+[32m[06/23 17:07:05 ScanNet]: [0m[5]/[312] cloud,  test_oa , test_macc, test_miou: 90.84 91.68 63.93, 
+iou per cls is: [ 79.49  96.53   0.     0.    80.88   0.    76.92  50.32  88.79  90.21
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    15.46]
+so far miou is:  43.9151725769043
+[32m[06/23 17:07:05 ScanNet]: [0mTest [6]/[312] cloud
+create chunks
+before:  (190792, 3)
+before:  (190792, 3)
+before:  (190792,)
+after:  (190792, 3)
+after:  (190792, 3)
+after:  (190792,)
+[32m[06/23 17:07:17 ScanNet]: [0m[6]/[312] cloud,  test_oa , test_macc, test_miou: 71.58 88.76 51.19, 
+iou per cls is: [ 60.56  92.18  25.06   0.    63.6   72.96   0.    60.02  32.51   0.
+   0.     0.    58.89   0.   100.   100.   100.   100.   100.    58.1 ]
+so far miou is:  45.8761100769043
+[32m[06/23 17:07:17 ScanNet]: [0mTest [7]/[312] cloud
+create chunks
+before:  (152050, 3)
+before:  (152050, 3)
+before:  (152050,)
+after:  (152050, 3)
+after:  (152050, 3)
+after:  (152050,)
+[32m[06/23 17:07:25 ScanNet]: [0m[7]/[312] cloud,  test_oa , test_macc, test_miou: 68.15 72.75 33.00, 
+iou per cls is: [ 55.36  95.36  54.61   0.    75.33   0.    21.65   2.44  25.81   0.
+   0.    27.35   0.     0.     0.   100.   100.     0.   100.     2.18]
+so far miou is:  44.7319450378418
+[32m[06/23 17:07:25 ScanNet]: [0mTest [8]/[312] cloud
+create chunks
+before:  (196815, 3)
+before:  (196815, 3)
+before:  (196815,)
+after:  (196815, 3)
+after:  (196815, 3)
+after:  (196815,)
+[32m[06/23 17:07:39 ScanNet]: [0m[8]/[312] cloud,  test_oa , test_macc, test_miou: 67.16 78.46 29.46, 
+iou per cls is: [ 81.13  92.81   0.     0.    63.84  42.7    0.68  32.     0.     0.
+   0.     0.    56.84   0.     0.     0.   100.   100.     0.    19.25]
+so far miou is:  42.8336181640625
+[32m[06/23 17:07:39 ScanNet]: [0mTest [9]/[312] cloud
+create chunks
+before:  (88450, 3)
+before:  (88450, 3)
+before:  (88450,)
+after:  (88450, 3)
+after:  (88450, 3)
+after:  (88450,)
+[32m[06/23 17:07:44 ScanNet]: [0m[9]/[312] cloud,  test_oa , test_macc, test_miou: 87.85 92.10 58.10, 
+iou per cls is: [ 77.02  93.23  76.61 100.    84.57   0.    72.99   0.     0.   100.
+ 100.    69.33   0.     0.    63.05   0.   100.    62.05 100.    63.17]
+so far miou is:  47.08060836791992
+[32m[06/23 17:07:44 ScanNet]: [0mTest [10]/[312] cloud
+create chunks
+before:  (239354, 3)
+before:  (239354, 3)
+before:  (239354,)
+after:  (239354, 3)
+after:  (239354, 3)
+after:  (239354,)
+[32m[06/23 17:07:57 ScanNet]: [0m[10]/[312] cloud,  test_oa , test_macc, test_miou: 83.13 82.70 39.23, 
+iou per cls is: [ 71.44  95.07   7.87   0.    85.43   0.    75.76  39.85   3.36   0.
+  65.75   0.     0.     0.   100.   100.     0.   100.     0.    40.12]
+so far miou is:  48.25823974609375
+[32m[06/23 17:07:57 ScanNet]: [0mTest [11]/[312] cloud
+create chunks
+before:  (408633, 3)
+before:  (408633, 3)
+before:  (408633,)
+after:  (408633, 3)
+after:  (408633, 3)
+after:  (408633,)
+[32m[06/23 17:08:28 ScanNet]: [0m[11]/[312] cloud,  test_oa , test_macc, test_miou: 56.17 71.65 25.28, 
+iou per cls is: [ 33.41  94.93   8.25   0.    11.89   0.    31.76  21.    41.94   0.
+   0.     0.     0.     0.    10.01   0.   100.    35.77 100.    16.73]
+so far miou is:  44.50922775268555
+[32m[06/23 17:08:28 ScanNet]: [0mTest [12]/[312] cloud
+create chunks
+before:  (60438, 3)
+before:  (60438, 3)
+before:  (60438,)
+after:  (60438, 3)
+after:  (60438, 3)
+after:  (60438,)
+[32m[06/23 17:08:31 ScanNet]: [0m[12]/[312] cloud,  test_oa , test_macc, test_miou: 86.85 92.71 45.34, 
+iou per cls is: [ 85.9   94.66   0.   100.     0.     0.   100.    37.38   0.     0.
+ 100.   100.     0.   100.     0.     0.    68.89  81.18   0.    38.83]
+so far miou is:  44.48929214477539
+[32m[06/23 17:08:31 ScanNet]: [0mTest [13]/[312] cloud
+create chunks
+before:  (55521, 3)
+before:  (55521, 3)
+before:  (55521,)
+after:  (55521, 3)
+after:  (55521, 3)
+after:  (55521,)
+[32m[06/23 17:08:34 ScanNet]: [0m[13]/[312] cloud,  test_oa , test_macc, test_miou: 73.86 91.00 40.32, 
+iou per cls is: [ 60.14  95.33  30.2    0.     0.     0.     0.    51.15   0.   100.
+ 100.     0.     0.     0.     0.   100.   100.    30.94 100.    38.56]
+so far miou is:  43.98765563964844
+[32m[06/23 17:08:34 ScanNet]: [0mTest [14]/[312] cloud
+create chunks
+before:  (144163, 3)
+before:  (144163, 3)
+before:  (144163,)
+after:  (144163, 3)
+after:  (144163, 3)
+after:  (144163,)
+[32m[06/23 17:08:41 ScanNet]: [0m[14]/[312] cloud,  test_oa , test_macc, test_miou: 86.89 91.92 50.61, 
+iou per cls is: [ 92.3   96.65 100.     0.    41.81   0.    69.25 100.     0.     0.
+ 100.   100.     0.     0.   100.   100.     0.   100.     0.    12.23]
+so far miou is:  43.230403900146484
+[32m[06/23 17:08:41 ScanNet]: [0mTest [15]/[312] cloud
+create chunks
+before:  (214895, 3)
+before:  (214895, 3)
+before:  (214895,)
+after:  (214895, 3)
+after:  (214895, 3)
+after:  (214895,)
+[32m[06/23 17:08:54 ScanNet]: [0m[15]/[312] cloud,  test_oa , test_macc, test_miou: 81.00 83.55 28.44, 
+iou per cls is: [ 74.38  85.56  26.55   0.    88.28   0.    64.61   8.23  21.11   0.
+   0.     0.     0.     0.     0.   100.   100.     0.     0.     0.  ]
+so far miou is:  42.689517974853516
+[32m[06/23 17:08:54 ScanNet]: [0mTest [16]/[312] cloud
+create chunks
+before:  (252726, 3)
+before:  (252726, 3)
+before:  (252726,)
+after:  (252726, 3)
+after:  (252726, 3)
+after:  (252726,)
+[32m[06/23 17:09:06 ScanNet]: [0m[16]/[312] cloud,  test_oa , test_macc, test_miou: 82.68 89.25 49.28, 
+iou per cls is: [ 72.02  92.91   0.     0.    66.7    0.    68.45  46.39   0.     0.
+ 100.     0.    39.21 100.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  42.28231430053711
+[32m[06/23 17:09:06 ScanNet]: [0mTest [17]/[312] cloud
+create chunks
+before:  (161593, 3)
+before:  (161593, 3)
+before:  (161593,)
+after:  (161593, 3)
+after:  (161593, 3)
+after:  (161593,)
+[32m[06/23 17:09:15 ScanNet]: [0m[17]/[312] cloud,  test_oa , test_macc, test_miou: 77.27 88.05 47.69, 
+iou per cls is: [ 66.39  95.    16.95   0.    81.46 100.     0.    56.21  36.24  75.19
+   0.     0.    69.66   0.     0.     0.   100.   100.   100.    56.7 ]
+so far miou is:  42.388702392578125
+[32m[06/23 17:09:15 ScanNet]: [0mTest [18]/[312] cloud
+create chunks
+before:  (191107, 3)
+before:  (191107, 3)
+before:  (191107,)
+after:  (191107, 3)
+after:  (191107, 3)
+after:  (191107,)
+[32m[06/23 17:09:28 ScanNet]: [0m[18]/[312] cloud,  test_oa , test_macc, test_miou: 65.20 76.44 44.58, 
+iou per cls is: [ 70.85  86.45   0.     0.    33.73  34.34  52.88   0.    39.27   0.
+  60.33 100.     0.    10.91 100.   100.   100.     0.   100.     2.87]
+so far miou is:  42.660858154296875
+[32m[06/23 17:09:28 ScanNet]: [0mTest [19]/[312] cloud
+create chunks
+before:  (39529, 3)
+before:  (39529, 3)
+before:  (39529,)
+after:  (39529, 3)
+after:  (39529, 3)
+after:  (39529,)
+[32m[06/23 17:09:30 ScanNet]: [0m[19]/[312] cloud,  test_oa , test_macc, test_miou: 89.22 96.32 71.09, 
+iou per cls is: [ 92.22  98.   100.     0.    67.61   0.    63.95   0.     0.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  42.59620666503906
+[32m[06/23 17:09:30 ScanNet]: [0mTest [20]/[312] cloud
+create chunks
+before:  (164401, 3)
+before:  (164401, 3)
+before:  (164401,)
+after:  (164401, 3)
+after:  (164401, 3)
+after:  (164401,)
+[32m[06/23 17:09:40 ScanNet]: [0m[20]/[312] cloud,  test_oa , test_macc, test_miou: 64.57 72.18 27.16, 
+iou per cls is: [ 52.95  94.41  52.46   0.    65.41   0.    25.53   4.23  12.21   0.
+  18.51  17.52   0.     0.     0.     0.   100.     0.   100.     0.  ]
+so far miou is:  41.51738357543945
+[32m[06/23 17:09:40 ScanNet]: [0mTest [21]/[312] cloud
+create chunks
+before:  (145562, 3)
+before:  (145562, 3)
+before:  (145562,)
+after:  (145562, 3)
+after:  (145562, 3)
+after:  (145562,)
+[32m[06/23 17:09:47 ScanNet]: [0m[21]/[312] cloud,  test_oa , test_macc, test_miou: 63.38 89.46 36.55, 
+iou per cls is: [ 15.42  92.1    0.     0.    76.49   0.    60.58   0.     8.93  77.52
+   0.     0.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  41.11995315551758
+[32m[06/23 17:09:47 ScanNet]: [0mTest [22]/[312] cloud
+create chunks
+before:  (51187, 3)
+before:  (51187, 3)
+before:  (51187,)
+after:  (51187, 3)
+after:  (51187, 3)
+after:  (51187,)
+[32m[06/23 17:09:50 ScanNet]: [0m[22]/[312] cloud,  test_oa , test_macc, test_miou: 83.76 86.77 54.44, 
+iou per cls is: [ 53.43  97.84   0.     0.    67.07   0.    70.49   0.     0.     0.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  41.03205490112305
+[32m[06/23 17:09:50 ScanNet]: [0mTest [23]/[312] cloud
+create chunks
+before:  (172602, 3)
+before:  (172602, 3)
+before:  (172602,)
+after:  (172602, 3)
+after:  (172602, 3)
+after:  (172602,)
+[32m[06/23 17:10:00 ScanNet]: [0m[23]/[312] cloud,  test_oa , test_macc, test_miou: 67.79 80.20 34.71, 
+iou per cls is: [ 63.39  77.95   0.    54.31  61.32   0.     0.     7.13  73.86   0.
+   0.07   0.    49.89   0.     0.     0.   100.   100.   100.     6.17]
+so far miou is:  40.71574401855469
+[32m[06/23 17:10:00 ScanNet]: [0mTest [24]/[312] cloud
+create chunks
+before:  (100286, 3)
+before:  (100286, 3)
+before:  (100286,)
+after:  (100286, 3)
+after:  (100286, 3)
+after:  (100286,)
+[32m[06/23 17:10:06 ScanNet]: [0m[24]/[312] cloud,  test_oa , test_macc, test_miou: 68.35 76.09 32.85, 
+iou per cls is: [ 66.31  95.49  43.85  63.57   0.    21.16   0.     0.     2.02   0.
+  16.06   0.     0.    47.79   0.   100.   100.     0.   100.     0.76]
+so far miou is:  41.11162567138672
+[32m[06/23 17:10:06 ScanNet]: [0mTest [25]/[312] cloud
+create chunks
+before:  (41327, 3)
+before:  (41327, 3)
+before:  (41327,)
+after:  (41327, 3)
+after:  (41327, 3)
+after:  (41327,)
+[32m[06/23 17:10:08 ScanNet]: [0m[25]/[312] cloud,  test_oa , test_macc, test_miou: 67.82 84.06 45.82, 
+iou per cls is: [ 49.5   92.36  53.26 100.   100.     0.   100.    43.76  28.9    0.
+ 100.     0.   100.     0.     0.     0.    90.65  39.86  16.42   1.77]
+so far miou is:  41.9189567565918
+[32m[06/23 17:10:08 ScanNet]: [0mTest [26]/[312] cloud
+create chunks
+before:  (89958, 3)
+before:  (89958, 3)
+before:  (89958,)
+after:  (89958, 3)
+after:  (89958, 3)
+after:  (89958,)
+[32m[06/23 17:10:14 ScanNet]: [0m[26]/[312] cloud,  test_oa , test_macc, test_miou: 97.41 98.83 68.49, 
+iou per cls is: [ 96.35  98.06   0.     0.    95.06   0.    80.31 100.   100.     0.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  42.018798828125
+[32m[06/23 17:10:14 ScanNet]: [0mTest [27]/[312] cloud
+create chunks
+before:  (62854, 3)
+before:  (62854, 3)
+before:  (62854,)
+after:  (62854, 3)
+after:  (62854, 3)
+after:  (62854,)
+[32m[06/23 17:10:17 ScanNet]: [0m[27]/[312] cloud,  test_oa , test_macc, test_miou: 78.78 91.12 53.73, 
+iou per cls is: [ 73.03  93.75   0.   100.     0.     0.   100.    21.4    0.     0.
+ 100.   100.     0.   100.     0.   100.    88.81  83.71 100.    13.91]
+so far miou is:  42.367374420166016
+[32m[06/23 17:10:17 ScanNet]: [0mTest [28]/[312] cloud
+create chunks
+before:  (82628, 3)
+before:  (82628, 3)
+before:  (82628,)
+after:  (82628, 3)
+after:  (82628, 3)
+after:  (82628,)
+[32m[06/23 17:10:21 ScanNet]: [0m[28]/[312] cloud,  test_oa , test_macc, test_miou: 80.43 86.13 45.40, 
+iou per cls is: [ 77.17  91.85   0.    80.96  45.81   0.     0.     5.11  83.47   0.
+ 100.     0.    58.64   0.     0.     0.   100.   100.   100.    64.96]
+so far miou is:  42.66547775268555
+[32m[06/23 17:10:21 ScanNet]: [0mTest [29]/[312] cloud
+create chunks
+before:  (74074, 3)
+before:  (74074, 3)
+before:  (74074,)
+after:  (74074, 3)
+after:  (74074, 3)
+after:  (74074,)
+[32m[06/23 17:10:25 ScanNet]: [0m[29]/[312] cloud,  test_oa , test_macc, test_miou: 91.38 91.42 73.44, 
+iou per cls is: [ 93.15  92.71 100.     0.    90.89 100.    70.7   48.63   0.22 100.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    72.44]
+so far miou is:  42.75962829589844
+[32m[06/23 17:10:25 ScanNet]: [0mTest [30]/[312] cloud
+create chunks
+before:  (134987, 3)
+before:  (134987, 3)
+before:  (134987,)
+after:  (134987, 3)
+after:  (134987, 3)
+after:  (134987,)
+[32m[06/23 17:10:31 ScanNet]: [0m[30]/[312] cloud,  test_oa , test_macc, test_miou: 87.51 93.87 48.28, 
+iou per cls is: [  0.    95.24   0.     0.    89.47   0.    63.58   0.     0.     0.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    17.39]
+so far miou is:  42.70233154296875
+[32m[06/23 17:10:31 ScanNet]: [0mTest [31]/[312] cloud
+create chunks
+before:  (273280, 3)
+before:  (273280, 3)
+before:  (273280,)
+after:  (273280, 3)
+after:  (273280, 3)
+after:  (273280,)
+[32m[06/23 17:10:46 ScanNet]: [0m[31]/[312] cloud,  test_oa , test_macc, test_miou: 74.83 64.67 29.93, 
+iou per cls is: [73.12 89.98  0.   84.89 62.39  0.    0.   35.75  0.    0.   24.15  0.
+ 49.95 41.36  6.35  1.68 32.34 40.54 43.56 12.5 ]
+so far miou is:  43.42206954956055
+[32m[06/23 17:10:46 ScanNet]: [0mTest [32]/[312] cloud
+create chunks
+before:  (37547, 3)
+before:  (37547, 3)
+before:  (37547,)
+after:  (37547, 3)
+after:  (37547, 3)
+after:  (37547,)
+[32m[06/23 17:10:48 ScanNet]: [0m[32]/[312] cloud,  test_oa , test_macc, test_miou: 76.14 93.16 48.01, 
+iou per cls is: [ 81.12  96.74 100.     0.    24.72   0.    57.67   0.     0.     0.
+ 100.   100.     0.     0.   100.   100.   100.   100.     0.     0.  ]
+so far miou is:  43.26362609863281
+[32m[06/23 17:10:48 ScanNet]: [0mTest [33]/[312] cloud
+create chunks
+before:  (84543, 3)
+before:  (84543, 3)
+before:  (84543,)
+after:  (84543, 3)
+after:  (84543, 3)
+after:  (84543,)
+[32m[06/23 17:10:52 ScanNet]: [0m[33]/[312] cloud,  test_oa , test_macc, test_miou: 83.74 93.08 39.71, 
+iou per cls is: [ 75.2   96.39   0.     0.     0.   100.     0.    28.16   0.   100.
+   0.   100.   100.     0.     0.     0.    67.52  85.62   0.    41.3 ]
+so far miou is:  43.346431732177734
+[32m[06/23 17:10:52 ScanNet]: [0mTest [34]/[312] cloud
+create chunks
+before:  (116341, 3)
+before:  (116341, 3)
+before:  (116341,)
+after:  (116341, 3)
+after:  (116341, 3)
+after:  (116341,)
+[32m[06/23 17:10:58 ScanNet]: [0m[34]/[312] cloud,  test_oa , test_macc, test_miou: 79.53 88.09 49.76, 
+iou per cls is: [ 74.97  95.09   0.    69.56  59.33   0.     0.    29.17  64.57   0.
+ 100.     0.    64.41  38.04   0.   100.   100.   100.   100.     0.  ]
+so far miou is:  43.430328369140625
+[32m[06/23 17:10:58 ScanNet]: [0mTest [35]/[312] cloud
+create chunks
+before:  (250821, 3)
+before:  (250821, 3)
+before:  (250821,)
+after:  (250821, 3)
+after:  (250821, 3)
+after:  (250821,)
+[32m[06/23 17:11:11 ScanNet]: [0m[35]/[312] cloud,  test_oa , test_macc, test_miou: 91.83 96.50 50.00, 
+iou per cls is: [ 85.9   95.94   0.     0.    85.51 100.    88.98  43.65   0.     0.
+ 100.   100.     0.     0.     0.     0.   100.   100.   100.     0.  ]
+so far miou is:  43.6471061706543
+[32m[06/23 17:11:11 ScanNet]: [0mTest [36]/[312] cloud
+create chunks
+before:  (153929, 3)
+before:  (153929, 3)
+before:  (153929,)
+after:  (153929, 3)
+after:  (153929, 3)
+after:  (153929,)
+[32m[06/23 17:11:19 ScanNet]: [0m[36]/[312] cloud,  test_oa , test_macc, test_miou: 94.49 98.80 58.45, 
+iou per cls is: [  0.    94.81   0.     0.    92.16 100.    82.06   0.     0.     0.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  43.78874206542969
+[32m[06/23 17:11:19 ScanNet]: [0mTest [37]/[312] cloud
+create chunks
+before:  (127677, 3)
+before:  (127677, 3)
+before:  (127677,)
+after:  (127677, 3)
+after:  (127677, 3)
+after:  (127677,)
+[32m[06/23 17:11:25 ScanNet]: [0m[37]/[312] cloud,  test_oa , test_macc, test_miou: 60.48 79.62 25.08, 
+iou per cls is: [ 35.19  83.87  12.86   0.     0.     0.     0.    46.94  66.36   0.
+ 100.     0.     0.     0.     0.    75.43  58.49   1.71   0.    20.68]
+so far miou is:  44.63797378540039
+[32m[06/23 17:11:25 ScanNet]: [0mTest [38]/[312] cloud
+create chunks
+before:  (65893, 3)
+before:  (65893, 3)
+before:  (65893,)
+after:  (65893, 3)
+after:  (65893, 3)
+after:  (65893,)
+[32m[06/23 17:11:28 ScanNet]: [0m[38]/[312] cloud,  test_oa , test_macc, test_miou: 52.76 77.67 17.83, 
+iou per cls is: [ 38.32  94.36  20.92   0.     0.     0.     2.66   7.87   0.     0.
+   0.     0.     0.    69.64   0.     0.   100.    22.83   0.     0.  ]
+so far miou is:  44.32850646972656
+[32m[06/23 17:11:28 ScanNet]: [0mTest [39]/[312] cloud
+create chunks
+before:  (90381, 3)
+before:  (90381, 3)
+before:  (90381,)
+after:  (90381, 3)
+after:  (90381, 3)
+after:  (90381,)
+[32m[06/23 17:11:33 ScanNet]: [0m[39]/[312] cloud,  test_oa , test_macc, test_miou: 81.67 88.63 49.74, 
+iou per cls is: [ 70.99  96.34  56.     0.     0.   100.     4.59  59.93  66.51   0.
+   0.    58.08   0.     0.     0.   100.   100.   100.   100.    82.41]
+so far miou is:  44.70683288574219
+[32m[06/23 17:11:33 ScanNet]: [0mTest [40]/[312] cloud
+create chunks
+before:  (164016, 3)
+before:  (164016, 3)
+before:  (164016,)
+after:  (164016, 3)
+after:  (164016, 3)
+after:  (164016,)
+[32m[06/23 17:11:42 ScanNet]: [0m[40]/[312] cloud,  test_oa , test_macc, test_miou: 79.39 91.37 34.72, 
+iou per cls is: [ 57.22  94.34  62.14   0.     0.   100.     0.    11.58   0.     0.
+   0.     0.   100.     0.     0.     0.   100.     0.   100.    69.06]
+so far miou is:  44.56897735595703
+[32m[06/23 17:11:42 ScanNet]: [0mTest [41]/[312] cloud
+create chunks
+before:  (48864, 3)
+before:  (48864, 3)
+before:  (48864,)
+after:  (48864, 3)
+after:  (48864, 3)
+after:  (48864,)
+[32m[06/23 17:11:45 ScanNet]: [0m[41]/[312] cloud,  test_oa , test_macc, test_miou: 77.00 88.85 42.19, 
+iou per cls is: [ 73.68  93.82   0.     0.     0.   100.   100.    39.48   0.     0.
+  73.36   7.56   0.     0.     0.    40.49  86.67  76.68  86.95  65.03]
+so far miou is:  45.74616241455078
+[32m[06/23 17:11:45 ScanNet]: [0mTest [42]/[312] cloud
+create chunks
+before:  (67623, 3)
+before:  (67623, 3)
+before:  (67623,)
+after:  (67623, 3)
+after:  (67623, 3)
+after:  (67623,)
+[32m[06/23 17:11:48 ScanNet]: [0m[42]/[312] cloud,  test_oa , test_macc, test_miou: 93.99 98.25 52.66, 
+iou per cls is: [ 77.33  98.11   0.     0.    95.41   0.    82.39   0.     0.   100.
+ 100.   100.     0.     0.   100.     0.   100.   100.   100.     0.  ]
+so far miou is:  45.75467300415039
+[32m[06/23 17:11:48 ScanNet]: [0mTest [43]/[312] cloud
+create chunks
+before:  (138130, 3)
+before:  (138130, 3)
+before:  (138130,)
+after:  (138130, 3)
+after:  (138130, 3)
+after:  (138130,)
+[32m[06/23 17:11:55 ScanNet]: [0m[43]/[312] cloud,  test_oa , test_macc, test_miou: 80.20 87.80 19.96, 
+iou per cls is: [ 78.99  93.86   0.     0.     0.     0.    36.73  48.14   0.     0.
+   0.     0.     0.     0.     0.   100.     0.     0.     0.    41.58]
+so far miou is:  45.50975036621094
+[32m[06/23 17:11:55 ScanNet]: [0mTest [44]/[312] cloud
+create chunks
+before:  (172134, 3)
+before:  (172134, 3)
+before:  (172134,)
+after:  (172134, 3)
+after:  (172134, 3)
+after:  (172134,)
+[32m[06/23 17:12:05 ScanNet]: [0m[44]/[312] cloud,  test_oa , test_macc, test_miou: 85.12 90.55 53.73, 
+iou per cls is: [ 78.57  92.09   3.28 100.    91.76   0.     0.     0.    91.01   0.
+   0.   100.    63.93   0.     0.   100.   100.   100.   100.    53.92]
+so far miou is:  45.82136535644531
+[32m[06/23 17:12:05 ScanNet]: [0mTest [45]/[312] cloud
+create chunks
+before:  (89796, 3)
+before:  (89796, 3)
+before:  (89796,)
+after:  (89796, 3)
+after:  (89796, 3)
+after:  (89796,)
+[32m[06/23 17:12:10 ScanNet]: [0m[45]/[312] cloud,  test_oa , test_macc, test_miou: 81.25 93.26 36.93, 
+iou per cls is: [ 80.49  92.68   0.     0.     0.    59.76  33.9    0.     0.   100.
+   0.   100.     0.     0.     0.   100.   100.     0.     0.    71.7 ]
+so far miou is:  45.97932815551758
+[32m[06/23 17:12:10 ScanNet]: [0mTest [46]/[312] cloud
+create chunks
+before:  (176038, 3)
+before:  (176038, 3)
+before:  (176038,)
+after:  (176038, 3)
+after:  (176038, 3)
+after:  (176038,)
+[32m[06/23 17:12:21 ScanNet]: [0m[46]/[312] cloud,  test_oa , test_macc, test_miou: 72.08 82.22 36.66, 
+iou per cls is: [ 60.33  92.85  54.5    0.     0.     0.     0.     0.    42.27   0.
+  30.74  38.26   0.     0.    35.77 100.   100.    23.94 100.    54.49]
+so far miou is:  46.497528076171875
+[32m[06/23 17:12:21 ScanNet]: [0mTest [47]/[312] cloud
+create chunks
+before:  (186579, 3)
+before:  (186579, 3)
+before:  (186579,)
+after:  (186579, 3)
+after:  (186579, 3)
+after:  (186579,)
+[32m[06/23 17:12:32 ScanNet]: [0m[47]/[312] cloud,  test_oa , test_macc, test_miou: 65.19 75.70 33.19, 
+iou per cls is: [ 69.49  86.51   0.     0.    34.67  35.49  36.69   0.    36.19   0.
+  50.74   0.     0.     1.43 100.   100.     0.   100.     0.    12.65]
+so far miou is:  46.367401123046875
+[32m[06/23 17:12:32 ScanNet]: [0mTest [48]/[312] cloud
+create chunks
+before:  (131283, 3)
+before:  (131283, 3)
+before:  (131283,)
+after:  (131283, 3)
+after:  (131283, 3)
+after:  (131283,)
+[32m[06/23 17:12:38 ScanNet]: [0m[48]/[312] cloud,  test_oa , test_macc, test_miou: 94.05 98.93 53.60, 
+iou per cls is: [ 85.62  96.32   0.     0.    94.61 100.    95.36   0.     0.     0.
+ 100.   100.     0.   100.     0.   100.   100.   100.     0.     0.  ]
+so far miou is:  46.4776725769043
+[32m[06/23 17:12:38 ScanNet]: [0mTest [49]/[312] cloud
+create chunks
+before:  (419537, 3)
+before:  (419537, 3)
+before:  (419537,)
+after:  (419537, 3)
+after:  (419537, 3)
+after:  (419537,)
+[32m[06/23 17:13:09 ScanNet]: [0m[49]/[312] cloud,  test_oa , test_macc, test_miou: 78.28 68.64 39.48, 
+iou per cls is: [ 69.31  92.37  67.94   0.    63.41  49.62   0.    26.69  39.59   0.
+  42.57  59.12  50.74   0.     3.57 100.     0.     7.34 100.    17.28]
+so far miou is:  46.99024200439453
+[32m[06/23 17:13:09 ScanNet]: [0mTest [50]/[312] cloud
+create chunks
+before:  (59330, 3)
+before:  (59330, 3)
+before:  (59330,)
+after:  (59330, 3)
+after:  (59330, 3)
+after:  (59330,)
+[32m[06/23 17:13:12 ScanNet]: [0m[50]/[312] cloud,  test_oa , test_macc, test_miou: 83.65 89.85 41.36, 
+iou per cls is: [ 79.64  96.18   0.   100.     0.   100.   100.     3.83   0.     0.
+ 100.     0.     0.   100.     0.     0.    47.82  74.37   0.    25.26]
+so far miou is:  46.96476745605469
+[32m[06/23 17:13:12 ScanNet]: [0mTest [51]/[312] cloud
+create chunks
+before:  (59134, 3)
+before:  (59134, 3)
+before:  (59134,)
+after:  (59134, 3)
+after:  (59134, 3)
+after:  (59134,)
+[32m[06/23 17:13:14 ScanNet]: [0m[51]/[312] cloud,  test_oa , test_macc, test_miou: 69.67 90.46 58.65, 
+iou per cls is: [ 64.54  93.83   0.     0.    29.81   0.    35.63   0.    49.21 100.
+ 100.   100.   100.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.83118438720703
+[32m[06/23 17:13:14 ScanNet]: [0mTest [52]/[312] cloud
+create chunks
+before:  (72007, 3)
+before:  (72007, 3)
+before:  (72007,)
+after:  (72007, 3)
+after:  (72007, 3)
+after:  (72007,)
+[32m[06/23 17:13:18 ScanNet]: [0m[52]/[312] cloud,  test_oa , test_macc, test_miou: 66.04 83.30 30.07, 
+iou per cls is: [ 63.31  91.03   0.     0.     0.     0.    60.    58.79   0.     0.
+ 100.     0.     0.     0.     0.     0.   100.     0.05 100.    28.15]
+so far miou is:  46.59652328491211
+[32m[06/23 17:13:18 ScanNet]: [0mTest [53]/[312] cloud
+create chunks
+before:  (141342, 3)
+before:  (141342, 3)
+before:  (141342,)
+after:  (141342, 3)
+after:  (141342, 3)
+after:  (141342,)
+[32m[06/23 17:13:25 ScanNet]: [0m[53]/[312] cloud,  test_oa , test_macc, test_miou: 79.14 92.94 48.91, 
+iou per cls is: [ 44.18  96.09   0.     0.    80.71   0.    57.87   0.    32.54  66.75
+   0.   100.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.514461517333984
+[32m[06/23 17:13:25 ScanNet]: [0mTest [54]/[312] cloud
+create chunks
+before:  (165009, 3)
+before:  (165009, 3)
+before:  (165009,)
+after:  (165009, 3)
+after:  (165009, 3)
+after:  (165009,)
+[32m[06/23 17:13:34 ScanNet]: [0m[54]/[312] cloud,  test_oa , test_macc, test_miou: 70.70 71.68 42.05, 
+iou per cls is: [ 68.97  52.16  60.34  69.21   1.23   0.    12.82  25.17  46.8   66.25
+   0.     0.     0.    38.13 100.   100.   100.     0.   100.     0.  ]
+so far miou is:  46.47074508666992
+[32m[06/23 17:13:34 ScanNet]: [0mTest [55]/[312] cloud
+create chunks
+before:  (358910, 3)
+before:  (358910, 3)
+before:  (358910,)
+after:  (358910, 3)
+after:  (358910, 3)
+after:  (358910,)
+[32m[06/23 17:14:00 ScanNet]: [0m[55]/[312] cloud,  test_oa , test_macc, test_miou: 80.79 78.22 39.89, 
+iou per cls is: [ 69.32  94.97   0.52   0.    61.97  65.03  24.75  49.97   0.    18.16
+  34.41   0.    24.57   0.     0.   100.     0.   100.   100.    54.16]
+so far miou is:  46.48273849487305
+[32m[06/23 17:14:00 ScanNet]: [0mTest [56]/[312] cloud
+create chunks
+before:  (81469, 3)
+before:  (81469, 3)
+before:  (81469,)
+after:  (81469, 3)
+after:  (81469, 3)
+after:  (81469,)
+[32m[06/23 17:14:04 ScanNet]: [0m[56]/[312] cloud,  test_oa , test_macc, test_miou: 80.74 87.30 39.53, 
+iou per cls is: [ 60.63  96.88   2.58   0.    60.98   0.    69.59   0.     0.     0.
+ 100.   100.     0.     0.     0.   100.   100.   100.     0.     0.  ]
+so far miou is:  46.38308334350586
+[32m[06/23 17:14:04 ScanNet]: [0mTest [57]/[312] cloud
+create chunks
+before:  (198471, 3)
+before:  (198471, 3)
+before:  (198471,)
+after:  (198471, 3)
+after:  (198471, 3)
+after:  (198471,)
+[32m[06/23 17:14:16 ScanNet]: [0m[57]/[312] cloud,  test_oa , test_macc, test_miou: 68.17 72.89 27.15, 
+iou per cls is: [63.18 90.92  0.   61.34 70.95  0.    0.   24.34  0.    0.    0.    0.
+  0.   70.07  0.   13.33  1.08 70.81 71.58  5.48]
+so far miou is:  46.462257385253906
+[32m[06/23 17:14:16 ScanNet]: [0mTest [58]/[312] cloud
+create chunks
+before:  (135867, 3)
+before:  (135867, 3)
+before:  (135867,)
+after:  (135867, 3)
+after:  (135867, 3)
+after:  (135867,)
+[32m[06/23 17:14:23 ScanNet]: [0m[58]/[312] cloud,  test_oa , test_macc, test_miou: 77.43 81.97 43.55, 
+iou per cls is: [ 67.97  96.76   0.    78.45  81.46   0.     0.    37.12  53.59   0.
+   0.   100.    53.48   0.     0.     0.   100.   100.   100.     2.15]
+so far miou is:  46.47425842285156
+[32m[06/23 17:14:23 ScanNet]: [0mTest [59]/[312] cloud
+create chunks
+before:  (113557, 3)
+before:  (113557, 3)
+before:  (113557,)
+after:  (113557, 3)
+after:  (113557, 3)
+after:  (113557,)
+[32m[06/23 17:14:28 ScanNet]: [0m[59]/[312] cloud,  test_oa , test_macc, test_miou: 82.17 94.87 40.83, 
+iou per cls is: [ 76.96  93.44   0.     0.    34.44 100.     0.     0.    74.78   0.
+   0.   100.     0.     0.     0.     0.   100.   100.   100.    37.01]
+so far miou is:  46.44683074951172
+[32m[06/23 17:14:28 ScanNet]: [0mTest [60]/[312] cloud
+create chunks
+before:  (305916, 3)
+before:  (305916, 3)
+before:  (305916,)
+after:  (305916, 3)
+after:  (305916, 3)
+after:  (305916,)
+[32m[06/23 17:14:47 ScanNet]: [0m[60]/[312] cloud,  test_oa , test_macc, test_miou: 60.13 76.36 25.80, 
+iou per cls is: [ 41.47  94.73  38.2   21.53  67.29  31.69  66.03  36.82   0.     0.
+ 100.     0.     0.    12.7    0.     0.     0.     0.     0.     5.45]
+so far miou is:  45.92695236206055
+[32m[06/23 17:14:47 ScanNet]: [0mTest [61]/[312] cloud
+create chunks
+before:  (110945, 3)
+before:  (110945, 3)
+before:  (110945,)
+after:  (110945, 3)
+after:  (110945, 3)
+after:  (110945,)
+[32m[06/23 17:14:52 ScanNet]: [0m[61]/[312] cloud,  test_oa , test_macc, test_miou: 42.24 89.78 28.69, 
+iou per cls is: [ 71.67  56.71   0.     0.     0.    25.    20.46   0.     0.     0.
+ 100.     0.     0.     0.     0.   100.   100.   100.     0.     0.  ]
+so far miou is:  45.42123031616211
+[32m[06/23 17:14:52 ScanNet]: [0mTest [62]/[312] cloud
+create chunks
+before:  (64383, 3)
+before:  (64383, 3)
+before:  (64383,)
+after:  (64383, 3)
+after:  (64383, 3)
+after:  (64383,)
+[32m[06/23 17:14:55 ScanNet]: [0m[62]/[312] cloud,  test_oa , test_macc, test_miou: 86.41 89.48 42.54, 
+iou per cls is: [ 82.92  95.21   0.     0.     0.     0.   100.     6.61   0.     0.
+ 100.   100.     0.     0.     0.   100.    49.93  77.9  100.    38.31]
+so far miou is:  45.47285461425781
+[32m[06/23 17:14:55 ScanNet]: [0mTest [63]/[312] cloud
+create chunks
+before:  (116845, 3)
+before:  (116845, 3)
+before:  (116845,)
+after:  (116845, 3)
+after:  (116845, 3)
+after:  (116845,)
+[32m[06/23 17:15:00 ScanNet]: [0m[63]/[312] cloud,  test_oa , test_macc, test_miou: 79.98 83.25 34.09, 
+iou per cls is: [ 75.48  94.49   0.   100.     0.     0.     0.    16.32  81.69   0.
+   0.    44.75   0.     0.   100.     6.42  80.99  61.82   0.    19.88]
+so far miou is:  45.45561218261719
+[32m[06/23 17:15:00 ScanNet]: [0mTest [64]/[312] cloud
+create chunks
+before:  (111833, 3)
+before:  (111833, 3)
+before:  (111833,)
+after:  (111833, 3)
+after:  (111833, 3)
+after:  (111833,)
+[32m[06/23 17:15:06 ScanNet]: [0m[64]/[312] cloud,  test_oa , test_macc, test_miou: 77.87 83.10 36.39, 
+iou per cls is: [ 74.74  94.96   0.     0.     0.   100.     0.    22.75  74.51   0.
+ 100.    19.82   0.     0.     0.     0.    81.03  29.15 100.    30.9 ]
+so far miou is:  45.24845504760742
+[32m[06/23 17:15:06 ScanNet]: [0mTest [65]/[312] cloud
+create chunks
+before:  (108319, 3)
+before:  (108319, 3)
+before:  (108319,)
+after:  (108319, 3)
+after:  (108319, 3)
+after:  (108319,)
+[32m[06/23 17:15:11 ScanNet]: [0m[65]/[312] cloud,  test_oa , test_macc, test_miou: 77.89 91.29 43.84, 
+iou per cls is: [ 45.4   96.54  72.61 100.     0.     0.     0.     0.     0.     0.
+ 100.    52.87   0.     0.    66.96 100.   100.    42.47 100.     0.  ]
+so far miou is:  46.13535690307617
+[32m[06/23 17:15:11 ScanNet]: [0mTest [66]/[312] cloud
+create chunks
+before:  (78836, 3)
+before:  (78836, 3)
+before:  (78836,)
+after:  (78836, 3)
+after:  (78836, 3)
+after:  (78836,)
+[32m[06/23 17:15:15 ScanNet]: [0m[66]/[312] cloud,  test_oa , test_macc, test_miou: 77.61 92.74 49.81, 
+iou per cls is: [ 37.04  95.48   0.     0.    84.12   0.    68.7    0.     0.     0.
+ 100.   100.     0.   100.   100.   100.   100.   100.     0.    10.81]
+so far miou is:  46.09019088745117
+[32m[06/23 17:15:15 ScanNet]: [0mTest [67]/[312] cloud
+create chunks
+before:  (44585, 3)
+before:  (44585, 3)
+before:  (44585,)
+after:  (44585, 3)
+after:  (44585, 3)
+after:  (44585,)
+[32m[06/23 17:15:18 ScanNet]: [0m[67]/[312] cloud,  test_oa , test_macc, test_miou: 78.48 88.39 41.23, 
+iou per cls is: [ 67.14  92.91  63.17 100.     0.   100.     0.    36.18   0.     0.
+  74.52   0.     0.     0.     0.    40.85  87.53  51.21  88.12  22.96]
+so far miou is:  46.651676177978516
+[32m[06/23 17:15:18 ScanNet]: [0mTest [68]/[312] cloud
+create chunks
+before:  (140599, 3)
+before:  (140599, 3)
+before:  (140599,)
+after:  (140599, 3)
+after:  (140599, 3)
+after:  (140599,)
+[32m[06/23 17:15:24 ScanNet]: [0m[68]/[312] cloud,  test_oa , test_macc, test_miou: 86.45 88.07 39.47, 
+iou per cls is: [ 83.2   93.35  17.06   0.    86.96  12.9    0.     0.     0.     0.
+   0.     0.    69.05 100.    26.9  100.   100.   100.     0.     0.  ]
+so far miou is:  46.73099899291992
+[32m[06/23 17:15:24 ScanNet]: [0mTest [69]/[312] cloud
+create chunks
+before:  (202882, 3)
+before:  (202882, 3)
+before:  (202882,)
+after:  (202882, 3)
+after:  (202882, 3)
+after:  (202882,)
+[32m[06/23 17:15:37 ScanNet]: [0m[69]/[312] cloud,  test_oa , test_macc, test_miou: 82.69 92.32 63.55, 
+iou per cls is: [ 73.8   88.79   0.   100.    94.46 100.    89.97  44.99   0.81   0.
+ 100.   100.     0.     0.     0.   100.   100.   100.   100.    78.28]
+so far miou is:  46.68928527832031
+[32m[06/23 17:15:37 ScanNet]: [0mTest [70]/[312] cloud
+create chunks
+before:  (167558, 3)
+before:  (167558, 3)
+before:  (167558,)
+after:  (167558, 3)
+after:  (167558, 3)
+after:  (167558,)
+[32m[06/23 17:15:46 ScanNet]: [0m[70]/[312] cloud,  test_oa , test_macc, test_miou: 72.83 82.21 27.91, 
+iou per cls is: [ 38.27  96.36   7.63   0.    78.48   0.     0.    67.27   0.71   0.
+   0.     0.    53.18   0.     0.     0.   100.     0.   100.    16.28]
+so far miou is:  46.62617111206055
+[32m[06/23 17:15:46 ScanNet]: [0mTest [71]/[312] cloud
+create chunks
+before:  (258402, 3)
+before:  (258402, 3)
+before:  (258402,)
+after:  (258402, 3)
+after:  (258402, 3)
+after:  (258402,)
+[32m[06/23 17:15:59 ScanNet]: [0m[71]/[312] cloud,  test_oa , test_macc, test_miou: 73.35 87.33 38.22, 
+iou per cls is: [ 65.84  92.23  18.88   0.    89.51   0.     0.    49.28  53.21   0.
+   0.     0.    46.03   0.     0.     0.   100.   100.   100.    49.39]
+so far miou is:  46.439453125
+[32m[06/23 17:15:59 ScanNet]: [0mTest [72]/[312] cloud
+create chunks
+before:  (254998, 3)
+before:  (254998, 3)
+before:  (254998,)
+after:  (254998, 3)
+after:  (254998, 3)
+after:  (254998,)
+[32m[06/23 17:16:11 ScanNet]: [0m[72]/[312] cloud,  test_oa , test_macc, test_miou: 76.99 67.88 35.09, 
+iou per cls is: [69.82 86.76 41.23 87.04 69.94  0.    0.   15.13  0.    0.   41.41  0.
+ 65.42 65.94 16.12  9.25 63.91 48.53 14.58  6.64]
+so far miou is:  46.391204833984375
+[32m[06/23 17:16:11 ScanNet]: [0mTest [73]/[312] cloud
+create chunks
+before:  (195084, 3)
+before:  (195084, 3)
+before:  (195084,)
+after:  (195084, 3)
+after:  (195084, 3)
+after:  (195084,)
+[32m[06/23 17:16:24 ScanNet]: [0m[73]/[312] cloud,  test_oa , test_macc, test_miou: 76.05 79.78 43.72, 
+iou per cls is: [ 72.75  93.94   1.71   0.    71.61  40.54   0.    28.63  40.73  55.62
+   0.     0.    59.86   0.     0.   100.   100.   100.   100.     9.08]
+so far miou is:  46.368873596191406
+[32m[06/23 17:16:24 ScanNet]: [0mTest [74]/[312] cloud
+create chunks
+before:  (53074, 3)
+before:  (53074, 3)
+before:  (53074,)
+after:  (53074, 3)
+after:  (53074, 3)
+after:  (53074,)
+[32m[06/23 17:16:26 ScanNet]: [0m[74]/[312] cloud,  test_oa , test_macc, test_miou: 66.20 94.73 84.71, 
+iou per cls is: [100.    99.23 100.   100.    16.25   0.    78.69 100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.1860237121582
+[32m[06/23 17:16:26 ScanNet]: [0mTest [75]/[312] cloud
+create chunks
+before:  (124572, 3)
+before:  (124572, 3)
+before:  (124572,)
+after:  (124572, 3)
+after:  (124572, 3)
+after:  (124572,)
+[32m[06/23 17:16:32 ScanNet]: [0m[75]/[312] cloud,  test_oa , test_macc, test_miou: 81.58 90.89 33.38, 
+iou per cls is: [ 63.02  96.53   0.     0.     0.     0.   100.    46.8   72.19   0.
+ 100.     0.     0.     0.     0.     0.    78.14  80.24   0.    30.77]
+so far miou is:  46.370849609375
+[32m[06/23 17:16:32 ScanNet]: [0mTest [76]/[312] cloud
+create chunks
+before:  (149922, 3)
+before:  (149922, 3)
+before:  (149922,)
+after:  (149922, 3)
+after:  (149922, 3)
+after:  (149922,)
+[32m[06/23 17:16:40 ScanNet]: [0m[76]/[312] cloud,  test_oa , test_macc, test_miou: 85.28 90.18 37.01, 
+iou per cls is: [ 75.09  92.63   0.     0.    83.93   0.    62.19  44.42  66.17   0.
+ 100.     0.     0.     0.     0.     0.   100.   100.     0.    15.83]
+so far miou is:  46.40314483642578
+[32m[06/23 17:16:40 ScanNet]: [0mTest [77]/[312] cloud
+create chunks
+before:  (53641, 3)
+before:  (53641, 3)
+before:  (53641,)
+after:  (53641, 3)
+after:  (53641, 3)
+after:  (53641,)
+[32m[06/23 17:16:42 ScanNet]: [0m[77]/[312] cloud,  test_oa , test_macc, test_miou: 74.20 91.37 36.90, 
+iou per cls is: [ 67.6   94.56  36.44   0.     0.     0.     0.    63.37   0.   100.
+   0.     0.     0.     0.     0.   100.   100.    50.97 100.    25.11]
+so far miou is:  46.370391845703125
+[32m[06/23 17:16:42 ScanNet]: [0mTest [78]/[312] cloud
+create chunks
+before:  (124091, 3)
+before:  (124091, 3)
+before:  (124091,)
+after:  (124091, 3)
+after:  (124091, 3)
+after:  (124091,)
+[32m[06/23 17:16:48 ScanNet]: [0m[78]/[312] cloud,  test_oa , test_macc, test_miou: 82.68 90.14 32.94, 
+iou per cls is: [ 66.39  98.06   0.     0.     0.     0.     0.    44.1   74.08   0.
+ 100.     0.     0.     0.     0.     0.    83.24  67.84 100.    25.03]
+so far miou is:  46.508968353271484
+[32m[06/23 17:16:48 ScanNet]: [0mTest [79]/[312] cloud
+create chunks
+before:  (136945, 3)
+before:  (136945, 3)
+before:  (136945,)
+after:  (136945, 3)
+after:  (136945, 3)
+after:  (136945,)
+[32m[06/23 17:16:55 ScanNet]: [0m[79]/[312] cloud,  test_oa , test_macc, test_miou: 65.50 85.19 44.36, 
+iou per cls is: [ 59.4   95.54   5.36   0.     0.     0.    66.75  37.91  21.25   0.
+ 100.   100.     0.     0.95   0.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.42267990112305
+[32m[06/23 17:16:55 ScanNet]: [0mTest [80]/[312] cloud
+create chunks
+before:  (110569, 3)
+before:  (110569, 3)
+before:  (110569,)
+after:  (110569, 3)
+after:  (110569, 3)
+after:  (110569,)
+[32m[06/23 17:17:00 ScanNet]: [0m[80]/[312] cloud,  test_oa , test_macc, test_miou: 87.39 91.77 62.33, 
+iou per cls is: [ 73.76  92.09   0.     0.    95.18 100.    79.18  28.21  47.39   0.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    30.79]
+so far miou is:  46.468814849853516
+[32m[06/23 17:17:00 ScanNet]: [0mTest [81]/[312] cloud
+create chunks
+before:  (83613, 3)
+before:  (83613, 3)
+before:  (83613,)
+after:  (83613, 3)
+after:  (83613, 3)
+after:  (83613,)
+[32m[06/23 17:17:05 ScanNet]: [0m[81]/[312] cloud,  test_oa , test_macc, test_miou: 84.70 91.82 63.58, 
+iou per cls is: [ 69.59  96.41   0.    82.91  85.46 100.     0.    62.88  67.54   0.
+ 100.   100.    52.49   0.     0.   100.   100.   100.   100.    54.4 ]
+so far miou is:  46.593536376953125
+[32m[06/23 17:17:05 ScanNet]: [0mTest [82]/[312] cloud
+create chunks
+before:  (299472, 3)
+before:  (299472, 3)
+before:  (299472,)
+after:  (299472, 3)
+after:  (299472, 3)
+after:  (299472,)
+[32m[06/23 17:17:22 ScanNet]: [0m[82]/[312] cloud,  test_oa , test_macc, test_miou: 78.68 83.95 31.02, 
+iou per cls is: [ 67.75  92.93  15.34   0.    83.85   0.    33.86  20.7   74.25 100.
+   0.     0.     0.     0.     0.   100.     0.     0.     0.    31.67]
+so far miou is:  46.41533279418945
+[32m[06/23 17:17:22 ScanNet]: [0mTest [83]/[312] cloud
+create chunks
+before:  (199774, 3)
+before:  (199774, 3)
+before:  (199774,)
+after:  (199774, 3)
+after:  (199774, 3)
+after:  (199774,)
+[32m[06/23 17:17:35 ScanNet]: [0m[83]/[312] cloud,  test_oa , test_macc, test_miou: 72.38 76.24 29.93, 
+iou per cls is: [63.16 92.73 13.9  62.98 49.41  0.    0.   27.36  0.    0.    0.    0.
+ 66.76 66.85  0.    0.   28.07 65.24 61.22  0.95]
+so far miou is:  46.513267517089844
+[32m[06/23 17:17:35 ScanNet]: [0mTest [84]/[312] cloud
+create chunks
+before:  (129951, 3)
+before:  (129951, 3)
+before:  (129951,)
+after:  (129951, 3)
+after:  (129951, 3)
+after:  (129951,)
+[32m[06/23 17:17:41 ScanNet]: [0m[84]/[312] cloud,  test_oa , test_macc, test_miou: 77.91 84.43 36.95, 
+iou per cls is: [ 75.09  88.64  52.59  48.95  35.64   0.     0.    39.33  75.47   0.
+ 100.   100.    23.35   0.     0.     0.     0.     0.   100.     0.  ]
+so far miou is:  46.456031799316406
+[32m[06/23 17:17:41 ScanNet]: [0mTest [85]/[312] cloud
+create chunks
+before:  (100285, 3)
+before:  (100285, 3)
+before:  (100285,)
+after:  (100285, 3)
+after:  (100285, 3)
+after:  (100285,)
+[32m[06/23 17:17:46 ScanNet]: [0m[85]/[312] cloud,  test_oa , test_macc, test_miou: 82.55 84.89 37.46, 
+iou per cls is: [ 74.86  96.08   0.     0.    94.72   0.     0.    34.49  68.57   0.
+   0.   100.    73.09   0.     0.     0.   100.   100.     0.     7.29]
+so far miou is:  46.44535827636719
+[32m[06/23 17:17:46 ScanNet]: [0mTest [86]/[312] cloud
+create chunks
+before:  (183029, 3)
+before:  (183029, 3)
+before:  (183029,)
+after:  (183029, 3)
+after:  (183029, 3)
+after:  (183029,)
+[32m[06/23 17:17:58 ScanNet]: [0m[86]/[312] cloud,  test_oa , test_macc, test_miou: 85.60 89.46 41.49, 
+iou per cls is: [ 83.22  89.2   78.39   0.     0.     0.     6.59  80.32   0.     0.
+  55.7   79.57   0.     0.     0.   100.   100.     0.   100.    56.73]
+so far miou is:  46.747947692871094
+[32m[06/23 17:17:58 ScanNet]: [0mTest [87]/[312] cloud
+create chunks
+before:  (170840, 3)
+before:  (170840, 3)
+before:  (170840,)
+after:  (170840, 3)
+after:  (170840, 3)
+after:  (170840,)
+[32m[06/23 17:18:08 ScanNet]: [0m[87]/[312] cloud,  test_oa , test_macc, test_miou: 85.01 89.55 45.01, 
+iou per cls is: [ 80.74  92.06   2.13   0.    76.11   0.     0.    54.91  80.96   0.
+   0.   100.    69.53   0.     0.   100.   100.     0.   100.    43.8 ]
+so far miou is:  46.894134521484375
+[32m[06/23 17:18:08 ScanNet]: [0mTest [88]/[312] cloud
+create chunks
+before:  (330321, 3)
+before:  (330321, 3)
+before:  (330321,)
+after:  (330321, 3)
+after:  (330321, 3)
+after:  (330321,)
+[32m[06/23 17:18:29 ScanNet]: [0m[88]/[312] cloud,  test_oa , test_macc, test_miou: 75.36 72.33 43.96, 
+iou per cls is: [65.14 93.97 45.19 82.69 52.58 43.44 18.35 24.   23.73  0.   43.28  0.
+ 48.07 49.11  0.   65.89 73.35 40.82 73.09 36.43]
+so far miou is:  47.436256408691406
+[32m[06/23 17:18:29 ScanNet]: [0mTest [89]/[312] cloud
+create chunks
+before:  (79213, 3)
+before:  (79213, 3)
+before:  (79213,)
+after:  (79213, 3)
+after:  (79213, 3)
+after:  (79213,)
+[32m[06/23 17:18:33 ScanNet]: [0m[89]/[312] cloud,  test_oa , test_macc, test_miou: 85.56 91.48 51.96, 
+iou per cls is: [ 70.88  92.57  80.67   0.    75.27   0.    58.88   0.     0.     0.
+ 100.    71.92   0.     0.    57.74 100.   100.    73.04 100.    58.24]
+so far miou is:  47.728145599365234
+[32m[06/23 17:18:33 ScanNet]: [0mTest [90]/[312] cloud
+create chunks
+before:  (331565, 3)
+before:  (331565, 3)
+before:  (331565,)
+after:  (331565, 3)
+after:  (331565, 3)
+after:  (331565,)
+[32m[06/23 17:18:55 ScanNet]: [0m[90]/[312] cloud,  test_oa , test_macc, test_miou: 82.08 89.99 33.70, 
+iou per cls is: [ 77.59  86.7   10.55   0.    78.36   0.     0.    64.79  74.93   0.
+   0.     0.    49.05   0.     0.     0.   100.     0.   100.    32.05]
+so far miou is:  47.81185531616211
+[32m[06/23 17:18:55 ScanNet]: [0mTest [91]/[312] cloud
+create chunks
+before:  (159475, 3)
+before:  (159475, 3)
+before:  (159475,)
+after:  (159475, 3)
+after:  (159475, 3)
+after:  (159475,)
+[32m[06/23 17:19:03 ScanNet]: [0m[91]/[312] cloud,  test_oa , test_macc, test_miou: 96.40 99.22 68.89, 
+iou per cls is: [ 92.49  97.28   0.   100.    93.28   0.    94.81   0.     0.   100.
+ 100.   100.   100.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.89231491088867
+[32m[06/23 17:19:03 ScanNet]: [0mTest [92]/[312] cloud
+create chunks
+before:  (98346, 3)
+before:  (98346, 3)
+before:  (98346,)
+after:  (98346, 3)
+after:  (98346, 3)
+after:  (98346,)
+[32m[06/23 17:19:09 ScanNet]: [0m[92]/[312] cloud,  test_oa , test_macc, test_miou: 80.90 85.85 35.21, 
+iou per cls is: [ 76.47  94.8    0.     0.     0.   100.     0.    28.61  84.38   0.
+ 100.    47.37   0.     0.     0.    10.98  84.53  41.85   0.    35.21]
+so far miou is:  47.87574768066406
+[32m[06/23 17:19:09 ScanNet]: [0mTest [93]/[312] cloud
+create chunks
+before:  (146820, 3)
+before:  (146820, 3)
+before:  (146820,)
+after:  (146820, 3)
+after:  (146820, 3)
+after:  (146820,)
+[32m[06/23 17:19:16 ScanNet]: [0m[93]/[312] cloud,  test_oa , test_macc, test_miou: 63.56 85.14 16.62, 
+iou per cls is: [ 62.43  61.63   0.    63.39   0.     0.     0.     0.     7.     0.
+  34.7    0.     0.     0.     0.     0.     0.   100.     0.     3.26]
+so far miou is:  47.71315383911133
+[32m[06/23 17:19:16 ScanNet]: [0mTest [94]/[312] cloud
+create chunks
+before:  (77020, 3)
+before:  (77020, 3)
+before:  (77020,)
+after:  (77020, 3)
+after:  (77020, 3)
+after:  (77020,)
+[32m[06/23 17:19:20 ScanNet]: [0m[94]/[312] cloud,  test_oa , test_macc, test_miou: 78.93 91.12 34.20, 
+iou per cls is: [ 74.33  91.3   49.15   0.    65.34   0.     0.     0.     0.     0.
+   0.    82.45   0.   100.     0.   100.   100.     0.     0.    21.5 ]
+so far miou is:  47.8366584777832
+[32m[06/23 17:19:20 ScanNet]: [0mTest [95]/[312] cloud
+create chunks
+before:  (126166, 3)
+before:  (126166, 3)
+before:  (126166,)
+after:  (126166, 3)
+after:  (126166, 3)
+after:  (126166,)
+[32m[06/23 17:19:26 ScanNet]: [0m[95]/[312] cloud,  test_oa , test_macc, test_miou: 92.20 97.14 70.59, 
+iou per cls is: [ 82.77  92.81   0.     0.    81.76 100.    86.41   0.    68.04 100.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  47.88637161254883
+[32m[06/23 17:19:26 ScanNet]: [0mTest [96]/[312] cloud
+create chunks
+before:  (46804, 3)
+before:  (46804, 3)
+before:  (46804,)
+after:  (46804, 3)
+after:  (46804, 3)
+after:  (46804,)
+[32m[06/23 17:19:28 ScanNet]: [0m[96]/[312] cloud,  test_oa , test_macc, test_miou: 77.07 86.14 71.01, 
+iou per cls is: [ 69.78  90.03   0.   100.   100.   100.   100.    46.73 100.   100.
+  76.63   0.08 100.     0.   100.    64.75  92.36  77.73  82.45  19.68]
+so far miou is:  48.19771194458008
+[32m[06/23 17:19:28 ScanNet]: [0mTest [97]/[312] cloud
+create chunks
+before:  (173904, 3)
+before:  (173904, 3)
+before:  (173904,)
+after:  (173904, 3)
+after:  (173904, 3)
+after:  (173904,)
+[32m[06/23 17:19:38 ScanNet]: [0m[97]/[312] cloud,  test_oa , test_macc, test_miou: 70.76 92.56 43.05, 
+iou per cls is: [ 35.02  94.3    0.     0.    75.66   0.    78.53   0.    21.11  56.32
+ 100.     0.     0.     0.   100.   100.   100.   100.     0.     0.  ]
+so far miou is:  48.12788009643555
+[32m[06/23 17:19:38 ScanNet]: [0mTest [98]/[312] cloud
+create chunks
+before:  (115550, 3)
+before:  (115550, 3)
+before:  (115550,)
+after:  (115550, 3)
+after:  (115550, 3)
+after:  (115550,)
+[32m[06/23 17:19:44 ScanNet]: [0m[98]/[312] cloud,  test_oa , test_macc, test_miou: 83.17 94.17 53.55, 
+iou per cls is: [  0.    96.12   0.     0.    85.29   0.    78.01   0.     0.   100.
+ 100.   100.     0.   100.   100.   100.   100.   100.     0.    11.5 ]
+so far miou is:  48.10268783569336
+[32m[06/23 17:19:44 ScanNet]: [0mTest [99]/[312] cloud
+create chunks
+before:  (136812, 3)
+before:  (136812, 3)
+before:  (136812,)
+after:  (136812, 3)
+after:  (136812, 3)
+after:  (136812,)
+[32m[06/23 17:19:50 ScanNet]: [0m[99]/[312] cloud,  test_oa , test_macc, test_miou: 96.55 96.83 60.57, 
+iou per cls is: [ 90.43  98.02   0.     0.    95.84   0.    93.28  80.85  52.93 100.
+ 100.   100.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  48.18122482299805
+[32m[06/23 17:19:50 ScanNet]: [0mTest [100]/[312] cloud
+create chunks
+before:  (208782, 3)
+before:  (208782, 3)
+before:  (208782,)
+after:  (208782, 3)
+after:  (208782, 3)
+after:  (208782,)
+[32m[06/23 17:20:03 ScanNet]: [0m[100]/[312] cloud,  test_oa , test_macc, test_miou: 64.99 76.54 37.08, 
+iou per cls is: [ 61.1   84.92   0.    37.38  67.09  74.98   0.    41.42  20.77  49.34
+   0.     0.    63.4   10.78  18.58   0.   100.     0.   100.    11.86]
+so far miou is:  48.07432174682617
+[32m[06/23 17:20:03 ScanNet]: [0mTest [101]/[312] cloud
+create chunks
+before:  (180928, 3)
+before:  (180928, 3)
+before:  (180928,)
+after:  (180928, 3)
+after:  (180928, 3)
+after:  (180928,)
+[32m[06/23 17:20:14 ScanNet]: [0m[101]/[312] cloud,  test_oa , test_macc, test_miou: 78.17 86.63 24.84, 
+iou per cls is: [ 77.78  94.44   0.     0.    63.46   0.    15.27  38.48   0.     0.
+   0.     0.     0.     0.     0.   100.   100.     7.26   0.     0.  ]
+so far miou is:  47.872989654541016
+[32m[06/23 17:20:14 ScanNet]: [0mTest [102]/[312] cloud
+create chunks
+before:  (210249, 3)
+before:  (210249, 3)
+before:  (210249,)
+after:  (210249, 3)
+after:  (210249, 3)
+after:  (210249,)
+[32m[06/23 17:20:27 ScanNet]: [0m[102]/[312] cloud,  test_oa , test_macc, test_miou: 93.82 98.24 69.78, 
+iou per cls is: [ 86.36  95.04   0.   100.    84.96   0.    87.26  78.28  63.74   0.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.97168731689453
+[32m[06/23 17:20:27 ScanNet]: [0mTest [103]/[312] cloud
+create chunks
+before:  (126181, 3)
+before:  (126181, 3)
+before:  (126181,)
+after:  (126181, 3)
+after:  (126181, 3)
+after:  (126181,)
+[32m[06/23 17:20:32 ScanNet]: [0m[103]/[312] cloud,  test_oa , test_macc, test_miou: 76.19 79.11 41.87, 
+iou per cls is: [ 67.85  95.49   0.    78.08  77.09   0.     0.    23.63  25.25 100.
+   0.     0.    70.1    0.     0.   100.   100.     0.   100.     0.  ]
+so far miou is:  47.9488639831543
+[32m[06/23 17:20:32 ScanNet]: [0mTest [104]/[312] cloud
+create chunks
+before:  (39474, 3)
+before:  (39474, 3)
+before:  (39474,)
+after:  (39474, 3)
+after:  (39474, 3)
+after:  (39474,)
+[32m[06/23 17:20:34 ScanNet]: [0m[104]/[312] cloud,  test_oa , test_macc, test_miou: 92.71 94.69 62.55, 
+iou per cls is: [ 89.43  95.11   0.     0.    82.69 100.    71.39  77.13  35.26 100.
+ 100.     0.     0.   100.   100.   100.     0.   100.   100.     0.  ]
+so far miou is:  47.95709228515625
+[32m[06/23 17:20:34 ScanNet]: [0mTest [105]/[312] cloud
+create chunks
+before:  (235030, 3)
+before:  (235030, 3)
+before:  (235030,)
+after:  (235030, 3)
+after:  (235030, 3)
+after:  (235030,)
+[32m[06/23 17:20:47 ScanNet]: [0m[105]/[312] cloud,  test_oa , test_macc, test_miou: 70.34 74.32 47.37, 
+iou per cls is: [ 68.41  89.26  17.49   0.    52.04  42.75  43.65  18.5   41.71   0.
+  65.29   0.     0.     0.   100.   100.   100.   100.   100.     8.22]
+so far miou is:  47.983802795410156
+[32m[06/23 17:20:47 ScanNet]: [0mTest [106]/[312] cloud
+create chunks
+before:  (187656, 3)
+before:  (187656, 3)
+before:  (187656,)
+after:  (187656, 3)
+after:  (187656, 3)
+after:  (187656,)
+[32m[06/23 17:20:59 ScanNet]: [0m[106]/[312] cloud,  test_oa , test_macc, test_miou: 74.07 88.43 39.74, 
+iou per cls is: [ 62.21  93.03  14.9    0.    45.64  64.67   0.    61.7   78.1   49.76
+   0.     0.    71.15   0.     0.   100.     0.   100.     0.    53.72]
+so far miou is:  48.01707458496094
+[32m[06/23 17:20:59 ScanNet]: [0mTest [107]/[312] cloud
+create chunks
+before:  (130180, 3)
+before:  (130180, 3)
+before:  (130180,)
+after:  (130180, 3)
+after:  (130180, 3)
+after:  (130180,)
+[32m[06/23 17:21:05 ScanNet]: [0m[107]/[312] cloud,  test_oa , test_macc, test_miou: 75.58 82.10 37.96, 
+iou per cls is: [ 64.28  92.01   2.49   0.    76.14  75.32  78.55   0.     0.     0.
+   0.     0.    64.41   0.     0.   100.     0.   100.   100.     5.9 ]
+so far miou is:  48.05132293701172
+[32m[06/23 17:21:05 ScanNet]: [0mTest [108]/[312] cloud
+create chunks
+before:  (81172, 3)
+before:  (81172, 3)
+before:  (81172,)
+after:  (81172, 3)
+after:  (81172, 3)
+after:  (81172,)
+[32m[06/23 17:21:09 ScanNet]: [0m[108]/[312] cloud,  test_oa , test_macc, test_miou: 82.37 91.29 56.53, 
+iou per cls is: [ 65.72  96.08   0.    81.74  66.64 100.     0.    45.78  79.48   0.
+ 100.     0.    56.75   0.     0.   100.   100.   100.   100.    38.48]
+so far miou is:  48.10643768310547
+[32m[06/23 17:21:09 ScanNet]: [0mTest [109]/[312] cloud
+create chunks
+before:  (111617, 3)
+before:  (111617, 3)
+before:  (111617,)
+after:  (111617, 3)
+after:  (111617, 3)
+after:  (111617,)
+[32m[06/23 17:21:14 ScanNet]: [0m[109]/[312] cloud,  test_oa , test_macc, test_miou: 63.61 89.10 39.08, 
+iou per cls is: [ 45.59  93.32   0.   100.    44.18 100.    47.81   0.     0.   100.
+ 100.     0.     0.    43.28   0.     0.     0.   100.     0.     7.47]
+so far miou is:  48.0649299621582
+[32m[06/23 17:21:14 ScanNet]: [0mTest [110]/[312] cloud
+create chunks
+before:  (186857, 3)
+before:  (186857, 3)
+before:  (186857,)
+after:  (186857, 3)
+after:  (186857, 3)
+after:  (186857,)
+[32m[06/23 17:21:26 ScanNet]: [0m[110]/[312] cloud,  test_oa , test_macc, test_miou: 68.59 68.87 34.38, 
+iou per cls is: [58.07 91.1   0.   54.04 82.65  0.   28.32 25.09  0.    0.   20.82  0.
+ 83.01 65.92  0.    2.51 21.72 75.1  74.63  4.55]
+so far miou is:  48.0201530456543
+[32m[06/23 17:21:26 ScanNet]: [0mTest [111]/[312] cloud
+create chunks
+before:  (137586, 3)
+before:  (137586, 3)
+before:  (137586,)
+after:  (137586, 3)
+after:  (137586, 3)
+after:  (137586,)
+[32m[06/23 17:21:33 ScanNet]: [0m[111]/[312] cloud,  test_oa , test_macc, test_miou: 78.11 83.83 46.03, 
+iou per cls is: [ 73.13  96.15   0.    77.05  79.11   0.     0.    23.51  27.52   0.
+   0.   100.    44.05   0.   100.     0.   100.   100.   100.     0.  ]
+so far miou is:  47.98501205444336
+[32m[06/23 17:21:33 ScanNet]: [0mTest [112]/[312] cloud
+create chunks
+before:  (48076, 3)
+before:  (48076, 3)
+before:  (48076,)
+after:  (48076, 3)
+after:  (48076, 3)
+after:  (48076,)
+[32m[06/23 17:21:36 ScanNet]: [0m[112]/[312] cloud,  test_oa , test_macc, test_miou: 44.88 69.47 44.50, 
+iou per cls is: [ 36.19  75.73   0.3    0.    39.66   0.     1.37   1.47   8.09 100.
+   0.   100.    27.22   0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.91961669921875
+[32m[06/23 17:21:36 ScanNet]: [0mTest [113]/[312] cloud
+create chunks
+before:  (89776, 3)
+before:  (89776, 3)
+before:  (89776,)
+after:  (89776, 3)
+after:  (89776, 3)
+after:  (89776,)
+[32m[06/23 17:21:41 ScanNet]: [0m[113]/[312] cloud,  test_oa , test_macc, test_miou: 83.22 93.64 45.82, 
+iou per cls is: [ 71.08  96.86   0.     0.     0.   100.   100.    41.71   0.     0.
+ 100.     0.   100.     0.   100.     0.    64.42  93.08   0.    49.28]
+so far miou is:  47.96578598022461
+[32m[06/23 17:21:41 ScanNet]: [0mTest [114]/[312] cloud
+create chunks
+before:  (81654, 3)
+before:  (81654, 3)
+before:  (81654,)
+after:  (81654, 3)
+after:  (81654, 3)
+after:  (81654,)
+[32m[06/23 17:21:45 ScanNet]: [0m[114]/[312] cloud,  test_oa , test_macc, test_miou: 71.77 88.19 44.35, 
+iou per cls is: [ 62.89  91.05   0.     0.     0.    63.93  19.56  16.47   0.     0.
+ 100.   100.     0.     0.     0.   100.   100.   100.   100.    33.18]
+so far miou is:  47.988136291503906
+[32m[06/23 17:21:45 ScanNet]: [0mTest [115]/[312] cloud
+create chunks
+before:  (176139, 3)
+before:  (176139, 3)
+before:  (176139,)
+after:  (176139, 3)
+after:  (176139, 3)
+after:  (176139,)
+[32m[06/23 17:21:56 ScanNet]: [0m[115]/[312] cloud,  test_oa , test_macc, test_miou: 91.61 98.87 58.38, 
+iou per cls is: [ 78.67  97.05   0.     0.     0.   100.   100.     0.     0.    91.82
+ 100.   100.     0.   100.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  48.36214828491211
+[32m[06/23 17:21:56 ScanNet]: [0mTest [116]/[312] cloud
+create chunks
+before:  (238392, 3)
+before:  (238392, 3)
+before:  (238392,)
+after:  (238392, 3)
+after:  (238392, 3)
+after:  (238392,)
+[32m[06/23 17:22:09 ScanNet]: [0m[116]/[312] cloud,  test_oa , test_macc, test_miou: 67.57 72.04 24.78, 
+iou per cls is: [ 49.73  97.03   0.     0.    22.89  42.52  51.77  42.02  15.46  55.9
+   0.41   0.     0.    13.61   0.     0.     0.     0.   100.     4.29]
+so far miou is:  48.20045852661133
+[32m[06/23 17:22:09 ScanNet]: [0mTest [117]/[312] cloud
+create chunks
+before:  (255083, 3)
+before:  (255083, 3)
+before:  (255083,)
+after:  (255083, 3)
+after:  (255083, 3)
+after:  (255083,)
+[32m[06/23 17:22:22 ScanNet]: [0m[117]/[312] cloud,  test_oa , test_macc, test_miou: 69.45 79.29 20.55, 
+iou per cls is: [ 68.61  87.86  21.54   0.33  45.56   0.    23.1   36.79   0.     0.
+  27.12   0.     0.     0.     0.     0.   100.     0.     0.     0.  ]
+so far miou is:  47.942745208740234
+[32m[06/23 17:22:22 ScanNet]: [0mTest [118]/[312] cloud
+create chunks
+before:  (226765, 3)
+before:  (226765, 3)
+before:  (226765,)
+after:  (226765, 3)
+after:  (226765, 3)
+after:  (226765,)
+[32m[06/23 17:22:34 ScanNet]: [0m[118]/[312] cloud,  test_oa , test_macc, test_miou: 63.50 78.11 34.32, 
+iou per cls is: [ 44.68  91.02  11.26   0.    70.23   0.    36.89  12.92   0.63   0.
+   0.     0.     0.     0.     0.   100.   100.   100.   100.    18.84]
+so far miou is:  47.674659729003906
+[32m[06/23 17:22:34 ScanNet]: [0mTest [119]/[312] cloud
+create chunks
+before:  (45436, 3)
+before:  (45436, 3)
+before:  (45436,)
+after:  (45436, 3)
+after:  (45436, 3)
+after:  (45436,)
+[32m[06/23 17:22:37 ScanNet]: [0m[119]/[312] cloud,  test_oa , test_macc, test_miou: 78.02 86.16 50.73, 
+iou per cls is: [ 72.72  90.72   0.   100.     0.   100.   100.    50.32   0.     0.
+  80.33   2.65 100.     0.     0.    52.43  88.97  72.69  82.52  21.29]
+so far miou is:  47.87080764770508
+[32m[06/23 17:22:37 ScanNet]: [0mTest [120]/[312] cloud
+create chunks
+before:  (41364, 3)
+before:  (41364, 3)
+before:  (41364,)
+after:  (41364, 3)
+after:  (41364, 3)
+after:  (41364,)
+[32m[06/23 17:22:39 ScanNet]: [0m[120]/[312] cloud,  test_oa , test_macc, test_miou: 90.46 95.05 72.23, 
+iou per cls is: [ 85.86  95.7    0.   100.    80.97 100.    65.3   79.75  37.04 100.
+ 100.     0.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.87766647338867
+[32m[06/23 17:22:39 ScanNet]: [0mTest [121]/[312] cloud
+create chunks
+before:  (76966, 3)
+before:  (76966, 3)
+before:  (76966,)
+after:  (76966, 3)
+after:  (76966, 3)
+after:  (76966,)
+[32m[06/23 17:22:43 ScanNet]: [0m[121]/[312] cloud,  test_oa , test_macc, test_miou: 80.93 86.08 56.57, 
+iou per cls is: [ 68.45  97.63  40.5  100.    62.03 100.    39.63  59.84   0.     0.
+ 100.    11.51   0.   100.    51.76 100.   100.     0.   100.     0.  ]
+so far miou is:  47.942665100097656
+[32m[06/23 17:22:43 ScanNet]: [0mTest [122]/[312] cloud
+create chunks
+before:  (149982, 3)
+before:  (149982, 3)
+before:  (149982,)
+after:  (149982, 3)
+after:  (149982, 3)
+after:  (149982,)
+[32m[06/23 17:22:51 ScanNet]: [0m[122]/[312] cloud,  test_oa , test_macc, test_miou: 82.45 90.22 48.35, 
+iou per cls is: [ 76.51  94.96  74.89 100.     0.     0.     8.31   0.     0.     0.
+ 100.    70.59   0.     0.     0.   100.   100.   100.   100.    41.69]
+so far miou is:  48.0724983215332
+[32m[06/23 17:22:51 ScanNet]: [0mTest [123]/[312] cloud
+create chunks
+before:  (111811, 3)
+before:  (111811, 3)
+before:  (111811,)
+after:  (111811, 3)
+after:  (111811, 3)
+after:  (111811,)
+[32m[06/23 17:22:56 ScanNet]: [0m[123]/[312] cloud,  test_oa , test_macc, test_miou: 78.62 92.83 41.65, 
+iou per cls is: [ 79.12  92.43   0.     0.    26.38 100.     0.     0.    86.92   0.
+   0.     0.     0.     0.     0.   100.   100.   100.   100.    48.1 ]
+so far miou is:  48.06793212890625
+[32m[06/23 17:22:56 ScanNet]: [0mTest [124]/[312] cloud
+create chunks
+before:  (141933, 3)
+before:  (141933, 3)
+before:  (141933,)
+after:  (141933, 3)
+after:  (141933, 3)
+after:  (141933,)
+[32m[06/23 17:23:03 ScanNet]: [0m[124]/[312] cloud,  test_oa , test_macc, test_miou: 88.69 92.74 49.37, 
+iou per cls is: [ 83.99  93.42   0.     0.    85.33   0.    63.47  49.85  71.1    0.
+ 100.     0.     0.     0.     0.   100.   100.   100.   100.    40.26]
+so far miou is:  48.111507415771484
+[32m[06/23 17:23:03 ScanNet]: [0mTest [125]/[312] cloud
+create chunks
+before:  (304396, 3)
+before:  (304396, 3)
+before:  (304396,)
+after:  (304396, 3)
+after:  (304396, 3)
+after:  (304396,)
+[32m[06/23 17:23:22 ScanNet]: [0m[125]/[312] cloud,  test_oa , test_macc, test_miou: 63.97 58.53 35.07, 
+iou per cls is: [58.07 92.5  31.56 67.67 33.18 64.05  0.15  6.68 14.07  0.    0.   37.15
+ 52.47  0.    0.   37.88 75.15 49.3  71.38 10.05]
+so far miou is:  48.00754928588867
+[32m[06/23 17:23:22 ScanNet]: [0mTest [126]/[312] cloud
+create chunks
+before:  (352674, 3)
+before:  (352674, 3)
+before:  (352674,)
+after:  (352674, 3)
+after:  (352674, 3)
+after:  (352674,)
+[32m[06/23 17:23:46 ScanNet]: [0m[126]/[312] cloud,  test_oa , test_macc, test_miou: 87.99 90.15 42.30, 
+iou per cls is: [ 64.97  93.39  12.58   0.    84.46   0.    82.16   0.    70.76   0.
+ 100.     0.     0.     0.     0.   100.     0.   100.   100.    37.63]
+so far miou is:  48.095821380615234
+[32m[06/23 17:23:46 ScanNet]: [0mTest [127]/[312] cloud
+create chunks
+before:  (297626, 3)
+before:  (297626, 3)
+before:  (297626,)
+after:  (297626, 3)
+after:  (297626, 3)
+after:  (297626,)
+[32m[06/23 17:24:03 ScanNet]: [0m[127]/[312] cloud,  test_oa , test_macc, test_miou: 71.11 87.17 43.22, 
+iou per cls is: [ 60.95  88.25   0.     0.    48.08   0.    80.85  37.32  82.71   0.
+   2.37 100.     0.     0.     0.   100.     0.   100.   100.    63.93]
+so far miou is:  47.93033981323242
+[32m[06/23 17:24:03 ScanNet]: [0mTest [128]/[312] cloud
+create chunks
+before:  (157025, 3)
+before:  (157025, 3)
+before:  (157025,)
+after:  (157025, 3)
+after:  (157025, 3)
+after:  (157025,)
+[32m[06/23 17:24:12 ScanNet]: [0m[128]/[312] cloud,  test_oa , test_macc, test_miou: 77.48 87.13 43.63, 
+iou per cls is: [ 79.48  87.29   0.    68.48  87.44   0.     0.     0.     0.    27.71
+   0.     0.    42.9   29.86 100.     0.   100.   100.   100.    49.4 ]
+so far miou is:  47.89639663696289
+[32m[06/23 17:24:12 ScanNet]: [0mTest [129]/[312] cloud
+create chunks
+before:  (407386, 3)
+before:  (407386, 3)
+before:  (407386,)
+after:  (407386, 3)
+after:  (407386, 3)
+after:  (407386,)
+[32m[06/23 17:24:42 ScanNet]: [0m[129]/[312] cloud,  test_oa , test_macc, test_miou: 73.71 90.53 26.91, 
+iou per cls is: [ 45.7   94.95   0.     0.     0.     0.    17.47   0.     0.    73.27
+   0.     0.     0.     0.     0.   100.     0.   100.   100.     6.78]
+so far miou is:  47.967281341552734
+[32m[06/23 17:24:42 ScanNet]: [0mTest [130]/[312] cloud
+create chunks
+before:  (96610, 3)
+before:  (96610, 3)
+before:  (96610,)
+after:  (96610, 3)
+after:  (96610, 3)
+after:  (96610,)
+[32m[06/23 17:24:48 ScanNet]: [0m[130]/[312] cloud,  test_oa , test_macc, test_miou: 80.98 91.27 52.62, 
+iou per cls is: [ 65.79  95.74   0.    80.48  78.31 100.     0.    43.73  69.41   0.
+ 100.     0.    47.33   0.     0.   100.   100.     0.   100.    71.56]
+so far miou is:  48.0117301940918
+[32m[06/23 17:24:48 ScanNet]: [0mTest [131]/[312] cloud
+create chunks
+before:  (199034, 3)
+before:  (199034, 3)
+before:  (199034,)
+after:  (199034, 3)
+after:  (199034, 3)
+after:  (199034,)
+[32m[06/23 17:25:01 ScanNet]: [0m[131]/[312] cloud,  test_oa , test_macc, test_miou: 62.12 87.51 28.58, 
+iou per cls is: [ 75.78  93.66   0.     0.    51.8   32.16   0.    20.16   0.     0.
+   0.     0.    67.59   0.     0.     0.   100.     0.   100.    30.51]
+so far miou is:  47.83111572265625
+[32m[06/23 17:25:01 ScanNet]: [0mTest [132]/[312] cloud
+create chunks
+before:  (136769, 3)
+before:  (136769, 3)
+before:  (136769,)
+after:  (136769, 3)
+after:  (136769, 3)
+after:  (136769,)
+[32m[06/23 17:25:07 ScanNet]: [0m[132]/[312] cloud,  test_oa , test_macc, test_miou: 71.97 86.10 24.16, 
+iou per cls is: [ 70.17  94.81   0.     0.    22.68  43.55   0.    37.81   0.     0.
+ 100.     0.     0.     0.     0.     0.     0.   100.     0.    14.24]
+so far miou is:  47.711849212646484
+[32m[06/23 17:25:07 ScanNet]: [0mTest [133]/[312] cloud
+create chunks
+before:  (331031, 3)
+before:  (331031, 3)
+before:  (331031,)
+after:  (331031, 3)
+after:  (331031, 3)
+after:  (331031,)
+[32m[06/23 17:25:29 ScanNet]: [0m[133]/[312] cloud,  test_oa , test_macc, test_miou: 91.35 94.41 56.96, 
+iou per cls is: [ 78.3   96.05   0.     0.    86.73   0.    71.05   0.    60.09 100.
+ 100.   100.     0.     0.     0.   100.   100.   100.   100.    46.92]
+so far miou is:  47.79677963256836
+[32m[06/23 17:25:29 ScanNet]: [0mTest [134]/[312] cloud
+create chunks
+before:  (192962, 3)
+before:  (192962, 3)
+before:  (192962,)
+after:  (192962, 3)
+after:  (192962, 3)
+after:  (192962,)
+[32m[06/23 17:25:41 ScanNet]: [0m[134]/[312] cloud,  test_oa , test_macc, test_miou: 85.29 91.00 47.28, 
+iou per cls is: [ 68.15  94.2    0.     0.    89.5    0.    61.76  59.45   9.8    0.
+ 100.     0.     0.     0.   100.   100.   100.   100.     0.    62.68]
+so far miou is:  47.7874641418457
+[32m[06/23 17:25:41 ScanNet]: [0mTest [135]/[312] cloud
+create chunks
+before:  (347322, 3)
+before:  (347322, 3)
+before:  (347322,)
+after:  (347322, 3)
+after:  (347322, 3)
+after:  (347322,)
+[32m[06/23 17:26:05 ScanNet]: [0m[135]/[312] cloud,  test_oa , test_macc, test_miou: 71.60 66.16 41.64, 
+iou per cls is: [63.95 94.69 32.51 79.2  43.96 61.37 15.05  9.45  9.24  0.    0.   25.36
+ 81.85  0.   30.77 64.99 70.36 54.99 65.99 29.02]
+so far miou is:  47.9122428894043
+[32m[06/23 17:26:05 ScanNet]: [0mTest [136]/[312] cloud
+create chunks
+before:  (196608, 3)
+before:  (196608, 3)
+before:  (196608,)
+after:  (196608, 3)
+after:  (196608, 3)
+after:  (196608,)
+[32m[06/23 17:26:18 ScanNet]: [0m[136]/[312] cloud,  test_oa , test_macc, test_miou: 75.59 87.87 51.71, 
+iou per cls is: [ 59.27  88.37  11.31   0.    85.96   0.     0.    59.91  32.67  81.19
+ 100.     0.    60.14   0.     0.   100.   100.   100.   100.    55.47]
+so far miou is:  47.93482208251953
+[32m[06/23 17:26:18 ScanNet]: [0mTest [137]/[312] cloud
+create chunks
+before:  (269529, 3)
+before:  (269529, 3)
+before:  (269529,)
+after:  (269529, 3)
+after:  (269529, 3)
+after:  (269529,)
+[32m[06/23 17:26:31 ScanNet]: [0m[137]/[312] cloud,  test_oa , test_macc, test_miou: 75.21 74.21 33.96, 
+iou per cls is: [ 68.97  94.84  53.32  81.15  46.06  46.06   9.79  21.85  21.46   0.
+  20.85   0.    45.91  35.52 100.     0.     0.     0.     0.    33.39]
+so far miou is:  47.95301055908203
+[32m[06/23 17:26:31 ScanNet]: [0mTest [138]/[312] cloud
+create chunks
+before:  (166855, 3)
+before:  (166855, 3)
+before:  (166855,)
+after:  (166855, 3)
+after:  (166855, 3)
+after:  (166855,)
+[32m[06/23 17:26:41 ScanNet]: [0m[138]/[312] cloud,  test_oa , test_macc, test_miou: 67.96 87.80 20.53, 
+iou per cls is: [ 78.75  66.9    0.    60.52   0.     0.     0.     0.     0.     0.
+   4.04   0.     0.     0.     0.   100.     0.   100.     0.     0.43]
+so far miou is:  47.853328704833984
+[32m[06/23 17:26:41 ScanNet]: [0mTest [139]/[312] cloud
+create chunks
+before:  (47986, 3)
+before:  (47986, 3)
+before:  (47986,)
+after:  (47986, 3)
+after:  (47986, 3)
+after:  (47986,)
+[32m[06/23 17:26:44 ScanNet]: [0m[139]/[312] cloud,  test_oa , test_macc, test_miou: 71.00 77.84 40.01, 
+iou per cls is: [ 65.55  90.89  59.42 100.     0.   100.   100.    28.87   5.18   0.
+   2.91   0.   100.     0.     0.     0.    89.36  39.27  18.78   0.  ]
+so far miou is:  47.75662612915039
+[32m[06/23 17:26:44 ScanNet]: [0mTest [140]/[312] cloud
+create chunks
+before:  (256524, 3)
+before:  (256524, 3)
+before:  (256524,)
+after:  (256524, 3)
+after:  (256524, 3)
+after:  (256524,)
+[32m[06/23 17:26:56 ScanNet]: [0m[140]/[312] cloud,  test_oa , test_macc, test_miou: 62.42 70.45 38.40, 
+iou per cls is: [ 52.64  92.89  37.41   0.    65.42   0.    56.58   8.33  28.4    0.
+  34.9   33.21   0.     0.    13.19 100.   100.     2.82 100.    42.23]
+so far miou is:  47.515560150146484
+[32m[06/23 17:26:56 ScanNet]: [0mTest [141]/[312] cloud
+create chunks
+before:  (78387, 3)
+before:  (78387, 3)
+before:  (78387,)
+after:  (78387, 3)
+after:  (78387, 3)
+after:  (78387,)
+[32m[06/23 17:27:00 ScanNet]: [0m[141]/[312] cloud,  test_oa , test_macc, test_miou: 78.59 86.98 47.94, 
+iou per cls is: [ 76.3   96.85  30.48   0.    74.8  100.    82.9    0.     0.     0.
+ 100.    37.26   0.     0.     1.45 100.   100.    58.72 100.     0.  ]
+so far miou is:  47.45707702636719
+[32m[06/23 17:27:00 ScanNet]: [0mTest [142]/[312] cloud
+create chunks
+before:  (94315, 3)
+before:  (94315, 3)
+before:  (94315,)
+after:  (94315, 3)
+after:  (94315, 3)
+after:  (94315,)
+[32m[06/23 17:27:06 ScanNet]: [0m[142]/[312] cloud,  test_oa , test_macc, test_miou: 71.66 88.45 48.25, 
+iou per cls is: [ 49.58  96.26  58.61 100.     0.   100.   100.    30.21   0.     0.
+   0.    62.5    0.     0.    67.82 100.   100.     0.   100.     0.  ]
+so far miou is:  47.62360382080078
+[32m[06/23 17:27:06 ScanNet]: [0mTest [143]/[312] cloud
+create chunks
+before:  (353013, 3)
+before:  (353013, 3)
+before:  (353013,)
+after:  (353013, 3)
+after:  (353013, 3)
+after:  (353013,)
+[32m[06/23 17:27:31 ScanNet]: [0m[143]/[312] cloud,  test_oa , test_macc, test_miou: 72.61 62.66 26.58, 
+iou per cls is: [61.45 93.89 59.56  0.   72.12 67.43  6.05  2.15 23.01  0.   25.5  46.35
+ 62.3   0.    0.    0.    0.    2.11  0.    9.64]
+so far miou is:  47.55396270751953
+[32m[06/23 17:27:31 ScanNet]: [0mTest [144]/[312] cloud
+create chunks
+before:  (128553, 3)
+before:  (128553, 3)
+before:  (128553,)
+after:  (128553, 3)
+after:  (128553, 3)
+after:  (128553,)
+[32m[06/23 17:27:37 ScanNet]: [0m[144]/[312] cloud,  test_oa , test_macc, test_miou: 86.32 85.11 66.86, 
+iou per cls is: [ 85.97  94.09   0.   100.    77.3  100.    49.25  73.46   9.39 100.
+   0.   100.     2.39 100.   100.   100.   100.   100.     0.    45.33]
+so far miou is:  47.5373420715332
+[32m[06/23 17:27:37 ScanNet]: [0mTest [145]/[312] cloud
+create chunks
+before:  (185828, 3)
+before:  (185828, 3)
+before:  (185828,)
+after:  (185828, 3)
+after:  (185828, 3)
+after:  (185828,)
+[32m[06/23 17:27:48 ScanNet]: [0m[145]/[312] cloud,  test_oa , test_macc, test_miou: 77.82 67.30 35.34, 
+iou per cls is: [ 65.27  91.47  45.48  87.54  77.28   0.    34.88  42.92   0.     0.
+  25.35   0.    46.39  23.89   0.     0.   100.    33.33   0.    33.06]
+so far miou is:  47.514102935791016
+[32m[06/23 17:27:48 ScanNet]: [0mTest [146]/[312] cloud
+create chunks
+before:  (136135, 3)
+before:  (136135, 3)
+before:  (136135,)
+after:  (136135, 3)
+after:  (136135, 3)
+after:  (136135,)
+[32m[06/23 17:27:55 ScanNet]: [0m[146]/[312] cloud,  test_oa , test_macc, test_miou: 92.41 97.79 47.01, 
+iou per cls is: [ 77.55  97.16   0.     0.    89.95   0.    75.63   0.     0.     0.
+ 100.   100.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.52952194213867
+[32m[06/23 17:27:55 ScanNet]: [0mTest [147]/[312] cloud
+create chunks
+before:  (98239, 3)
+before:  (98239, 3)
+before:  (98239,)
+after:  (98239, 3)
+after:  (98239, 3)
+after:  (98239,)
+[32m[06/23 17:28:01 ScanNet]: [0m[147]/[312] cloud,  test_oa , test_macc, test_miou: 58.21 72.52 25.21, 
+iou per cls is: [ 54.58  86.99  46.74   0.     0.     0.     0.    42.81  55.6  100.
+   0.82   0.     0.     0.     0.     3.51  68.95  40.91   0.     3.25]
+so far miou is:  47.21015167236328
+[32m[06/23 17:28:01 ScanNet]: [0mTest [148]/[312] cloud
+create chunks
+before:  (124048, 3)
+before:  (124048, 3)
+before:  (124048,)
+after:  (124048, 3)
+after:  (124048, 3)
+after:  (124048,)
+[32m[06/23 17:28:07 ScanNet]: [0m[148]/[312] cloud,  test_oa , test_macc, test_miou: 87.26 88.70 64.92, 
+iou per cls is: [ 80.55  93.61  79.09   0.    77.59  63.17  82.02   0.     0.   100.
+ 100.    56.76   0.   100.    54.65 100.   100.    47.27 100.    63.77]
+so far miou is:  47.37603759765625
+[32m[06/23 17:28:07 ScanNet]: [0mTest [149]/[312] cloud
+create chunks
+before:  (200947, 3)
+before:  (200947, 3)
+before:  (200947,)
+after:  (200947, 3)
+after:  (200947, 3)
+after:  (200947,)
+[32m[06/23 17:28:19 ScanNet]: [0m[149]/[312] cloud,  test_oa , test_macc, test_miou: 82.57 90.38 38.37, 
+iou per cls is: [ 73.62  96.35   0.     0.    67.42  52.56  64.19   0.     0.     0.
+  13.29 100.     0.     0.     0.   100.   100.   100.     0.     0.  ]
+so far miou is:  47.35165023803711
+[32m[06/23 17:28:19 ScanNet]: [0mTest [150]/[312] cloud
+create chunks
+before:  (89190, 3)
+before:  (89190, 3)
+before:  (89190,)
+after:  (89190, 3)
+after:  (89190, 3)
+after:  (89190,)
+[32m[06/23 17:28:24 ScanNet]: [0m[150]/[312] cloud,  test_oa , test_macc, test_miou: 74.10 88.25 45.41, 
+iou per cls is: [ 52.25  96.22  76.46 100.   100.   100.     0.    23.35   0.     0.
+  14.41  70.6    0.     0.    74.83   0.   100.     0.   100.     0.  ]
+so far miou is:  47.48857498168945
+[32m[06/23 17:28:24 ScanNet]: [0mTest [151]/[312] cloud
+create chunks
+before:  (182281, 3)
+before:  (182281, 3)
+before:  (182281,)
+after:  (182281, 3)
+after:  (182281, 3)
+after:  (182281,)
+[32m[06/23 17:28:35 ScanNet]: [0m[151]/[312] cloud,  test_oa , test_macc, test_miou: 77.64 89.06 43.31, 
+iou per cls is: [ 63.1   95.1    0.     0.    79.86  54.52   0.    34.68  30.35  76.19
+   0.     0.    76.85   0.     0.   100.   100.     0.   100.    55.54]
+so far miou is:  47.52113342285156
+[32m[06/23 17:28:35 ScanNet]: [0mTest [152]/[312] cloud
+create chunks
+before:  (396942, 3)
+before:  (396942, 3)
+before:  (396942,)
+after:  (396942, 3)
+after:  (396942, 3)
+after:  (396942,)
+[32m[06/23 17:29:06 ScanNet]: [0m[152]/[312] cloud,  test_oa , test_macc, test_miou: 86.15 94.55 43.91, 
+iou per cls is: [ 63.08  93.67   0.     0.    81.78   0.    71.11  11.66  56.83   0.
+ 100.     0.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.55863571166992
+[32m[06/23 17:29:06 ScanNet]: [0mTest [153]/[312] cloud
+create chunks
+before:  (438565, 3)
+before:  (438565, 3)
+before:  (438565,)
+after:  (438565, 3)
+after:  (438565, 3)
+after:  (438565,)
+[32m[06/23 17:29:37 ScanNet]: [0m[153]/[312] cloud,  test_oa , test_macc, test_miou: 74.99 70.18 35.85, 
+iou per cls is: [ 65.94  95.66  52.87   0.    70.93  62.23  12.32   7.08  44.56   0.
+  46.5   52.56  54.43   0.     0.14   0.     0.    27.94 100.    23.91]
+so far miou is:  47.616127014160156
+[32m[06/23 17:29:37 ScanNet]: [0mTest [154]/[312] cloud
+create chunks
+before:  (56603, 3)
+before:  (56603, 3)
+before:  (56603,)
+after:  (56603, 3)
+after:  (56603, 3)
+after:  (56603,)
+[32m[06/23 17:29:40 ScanNet]: [0m[154]/[312] cloud,  test_oa , test_macc, test_miou: 68.57 85.90 41.35, 
+iou per cls is: [ 65.54  92.46   0.     0.     0.     0.     0.    37.79   0.   100.
+ 100.   100.     0.     0.     0.    61.6   85.12 100.    83.     1.55]
+so far miou is:  47.723270416259766
+[32m[06/23 17:29:40 ScanNet]: [0mTest [155]/[312] cloud
+create chunks
+before:  (153041, 3)
+before:  (153041, 3)
+before:  (153041,)
+after:  (153041, 3)
+after:  (153041, 3)
+after:  (153041,)
+[32m[06/23 17:29:48 ScanNet]: [0m[155]/[312] cloud,  test_oa , test_macc, test_miou: 77.41 83.38 46.74, 
+iou per cls is: [ 62.96  91.42  63.16  82.19  60.46   0.    75.85  31.75  67.53   0.
+  70.     0.     0.     0.     0.   100.    19.64 100.   100.     9.83]
+so far miou is:  47.666656494140625
+[32m[06/23 17:29:48 ScanNet]: [0mTest [156]/[312] cloud
+create chunks
+before:  (110960, 3)
+before:  (110960, 3)
+before:  (110960,)
+after:  (110960, 3)
+after:  (110960, 3)
+after:  (110960,)
+[32m[06/23 17:29:54 ScanNet]: [0m[156]/[312] cloud,  test_oa , test_macc, test_miou: 94.40 98.58 58.23, 
+iou per cls is: [ 84.11  98.16   0.     0.    92.99   0.    89.32   0.     0.   100.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.6916618347168
+[32m[06/23 17:29:54 ScanNet]: [0mTest [157]/[312] cloud
+create chunks
+before:  (172221, 3)
+before:  (172221, 3)
+before:  (172221,)
+after:  (172221, 3)
+after:  (172221, 3)
+after:  (172221,)
+[32m[06/23 17:30:04 ScanNet]: [0m[157]/[312] cloud,  test_oa , test_macc, test_miou: 84.40 89.61 38.30, 
+iou per cls is: [ 86.3   91.78   0.     0.    88.67  15.66   0.     0.     0.     0.
+   0.     0.    55.47   0.    28.22 100.   100.   100.   100.     0.  ]
+so far miou is:  47.68655014038086
+[32m[06/23 17:30:04 ScanNet]: [0mTest [158]/[312] cloud
+create chunks
+before:  (133055, 3)
+before:  (133055, 3)
+before:  (133055,)
+after:  (133055, 3)
+after:  (133055, 3)
+after:  (133055,)
+[32m[06/23 17:30:10 ScanNet]: [0m[158]/[312] cloud,  test_oa , test_macc, test_miou: 65.08 83.03 31.63, 
+iou per cls is: [ 61.76  96.55   6.71   0.     0.     0.    11.96  34.39  20.63   0.
+   0.     0.     0.     0.58   0.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.6407585144043
+[32m[06/23 17:30:10 ScanNet]: [0mTest [159]/[312] cloud
+create chunks
+before:  (96933, 3)
+before:  (96933, 3)
+before:  (96933,)
+after:  (96933, 3)
+after:  (96933, 3)
+after:  (96933,)
+[32m[06/23 17:30:15 ScanNet]: [0m[159]/[312] cloud,  test_oa , test_macc, test_miou: 74.84 82.15 52.34, 
+iou per cls is: [ 74.72  83.05   0.     0.    89.79 100.     0.    36.64  71.72   0.
+ 100.   100.    76.08   2.39   0.   100.   100.   100.     0.    12.49]
+so far miou is:  47.59671401977539
+[32m[06/23 17:30:15 ScanNet]: [0mTest [160]/[312] cloud
+create chunks
+before:  (156298, 3)
+before:  (156298, 3)
+before:  (156298,)
+after:  (156298, 3)
+after:  (156298, 3)
+after:  (156298,)
+[32m[06/23 17:30:24 ScanNet]: [0m[160]/[312] cloud,  test_oa , test_macc, test_miou: 77.12 86.37 45.87, 
+iou per cls is: [ 64.88  91.61  16.21   0.    83.32   0.     0.    49.26  43.38  70.72
+ 100.   100.    67.48   0.     0.     0.     0.   100.   100.    30.57]
+so far miou is:  47.62534713745117
+[32m[06/23 17:30:24 ScanNet]: [0mTest [161]/[312] cloud
+create chunks
+before:  (153877, 3)
+before:  (153877, 3)
+before:  (153877,)
+after:  (153877, 3)
+after:  (153877, 3)
+after:  (153877,)
+[32m[06/23 17:30:33 ScanNet]: [0m[161]/[312] cloud,  test_oa , test_macc, test_miou: 70.33 85.47 39.19, 
+iou per cls is: [ 41.65  87.65  13.46   0.    72.94   0.     0.    56.1   86.28  39.9
+ 100.     0.    39.7    0.     0.     0.     0.   100.   100.    46.21]
+so far miou is:  47.60212707519531
+[32m[06/23 17:30:33 ScanNet]: [0mTest [162]/[312] cloud
+create chunks
+before:  (47996, 3)
+before:  (47996, 3)
+before:  (47996,)
+after:  (47996, 3)
+after:  (47996, 3)
+after:  (47996,)
+[32m[06/23 17:30:36 ScanNet]: [0m[162]/[312] cloud,  test_oa , test_macc, test_miou: 71.67 83.27 37.69, 
+iou per cls is: [ 68.12  90.01  50.34 100.     0.   100.   100.    32.77  43.49   0.
+  26.37   0.     0.     0.     0.     0.    83.18  55.32   4.15   0.  ]
+so far miou is:  47.51155090332031
+[32m[06/23 17:30:36 ScanNet]: [0mTest [163]/[312] cloud
+create chunks
+before:  (206210, 3)
+before:  (206210, 3)
+before:  (206210,)
+after:  (206210, 3)
+after:  (206210, 3)
+after:  (206210,)
+[32m[06/23 17:30:48 ScanNet]: [0m[163]/[312] cloud,  test_oa , test_macc, test_miou: 71.87 73.19 33.15, 
+iou per cls is: [ 60.17  95.88   0.     0.    26.36  38.91  34.03  22.1   12.76  63.37
+   1.06   0.     0.     0.     0.     0.   100.   100.   100.     8.36]
+so far miou is:  47.44133377075195
+[32m[06/23 17:30:48 ScanNet]: [0mTest [164]/[312] cloud
+create chunks
+before:  (203722, 3)
+before:  (203722, 3)
+before:  (203722,)
+after:  (203722, 3)
+after:  (203722, 3)
+after:  (203722,)
+[32m[06/23 17:31:01 ScanNet]: [0m[164]/[312] cloud,  test_oa , test_macc, test_miou: 83.41 83.63 48.88, 
+iou per cls is: [ 81.96  90.8    0.    86.69  65.97   0.     0.    48.77   0.     0.
+  31.43 100.    69.88  63.84   9.86   0.   100.   100.   100.    28.5 ]
+so far miou is:  47.577850341796875
+[32m[06/23 17:31:01 ScanNet]: [0mTest [165]/[312] cloud
+create chunks
+before:  (231067, 3)
+before:  (231067, 3)
+before:  (231067,)
+after:  (231067, 3)
+after:  (231067, 3)
+after:  (231067,)
+[32m[06/23 17:31:14 ScanNet]: [0m[165]/[312] cloud,  test_oa , test_macc, test_miou: 61.16 79.55 35.12, 
+iou per cls is: [ 31.96  89.04  31.65  30.26  79.63   0.    66.01  44.88   0.     0.
+ 100.     0.     0.    28.58   0.   100.   100.     0.     0.     0.46]
+so far miou is:  47.49113082885742
+[32m[06/23 17:31:14 ScanNet]: [0mTest [166]/[312] cloud
+create chunks
+before:  (162396, 3)
+before:  (162396, 3)
+before:  (162396,)
+after:  (162396, 3)
+after:  (162396, 3)
+after:  (162396,)
+[32m[06/23 17:31:23 ScanNet]: [0m[166]/[312] cloud,  test_oa , test_macc, test_miou: 79.04 85.91 49.04, 
+iou per cls is: [ 66.89  88.25  73.35   0.    65.72 100.    50.66   0.    76.57   0.
+ 100.    58.29   0.     0.    14.19   0.   100.    50.08 100.    36.73]
+so far miou is:  47.55916976928711
+[32m[06/23 17:31:23 ScanNet]: [0mTest [167]/[312] cloud
+create chunks
+before:  (142330, 3)
+before:  (142330, 3)
+before:  (142330,)
+after:  (142330, 3)
+after:  (142330, 3)
+after:  (142330,)
+[32m[06/23 17:31:30 ScanNet]: [0m[167]/[312] cloud,  test_oa , test_macc, test_miou: 78.98 89.98 28.29, 
+iou per cls is: [ 82.74  86.96   0.     0.     0.   100.    29.03   0.     0.     0.
+  11.67   0.     0.     0.     0.   100.     0.   100.     0.    55.43]
+so far miou is:  47.56181716918945
+[32m[06/23 17:31:30 ScanNet]: [0mTest [168]/[312] cloud
+create chunks
+before:  (179955, 3)
+before:  (179955, 3)
+before:  (179955,)
+after:  (179955, 3)
+after:  (179955, 3)
+after:  (179955,)
+[32m[06/23 17:31:41 ScanNet]: [0m[168]/[312] cloud,  test_oa , test_macc, test_miou: 85.96 96.96 41.24, 
+iou per cls is: [  0.    91.95   0.     0.    78.63   0.    54.19   0.     0.     0.
+ 100.     0.     0.   100.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.526119232177734
+[32m[06/23 17:31:41 ScanNet]: [0mTest [169]/[312] cloud
+create chunks
+before:  (89810, 3)
+before:  (89810, 3)
+before:  (89810,)
+after:  (89810, 3)
+after:  (89810, 3)
+after:  (89810,)
+[32m[06/23 17:31:46 ScanNet]: [0m[169]/[312] cloud,  test_oa , test_macc, test_miou: 55.91 71.27 21.86, 
+iou per cls is: [ 51.    89.69   0.     0.     0.     0.   100.    29.35  54.99   0.
+  15.53   0.     0.     0.     0.     3.92  63.91  26.49   2.37   0.  ]
+so far miou is:  47.23140335083008
+[32m[06/23 17:31:46 ScanNet]: [0mTest [170]/[312] cloud
+create chunks
+before:  (123103, 3)
+before:  (123103, 3)
+before:  (123103,)
+after:  (123103, 3)
+after:  (123103, 3)
+after:  (123103,)
+[32m[06/23 17:31:52 ScanNet]: [0m[170]/[312] cloud,  test_oa , test_macc, test_miou: 80.75 80.14 50.80, 
+iou per cls is: [ 78.13  96.93  50.62   0.    83.98   0.    61.3    0.     0.     0.
+ 100.    35.12   0.   100.    30.41 100.   100.    52.82 100.    26.62]
+so far miou is:  47.22809982299805
+[32m[06/23 17:31:52 ScanNet]: [0mTest [171]/[312] cloud
+create chunks
+before:  (167915, 3)
+before:  (167915, 3)
+before:  (167915,)
+after:  (167915, 3)
+after:  (167915, 3)
+after:  (167915,)
+[32m[06/23 17:32:02 ScanNet]: [0m[171]/[312] cloud,  test_oa , test_macc, test_miou: 64.06 73.14 36.16, 
+iou per cls is: [ 56.61  84.12  18.88  47.96  60.     0.     0.     0.    84.44   9.16
+   4.56   0.    48.58   0.     0.     0.   100.   100.   100.     8.87]
+so far miou is:  47.15009689331055
+[32m[06/23 17:32:02 ScanNet]: [0mTest [172]/[312] cloud
+create chunks
+before:  (237360, 3)
+before:  (237360, 3)
+before:  (237360,)
+after:  (237360, 3)
+after:  (237360, 3)
+after:  (237360,)
+[32m[06/23 17:32:14 ScanNet]: [0m[172]/[312] cloud,  test_oa , test_macc, test_miou: 67.83 69.27 29.37, 
+iou per cls is: [ 55.87  96.89  25.5    0.    62.07   0.    39.91  31.79  33.86   0.
+   0.     9.26   0.     0.     0.2    0.   100.    16.06 100.    15.92]
+so far miou is:  46.8675651550293
+[32m[06/23 17:32:14 ScanNet]: [0mTest [173]/[312] cloud
+create chunks
+before:  (114840, 3)
+before:  (114840, 3)
+before:  (114840,)
+after:  (114840, 3)
+after:  (114840, 3)
+after:  (114840,)
+[32m[06/23 17:32:20 ScanNet]: [0m[173]/[312] cloud,  test_oa , test_macc, test_miou: 86.72 90.88 62.03, 
+iou per cls is: [ 82.01  95.55   0.     0.    78.04 100.    58.56  42.02  21.95   0.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    62.5 ]
+so far miou is:  46.86774444580078
+[32m[06/23 17:32:20 ScanNet]: [0mTest [174]/[312] cloud
+create chunks
+before:  (173392, 3)
+before:  (173392, 3)
+before:  (173392,)
+after:  (173392, 3)
+after:  (173392, 3)
+after:  (173392,)
+[32m[06/23 17:32:30 ScanNet]: [0m[174]/[312] cloud,  test_oa , test_macc, test_miou: 81.96 87.53 47.91, 
+iou per cls is: [ 82.84  94.    40.51   0.    70.55  69.77   0.    66.92  26.02   0.
+   0.     0.    56.49 100.   100.   100.   100.     0.     0.    51.02]
+so far miou is:  46.90993118286133
+[32m[06/23 17:32:30 ScanNet]: [0mTest [175]/[312] cloud
+create chunks
+before:  (131255, 3)
+before:  (131255, 3)
+before:  (131255,)
+after:  (131255, 3)
+after:  (131255, 3)
+after:  (131255,)
+[32m[06/23 17:32:36 ScanNet]: [0m[175]/[312] cloud,  test_oa , test_macc, test_miou: 82.20 87.20 50.89, 
+iou per cls is: [ 74.35  89.15   1.49   0.    83.5   71.99   0.    50.57  59.93  82.63
+   0.     0.    61.09   0.     0.   100.   100.   100.   100.    43.18]
+so far miou is:  46.977352142333984
+[32m[06/23 17:32:36 ScanNet]: [0mTest [176]/[312] cloud
+create chunks
+before:  (166872, 3)
+before:  (166872, 3)
+before:  (166872,)
+after:  (166872, 3)
+after:  (166872, 3)
+after:  (166872,)
+[32m[06/23 17:32:45 ScanNet]: [0m[176]/[312] cloud,  test_oa , test_macc, test_miou: 96.69 95.81 68.02, 
+iou per cls is: [ 87.34  97.61   0.   100.    95.12   0.    98.39  70.96  57.6  100.
+ 100.   100.     0.     0.     0.   100.   100.   100.   100.    53.34]
+so far miou is:  47.03409194946289
+[32m[06/23 17:32:45 ScanNet]: [0mTest [177]/[312] cloud
+create chunks
+before:  (195252, 3)
+before:  (195252, 3)
+before:  (195252,)
+after:  (195252, 3)
+after:  (195252, 3)
+after:  (195252,)
+[32m[06/23 17:32:58 ScanNet]: [0m[177]/[312] cloud,  test_oa , test_macc, test_miou: 85.35 93.07 40.60, 
+iou per cls is: [ 58.29  90.33   0.     0.    80.51   0.    72.27  27.79   0.    82.74
+ 100.     0.     0.     0.   100.   100.     0.   100.     0.     0.  ]
+so far miou is:  47.11343002319336
+[32m[06/23 17:32:58 ScanNet]: [0mTest [178]/[312] cloud
+create chunks
+before:  (205756, 3)
+before:  (205756, 3)
+before:  (205756,)
+after:  (205756, 3)
+after:  (205756, 3)
+after:  (205756,)
+[32m[06/23 17:33:11 ScanNet]: [0m[178]/[312] cloud,  test_oa , test_macc, test_miou: 66.10 69.33 38.37, 
+iou per cls is: [ 52.66  96.87   0.     0.     5.17  53.01  46.27  37.26  12.83  39.08
+   6.7  100.     0.    13.69   0.     0.   100.   100.   100.     3.88]
+so far miou is:  47.02928924560547
+[32m[06/23 17:33:11 ScanNet]: [0mTest [179]/[312] cloud
+create chunks
+before:  (77206, 3)
+before:  (77206, 3)
+before:  (77206,)
+after:  (77206, 3)
+after:  (77206, 3)
+after:  (77206,)
+[32m[06/23 17:33:14 ScanNet]: [0m[179]/[312] cloud,  test_oa , test_macc, test_miou: 82.26 94.67 49.35, 
+iou per cls is: [ 73.58  89.77   0.     0.     0.    82.34  41.26   0.     0.   100.
+ 100.   100.     0.     0.   100.     0.   100.   100.   100.     0.  ]
+so far miou is:  47.14193344116211
+[32m[06/23 17:33:14 ScanNet]: [0mTest [180]/[312] cloud
+create chunks
+before:  (167932, 3)
+before:  (167932, 3)
+before:  (167932,)
+after:  (167932, 3)
+after:  (167932, 3)
+after:  (167932,)
+[32m[06/23 17:33:24 ScanNet]: [0m[180]/[312] cloud,  test_oa , test_macc, test_miou: 65.91 76.24 37.28, 
+iou per cls is: [ 60.74  92.56  46.32   0.    63.86   0.    27.17   9.46  27.93   0.
+   1.86  15.63   0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  47.04378890991211
+[32m[06/23 17:33:24 ScanNet]: [0mTest [181]/[312] cloud
+create chunks
+before:  (146032, 3)
+before:  (146032, 3)
+before:  (146032,)
+after:  (146032, 3)
+after:  (146032, 3)
+after:  (146032,)
+[32m[06/23 17:33:31 ScanNet]: [0m[181]/[312] cloud,  test_oa , test_macc, test_miou: 91.00 94.01 51.58, 
+iou per cls is: [ 75.57  95.23   0.     0.    86.88   0.    80.03  49.07   0.     0.
+   0.   100.     0.   100.     0.   100.   100.   100.   100.    44.89]
+so far miou is:  47.0752067565918
+[32m[06/23 17:33:31 ScanNet]: [0mTest [182]/[312] cloud
+create chunks
+before:  (45557, 3)
+before:  (45557, 3)
+before:  (45557,)
+after:  (45557, 3)
+after:  (45557, 3)
+after:  (45557,)
+[32m[06/23 17:33:34 ScanNet]: [0m[182]/[312] cloud,  test_oa , test_macc, test_miou: 71.80 89.40 41.45, 
+iou per cls is: [ 59.88  91.79  61.49   0.     0.   100.     0.    34.48 100.     0.
+  78.84   0.     0.     0.     0.     8.83  90.49  74.58  70.53  58.18]
+so far miou is:  47.14850997924805
+[32m[06/23 17:33:34 ScanNet]: [0mTest [183]/[312] cloud
+create chunks
+before:  (412511, 3)
+before:  (412511, 3)
+before:  (412511,)
+after:  (412511, 3)
+after:  (412511, 3)
+after:  (412511,)
+[32m[06/23 17:34:04 ScanNet]: [0m[183]/[312] cloud,  test_oa , test_macc, test_miou: 62.05 72.49 26.78, 
+iou per cls is: [ 54.84  94.94  14.24   0.     9.93   0.    13.93  15.9   48.62   0.
+   0.     0.     0.     0.    25.06   0.   100.    31.23 100.    26.94]
+so far miou is:  47.02355194091797
+[32m[06/23 17:34:04 ScanNet]: [0mTest [184]/[312] cloud
+create chunks
+before:  (41752, 3)
+before:  (41752, 3)
+before:  (41752,)
+after:  (41752, 3)
+after:  (41752, 3)
+after:  (41752,)
+[32m[06/23 17:34:07 ScanNet]: [0m[184]/[312] cloud,  test_oa , test_macc, test_miou: 75.14 90.76 53.57, 
+iou per cls is: [ 64.82  90.15  56.38   0.     0.   100.   100.    39.52   0.   100.
+  73.34   0.     0.     0.   100.    20.96  90.    71.96  83.52  80.78]
+so far miou is:  47.14638900756836
+[32m[06/23 17:34:07 ScanNet]: [0mTest [185]/[312] cloud
+create chunks
+before:  (239261, 3)
+before:  (239261, 3)
+before:  (239261,)
+after:  (239261, 3)
+after:  (239261, 3)
+after:  (239261,)
+[32m[06/23 17:34:19 ScanNet]: [0m[185]/[312] cloud,  test_oa , test_macc, test_miou: 67.65 70.34 34.44, 
+iou per cls is: [ 47.64  96.44  32.32   0.    74.13   0.    49.63  35.44  22.02   0.
+   0.    10.65   0.     0.     1.26 100.   100.     0.   100.    19.28]
+so far miou is:  46.910579681396484
+[32m[06/23 17:34:19 ScanNet]: [0mTest [186]/[312] cloud
+create chunks
+before:  (147607, 3)
+before:  (147607, 3)
+before:  (147607,)
+after:  (147607, 3)
+after:  (147607, 3)
+after:  (147607,)
+[32m[06/23 17:34:27 ScanNet]: [0m[186]/[312] cloud,  test_oa , test_macc, test_miou: 84.78 89.40 62.16, 
+iou per cls is: [ 80.99  94.61   0.     0.    82.58 100.    70.98  10.01  20.03 100.
+   0.   100.     0.     0.   100.   100.   100.   100.   100.    83.91]
+so far miou is:  46.91086196899414
+[32m[06/23 17:34:27 ScanNet]: [0mTest [187]/[312] cloud
+create chunks
+before:  (139300, 3)
+before:  (139300, 3)
+before:  (139300,)
+after:  (139300, 3)
+after:  (139300, 3)
+after:  (139300,)
+[32m[06/23 17:34:33 ScanNet]: [0m[187]/[312] cloud,  test_oa , test_macc, test_miou: 67.87 80.83 12.32, 
+iou per cls is: [63.83 65.76  0.   68.55  0.    0.    0.   30.24 16.35  0.    0.13  0.
+  0.    0.    0.    0.    0.    0.    0.    1.55]
+so far miou is:  46.874366760253906
+[32m[06/23 17:34:33 ScanNet]: [0mTest [188]/[312] cloud
+create chunks
+before:  (170654, 3)
+before:  (170654, 3)
+before:  (170654,)
+after:  (170654, 3)
+after:  (170654, 3)
+after:  (170654,)
+[32m[06/23 17:34:44 ScanNet]: [0m[188]/[312] cloud,  test_oa , test_macc, test_miou: 73.51 73.90 37.28, 
+iou per cls is: [ 61.01  91.02   6.6   76.56  49.7    0.    30.14  16.25   0.   100.
+  48.62   0.    20.84  19.55   0.     0.   100.   100.     0.    25.35]
+so far miou is:  46.88253402709961
+[32m[06/23 17:34:44 ScanNet]: [0mTest [189]/[312] cloud
+create chunks
+before:  (205565, 3)
+before:  (205565, 3)
+before:  (205565,)
+after:  (205565, 3)
+after:  (205565, 3)
+after:  (205565,)
+[32m[06/23 17:34:56 ScanNet]: [0m[189]/[312] cloud,  test_oa , test_macc, test_miou: 84.71 87.33 53.96, 
+iou per cls is: [ 86.52  91.8   25.32  82.21  90.15   0.     0.     0.   100.    26.77
+ 100.     0.    36.49  66.3  100.     0.   100.   100.     0.    73.57]
+so far miou is:  46.956905364990234
+[32m[06/23 17:34:56 ScanNet]: [0mTest [190]/[312] cloud
+create chunks
+before:  (132720, 3)
+before:  (132720, 3)
+before:  (132720,)
+after:  (132720, 3)
+after:  (132720, 3)
+after:  (132720,)
+[32m[06/23 17:35:02 ScanNet]: [0m[190]/[312] cloud,  test_oa , test_macc, test_miou: 83.96 87.51 29.78, 
+iou per cls is: [ 83.24  93.64   0.     0.     0.     0.    16.86  46.39   0.   100.
+   0.     0.     0.     0.     0.   100.   100.     0.     0.    55.54]
+so far miou is:  46.93938064575195
+[32m[06/23 17:35:02 ScanNet]: [0mTest [191]/[312] cloud
+create chunks
+before:  (140216, 3)
+before:  (140216, 3)
+before:  (140216,)
+after:  (140216, 3)
+after:  (140216, 3)
+after:  (140216,)
+[32m[06/23 17:35:09 ScanNet]: [0m[191]/[312] cloud,  test_oa , test_macc, test_miou: 57.26 80.74 31.80, 
+iou per cls is: [ 49.96  94.56   0.     0.    65.3    0.    12.93   0.    11.37  29.69
+  25.08   0.     0.     0.     0.   100.   100.     0.   100.    47.05]
+so far miou is:  46.81403350830078
+[32m[06/23 17:35:09 ScanNet]: [0mTest [192]/[312] cloud
+create chunks
+before:  (156714, 3)
+before:  (156714, 3)
+before:  (156714,)
+after:  (156714, 3)
+after:  (156714, 3)
+after:  (156714,)
+[32m[06/23 17:35:17 ScanNet]: [0m[192]/[312] cloud,  test_oa , test_macc, test_miou: 74.09 86.93 38.72, 
+iou per cls is: [ 72.12  95.98  28.72   0.     0.   100.     0.    34.48   0.     0.
+ 100.     0.     0.     0.     0.15   0.   100.   100.   100.    42.92]
+so far miou is:  46.78083038330078
+[32m[06/23 17:35:17 ScanNet]: [0mTest [193]/[312] cloud
+create chunks
+before:  (328973, 3)
+before:  (328973, 3)
+before:  (328973,)
+after:  (328973, 3)
+after:  (328973, 3)
+after:  (328973,)
+[32m[06/23 17:35:39 ScanNet]: [0m[193]/[312] cloud,  test_oa , test_macc, test_miou: 61.91 78.81 13.57, 
+iou per cls is: [26.   96.02  0.    0.    0.    0.    0.   10.91 11.7   0.    0.   40.96
+  0.    0.    0.    0.    0.   44.42  0.   41.33]
+so far miou is:  46.769412994384766
+[32m[06/23 17:35:39 ScanNet]: [0mTest [194]/[312] cloud
+create chunks
+before:  (191953, 3)
+before:  (191953, 3)
+before:  (191953,)
+after:  (191953, 3)
+after:  (191953, 3)
+after:  (191953,)
+[32m[06/23 17:35:51 ScanNet]: [0m[194]/[312] cloud,  test_oa , test_macc, test_miou: 56.40 73.65 40.94, 
+iou per cls is: [ 56.57  86.23   0.    24.42  65.68  74.89   0.    36.74  19.09  34.15
+   0.     0.     0.     6.25   4.59 100.   100.   100.   100.    10.13]
+so far miou is:  46.602230072021484
+[32m[06/23 17:35:51 ScanNet]: [0mTest [195]/[312] cloud
+create chunks
+before:  (158047, 3)
+before:  (158047, 3)
+before:  (158047,)
+after:  (158047, 3)
+after:  (158047, 3)
+after:  (158047,)
+[32m[06/23 17:36:00 ScanNet]: [0m[195]/[312] cloud,  test_oa , test_macc, test_miou: 72.18 75.38 44.91, 
+iou per cls is: [ 72.66  80.25   0.    85.42  10.23   0.     1.83  37.02  21.12  55.22
+   0.   100.     0.    34.35 100.     0.   100.   100.   100.     0.  ]
+so far miou is:  46.59150314331055
+[32m[06/23 17:36:00 ScanNet]: [0mTest [196]/[312] cloud
+create chunks
+before:  (165618, 3)
+before:  (165618, 3)
+before:  (165618,)
+after:  (165618, 3)
+after:  (165618, 3)
+after:  (165618,)
+[32m[06/23 17:36:09 ScanNet]: [0m[196]/[312] cloud,  test_oa , test_macc, test_miou: 72.73 94.21 36.48, 
+iou per cls is: [ 86.2   91.47   0.     0.    21.74   0.    30.23   0.     0.     0.
+ 100.     0.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.48957824707031
+[32m[06/23 17:36:09 ScanNet]: [0mTest [197]/[312] cloud
+create chunks
+before:  (201062, 3)
+before:  (201062, 3)
+before:  (201062,)
+after:  (201062, 3)
+after:  (201062, 3)
+after:  (201062,)
+[32m[06/23 17:36:21 ScanNet]: [0m[197]/[312] cloud,  test_oa , test_macc, test_miou: 68.26 68.12 32.21, 
+iou per cls is: [ 61.26  94.55  10.89  49.84  64.19   0.     0.35   0.     0.   100.
+   4.61   0.     0.    65.86   0.     2.4   72.01  18.2  100.     0.  ]
+so far miou is:  46.4007568359375
+[32m[06/23 17:36:21 ScanNet]: [0mTest [198]/[312] cloud
+create chunks
+before:  (65264, 3)
+before:  (65264, 3)
+before:  (65264,)
+after:  (65264, 3)
+after:  (65264, 3)
+after:  (65264,)
+[32m[06/23 17:36:24 ScanNet]: [0m[198]/[312] cloud,  test_oa , test_macc, test_miou: 72.63 89.98 41.13, 
+iou per cls is: [ 54.15  91.59  47.82   0.     0.   100.   100.     3.82  85.66   0.
+   0.     0.     0.     0.     0.   100.    74.78  52.81 100.    12.07]
+so far miou is:  46.426177978515625
+[32m[06/23 17:36:24 ScanNet]: [0mTest [199]/[312] cloud
+create chunks
+before:  (371616, 3)
+before:  (371616, 3)
+before:  (371616,)
+after:  (371616, 3)
+after:  (371616, 3)
+after:  (371616,)
+[32m[06/23 17:36:52 ScanNet]: [0m[199]/[312] cloud,  test_oa , test_macc, test_miou: 62.62 74.27 27.49, 
+iou per cls is: [ 53.11  96.86  25.18   0.    23.28   0.    11.16  28.44  40.84   0.
+   0.     0.     0.     0.    21.2    0.   100.    38.83 100.    10.83]
+so far miou is:  46.342262268066406
+[32m[06/23 17:36:52 ScanNet]: [0mTest [200]/[312] cloud
+create chunks
+before:  (125149, 3)
+before:  (125149, 3)
+before:  (125149,)
+after:  (125149, 3)
+after:  (125149, 3)
+after:  (125149,)
+[32m[06/23 17:36:57 ScanNet]: [0m[200]/[312] cloud,  test_oa , test_macc, test_miou: 75.20 76.92 54.49, 
+iou per cls is: [ 69.8   96.13   0.    66.12  70.7    0.     0.    20.08  20.39 100.
+   0.   100.    44.63   0.   100.   100.   100.   100.   100.     1.9 ]
+so far miou is:  46.32474899291992
+[32m[06/23 17:36:57 ScanNet]: [0mTest [201]/[312] cloud
+create chunks
+before:  (133337, 3)
+before:  (133337, 3)
+before:  (133337,)
+after:  (133337, 3)
+after:  (133337, 3)
+after:  (133337,)
+[32m[06/23 17:37:03 ScanNet]: [0m[201]/[312] cloud,  test_oa , test_macc, test_miou: 57.58 76.41 31.87, 
+iou per cls is: [ 52.72  93.23   0.     0.     0.     0.    14.94  30.47  36.38   0.
+ 100.     0.82   0.     0.     0.   100.   100.     0.   100.     8.82]
+so far miou is:  46.19521713256836
+[32m[06/23 17:37:03 ScanNet]: [0mTest [202]/[312] cloud
+create chunks
+before:  (192685, 3)
+before:  (192685, 3)
+before:  (192685,)
+after:  (192685, 3)
+after:  (192685, 3)
+after:  (192685,)
+[32m[06/23 17:37:16 ScanNet]: [0m[202]/[312] cloud,  test_oa , test_macc, test_miou: 74.88 85.96 27.27, 
+iou per cls is: [ 64.45  80.66  36.51   0.    59.65   0.    57.8    0.     0.     0.
+  41.2    0.     0.     0.   100.     0.     0.   100.     0.     5.05]
+so far miou is:  46.143226623535156
+[32m[06/23 17:37:16 ScanNet]: [0mTest [203]/[312] cloud
+create chunks
+before:  (92953, 3)
+before:  (92953, 3)
+before:  (92953,)
+after:  (92953, 3)
+after:  (92953, 3)
+after:  (92953,)
+[32m[06/23 17:37:21 ScanNet]: [0m[203]/[312] cloud,  test_oa , test_macc, test_miou: 72.99 89.55 52.76, 
+iou per cls is: [ 39.8   94.52   0.     0.    58.08   7.29  78.1    0.    14.39  63.08
+ 100.     0.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.12500762939453
+[32m[06/23 17:37:21 ScanNet]: [0mTest [204]/[312] cloud
+create chunks
+before:  (217086, 3)
+before:  (217086, 3)
+before:  (217086,)
+after:  (217086, 3)
+after:  (217086, 3)
+after:  (217086,)
+[32m[06/23 17:37:34 ScanNet]: [0m[204]/[312] cloud,  test_oa , test_macc, test_miou: 88.22 97.33 49.41, 
+iou per cls is: [ 75.11  94.37   0.   100.    92.67   0.    72.1    0.    53.86   0.
+ 100.     0.     0.     0.   100.   100.   100.   100.     0.     0.  ]
+so far miou is:  46.13774490356445
+[32m[06/23 17:37:34 ScanNet]: [0mTest [205]/[312] cloud
+create chunks
+before:  (61388, 3)
+before:  (61388, 3)
+before:  (61388,)
+after:  (61388, 3)
+after:  (61388, 3)
+after:  (61388,)
+[32m[06/23 17:37:36 ScanNet]: [0m[205]/[312] cloud,  test_oa , test_macc, test_miou: 89.07 93.28 71.49, 
+iou per cls is: [ 84.9   95.64   0.   100.     0.   100.   100.     3.57 100.   100.
+ 100.   100.     0.     0.   100.   100.    88.53  89.1  100.    68.  ]
+so far miou is:  46.22402572631836
+[32m[06/23 17:37:36 ScanNet]: [0mTest [206]/[312] cloud
+create chunks
+before:  (165356, 3)
+before:  (165356, 3)
+before:  (165356,)
+after:  (165356, 3)
+after:  (165356, 3)
+after:  (165356,)
+[32m[06/23 17:37:46 ScanNet]: [0m[206]/[312] cloud,  test_oa , test_macc, test_miou: 68.21 86.15 33.21, 
+iou per cls is: [ 61.06  95.4    0.     0.    16.04  45.12   0.    38.05   0.     0.
+ 100.     0.     0.     0.     0.     0.   100.   100.   100.     8.57]
+so far miou is:  46.1680793762207
+[32m[06/23 17:37:46 ScanNet]: [0mTest [207]/[312] cloud
+create chunks
+before:  (178388, 3)
+before:  (178388, 3)
+before:  (178388,)
+after:  (178388, 3)
+after:  (178388, 3)
+after:  (178388,)
+[32m[06/23 17:37:57 ScanNet]: [0m[207]/[312] cloud,  test_oa , test_macc, test_miou: 68.20 74.33 35.83, 
+iou per cls is: [ 61.63  90.08   1.14   0.    70.89  26.66   0.    17.8   42.31  38.29
+   0.56   0.    51.05   0.     0.     0.   100.   100.   100.    16.17]
+so far miou is:  46.05198287963867
+[32m[06/23 17:37:57 ScanNet]: [0mTest [208]/[312] cloud
+create chunks
+before:  (179252, 3)
+before:  (179252, 3)
+before:  (179252,)
+after:  (179252, 3)
+after:  (179252, 3)
+after:  (179252,)
+[32m[06/23 17:38:07 ScanNet]: [0m[208]/[312] cloud,  test_oa , test_macc, test_miou: 76.61 82.95 29.24, 
+iou per cls is: [ 76.24  94.69  27.02   0.     0.    36.68   0.14  28.92  73.78   0.
+   0.     0.     0.     0.     0.   100.     0.   100.     0.    47.4 ]
+so far miou is:  46.03756332397461
+[32m[06/23 17:38:07 ScanNet]: [0mTest [209]/[312] cloud
+create chunks
+before:  (161973, 3)
+before:  (161973, 3)
+before:  (161973,)
+after:  (161973, 3)
+after:  (161973, 3)
+after:  (161973,)
+[32m[06/23 17:38:16 ScanNet]: [0m[209]/[312] cloud,  test_oa , test_macc, test_miou: 80.00 88.22 49.59, 
+iou per cls is: [ 65.22  96.3    0.     0.    51.09  38.41  74.97  54.52  11.35   0.
+   0.     0.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.02134704589844
+[32m[06/23 17:38:16 ScanNet]: [0mTest [210]/[312] cloud
+create chunks
+before:  (122711, 3)
+before:  (122711, 3)
+before:  (122711,)
+after:  (122711, 3)
+after:  (122711, 3)
+after:  (122711,)
+[32m[06/23 17:38:22 ScanNet]: [0m[210]/[312] cloud,  test_oa , test_macc, test_miou: 84.91 91.59 48.28, 
+iou per cls is: [ 69.22  93.43   0.     0.    82.54   0.    64.23  37.58  78.17   0.
+   0.   100.     0.     0.     0.   100.   100.   100.   100.    40.45]
+so far miou is:  46.04903793334961
+[32m[06/23 17:38:22 ScanNet]: [0mTest [211]/[312] cloud
+create chunks
+before:  (133857, 3)
+before:  (133857, 3)
+before:  (133857,)
+after:  (133857, 3)
+after:  (133857, 3)
+after:  (133857,)
+[32m[06/23 17:38:28 ScanNet]: [0m[211]/[312] cloud,  test_oa , test_macc, test_miou: 94.68 99.05 53.84, 
+iou per cls is: [ 87.76  98.45   0.     0.    96.54   0.    94.01   0.     0.   100.
+   0.   100.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.07473373413086
+[32m[06/23 17:38:28 ScanNet]: [0mTest [212]/[312] cloud
+create chunks
+before:  (108517, 3)
+before:  (108517, 3)
+before:  (108517,)
+after:  (108517, 3)
+after:  (108517, 3)
+after:  (108517,)
+[32m[06/23 17:38:34 ScanNet]: [0m[212]/[312] cloud,  test_oa , test_macc, test_miou: 64.41 89.62 34.53, 
+iou per cls is: [ 46.76  91.48   0.     0.    35.62 100.    22.31   0.     0.     0.
+ 100.     0.     0.    62.11   0.     0.     0.   100.   100.    32.34]
+so far miou is:  46.10905838012695
+[32m[06/23 17:38:34 ScanNet]: [0mTest [213]/[312] cloud
+create chunks
+before:  (167360, 3)
+before:  (167360, 3)
+before:  (167360,)
+after:  (167360, 3)
+after:  (167360, 3)
+after:  (167360,)
+[32m[06/23 17:38:43 ScanNet]: [0m[213]/[312] cloud,  test_oa , test_macc, test_miou: 75.39 76.85 37.77, 
+iou per cls is: [ 65.04  92.13   0.     0.    80.48   0.     0.    34.15   4.57  55.84
+   0.     0.    59.66   0.     0.   100.   100.     0.   100.    63.43]
+so far miou is:  46.098060607910156
+[32m[06/23 17:38:43 ScanNet]: [0mTest [214]/[312] cloud
+create chunks
+before:  (87446, 3)
+before:  (87446, 3)
+before:  (87446,)
+after:  (87446, 3)
+after:  (87446, 3)
+after:  (87446,)
+[32m[06/23 17:38:48 ScanNet]: [0m[214]/[312] cloud,  test_oa , test_macc, test_miou: 64.81 90.99 44.36, 
+iou per cls is: [ 57.91  91.8    0.     0.    81.33   0.    53.38   0.     0.     0.
+ 100.   100.     0.     0.   100.   100.   100.     0.   100.     2.69]
+so far miou is:  46.01996994018555
+[32m[06/23 17:38:48 ScanNet]: [0mTest [215]/[312] cloud
+create chunks
+before:  (177900, 3)
+before:  (177900, 3)
+before:  (177900,)
+after:  (177900, 3)
+after:  (177900, 3)
+after:  (177900,)
+[32m[06/23 17:38:59 ScanNet]: [0m[215]/[312] cloud,  test_oa , test_macc, test_miou: 81.07 90.89 44.99, 
+iou per cls is: [ 86.5   92.84  29.15   0.    42.68  50.87   0.    62.46  64.74   0.
+   0.   100.    70.63   0.   100.   100.   100.     0.     0.     0.  ]
+so far miou is:  46.04825210571289
+[32m[06/23 17:38:59 ScanNet]: [0mTest [216]/[312] cloud
+create chunks
+before:  (232577, 3)
+before:  (232577, 3)
+before:  (232577,)
+after:  (232577, 3)
+after:  (232577, 3)
+after:  (232577,)
+[32m[06/23 17:39:11 ScanNet]: [0m[216]/[312] cloud,  test_oa , test_macc, test_miou: 76.82 77.70 39.17, 
+iou per cls is: [ 75.97  94.41   0.     0.    12.2   61.18  43.     0.     0.    64.2
+   0.   100.     0.     2.59   0.   100.   100.   100.     0.    29.89]
+so far miou is:  46.01227951049805
+[32m[06/23 17:39:11 ScanNet]: [0mTest [217]/[312] cloud
+create chunks
+before:  (51211, 3)
+before:  (51211, 3)
+before:  (51211,)
+after:  (51211, 3)
+after:  (51211, 3)
+after:  (51211,)
+[32m[06/23 17:39:14 ScanNet]: [0m[217]/[312] cloud,  test_oa , test_macc, test_miou: 71.45 85.67 35.88, 
+iou per cls is: [ 62.46  83.15  66.32   0.     0.     0.     0.    31.57   0.     0.
+ 100.     0.     0.   100.     0.   100.    85.34  40.1   48.49   0.23]
+so far miou is:  45.99959182739258
+[32m[06/23 17:39:14 ScanNet]: [0mTest [218]/[312] cloud
+create chunks
+before:  (109452, 3)
+before:  (109452, 3)
+before:  (109452,)
+after:  (109452, 3)
+after:  (109452, 3)
+after:  (109452,)
+[32m[06/23 17:39:20 ScanNet]: [0m[218]/[312] cloud,  test_oa , test_macc, test_miou: 82.30 94.74 56.34, 
+iou per cls is: [ 52.35  93.76  76.14   0.     0.   100.   100.     0.     0.     0.
+ 100.    68.27   0.   100.    73.26 100.   100.    62.93 100.     0.  ]
+so far miou is:  46.282501220703125
+[32m[06/23 17:39:20 ScanNet]: [0mTest [219]/[312] cloud
+create chunks
+before:  (126385, 3)
+before:  (126385, 3)
+before:  (126385,)
+after:  (126385, 3)
+after:  (126385, 3)
+after:  (126385,)
+[32m[06/23 17:39:25 ScanNet]: [0m[219]/[312] cloud,  test_oa , test_macc, test_miou: 87.64 94.48 65.64, 
+iou per cls is: [ 73.25  93.53   0.    75.84  83.34 100.     0.    57.99  72.08   0.
+ 100.   100.    74.17   0.   100.   100.     0.   100.   100.    82.62]
+so far miou is:  46.3628044128418
+[32m[06/23 17:39:25 ScanNet]: [0mTest [220]/[312] cloud
+create chunks
+before:  (106339, 3)
+before:  (106339, 3)
+before:  (106339,)
+after:  (106339, 3)
+after:  (106339, 3)
+after:  (106339,)
+[32m[06/23 17:39:31 ScanNet]: [0m[220]/[312] cloud,  test_oa , test_macc, test_miou: 89.82 96.60 43.01, 
+iou per cls is: [ 89.01  94.75  68.97   0.     0.     0.     0.    60.9    0.     0.
+ 100.    69.85   0.     0.     0.   100.   100.     0.   100.    76.68]
+so far miou is:  46.452735900878906
+[32m[06/23 17:39:31 ScanNet]: [0mTest [221]/[312] cloud
+create chunks
+before:  (124210, 3)
+before:  (124210, 3)
+before:  (124210,)
+after:  (124210, 3)
+after:  (124210, 3)
+after:  (124210,)
+[32m[06/23 17:39:37 ScanNet]: [0m[221]/[312] cloud,  test_oa , test_macc, test_miou: 80.75 89.07 31.78, 
+iou per cls is: [ 64.96  96.68   0.     0.     0.     0.     0.    47.49  58.48   0.
+ 100.     0.     0.     0.   100.     0.    68.76  76.43   0.    22.73]
+so far miou is:  46.5063591003418
+[32m[06/23 17:39:37 ScanNet]: [0mTest [222]/[312] cloud
+create chunks
+before:  (101007, 3)
+before:  (101007, 3)
+before:  (101007,)
+after:  (101007, 3)
+after:  (101007, 3)
+after:  (101007,)
+[32m[06/23 17:39:42 ScanNet]: [0m[222]/[312] cloud,  test_oa , test_macc, test_miou: 53.06 76.19 28.24, 
+iou per cls is: [ 58.71  95.24   0.     0.     4.07   0.     3.6    0.     0.     0.
+  49.44 100.     0.    48.44   0.     0.   100.     0.   100.     5.32]
+so far miou is:  46.465553283691406
+[32m[06/23 17:39:42 ScanNet]: [0mTest [223]/[312] cloud
+create chunks
+before:  (201935, 3)
+before:  (201935, 3)
+before:  (201935,)
+after:  (201935, 3)
+after:  (201935, 3)
+after:  (201935,)
+[32m[06/23 17:39:55 ScanNet]: [0m[223]/[312] cloud,  test_oa , test_macc, test_miou: 85.32 91.28 48.02, 
+iou per cls is: [ 80.67  82.48   0.     0.    92.89 100.    91.    37.02   6.55   0.
+ 100.     0.     0.     0.     0.   100.   100.   100.     0.    69.75]
+so far miou is:  46.471046447753906
+[32m[06/23 17:39:55 ScanNet]: [0mTest [224]/[312] cloud
+create chunks
+before:  (175600, 3)
+before:  (175600, 3)
+before:  (175600,)
+after:  (175600, 3)
+after:  (175600, 3)
+after:  (175600,)
+[32m[06/23 17:40:05 ScanNet]: [0m[224]/[312] cloud,  test_oa , test_macc, test_miou: 74.77 86.09 34.28, 
+iou per cls is: [ 61.54  92.46  26.64   0.    76.72  78.83   0.    69.22  42.64  55.52
+   0.     0.    56.9    0.     0.   100.     0.     0.     0.    25.22]
+so far miou is:  46.485538482666016
+[32m[06/23 17:40:05 ScanNet]: [0mTest [225]/[312] cloud
+create chunks
+before:  (211902, 3)
+before:  (211902, 3)
+before:  (211902,)
+after:  (211902, 3)
+after:  (211902, 3)
+after:  (211902,)
+[32m[06/23 17:40:18 ScanNet]: [0m[225]/[312] cloud,  test_oa , test_macc, test_miou: 78.40 84.73 41.58, 
+iou per cls is: [ 74.6   95.82  33.71   0.     0.    50.62  16.57  50.06  66.06   0.
+ 100.     0.     0.     0.     0.     0.   100.   100.   100.    44.11]
+so far miou is:  46.48303985595703
+[32m[06/23 17:40:18 ScanNet]: [0mTest [226]/[312] cloud
+create chunks
+before:  (111467, 3)
+before:  (111467, 3)
+before:  (111467,)
+after:  (111467, 3)
+after:  (111467, 3)
+after:  (111467,)
+[32m[06/23 17:40:24 ScanNet]: [0m[226]/[312] cloud,  test_oa , test_macc, test_miou: 62.94 77.22 29.29, 
+iou per cls is: [ 38.94  96.14  57.36   0.     0.     0.     0.     0.     0.     0.
+   0.    61.     0.     0.     0.   100.   100.    32.28 100.     0.  ]
+so far miou is:  46.46012878417969
+[32m[06/23 17:40:24 ScanNet]: [0mTest [227]/[312] cloud
+create chunks
+before:  (106050, 3)
+before:  (106050, 3)
+before:  (106050,)
+after:  (106050, 3)
+after:  (106050, 3)
+after:  (106050,)
+[32m[06/23 17:40:29 ScanNet]: [0m[227]/[312] cloud,  test_oa , test_macc, test_miou: 65.67 91.47 39.44, 
+iou per cls is: [  8.22  95.12  42.75   0.    54.51  27.81  60.49   0.     0.     0.
+ 100.     0.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.43027114868164
+[32m[06/23 17:40:29 ScanNet]: [0mTest [228]/[312] cloud
+create chunks
+before:  (244962, 3)
+before:  (244962, 3)
+before:  (244962,)
+after:  (244962, 3)
+after:  (244962, 3)
+after:  (244962,)
+[32m[06/23 17:40:42 ScanNet]: [0m[228]/[312] cloud,  test_oa , test_macc, test_miou: 64.72 73.05 28.91, 
+iou per cls is: [ 67.67  78.31  30.39   0.76  20.37   0.     0.27  25.64   0.     0.
+  42.54   0.    12.26   0.     0.     0.   100.   100.   100.     0.  ]
+so far miou is:  46.34435272216797
+[32m[06/23 17:40:42 ScanNet]: [0mTest [229]/[312] cloud
+create chunks
+before:  (197174, 3)
+before:  (197174, 3)
+before:  (197174,)
+after:  (197174, 3)
+after:  (197174, 3)
+after:  (197174,)
+[32m[06/23 17:40:55 ScanNet]: [0m[229]/[312] cloud,  test_oa , test_macc, test_miou: 71.51 85.97 30.15, 
+iou per cls is: [ 53.73  93.22   0.     0.     0.    51.84   4.21   0.     0.     0.
+   0.     0.     0.     0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.24867248535156
+[32m[06/23 17:40:55 ScanNet]: [0mTest [230]/[312] cloud
+create chunks
+before:  (165720, 3)
+before:  (165720, 3)
+before:  (165720,)
+after:  (165720, 3)
+after:  (165720, 3)
+after:  (165720,)
+[32m[06/23 17:41:04 ScanNet]: [0m[230]/[312] cloud,  test_oa , test_macc, test_miou: 80.70 87.06 50.14, 
+iou per cls is: [ 85.59  94.6   42.     0.    63.04  68.96   9.36  71.36  38.67   0.
+   0.     0.    29.24 100.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.259883880615234
+[32m[06/23 17:41:04 ScanNet]: [0mTest [231]/[312] cloud
+create chunks
+before:  (288139, 3)
+before:  (288139, 3)
+before:  (288139,)
+after:  (288139, 3)
+after:  (288139, 3)
+after:  (288139,)
+[32m[06/23 17:41:20 ScanNet]: [0m[231]/[312] cloud,  test_oa , test_macc, test_miou: 59.16 76.97 31.53, 
+iou per cls is: [ 35.59  93.21  34.23  13.2   71.35  38.02  75.05  49.18   0.     0.
+   0.     0.     0.    19.95   0.   100.     0.   100.     0.     0.74]
+so far miou is:  46.16908264160156
+[32m[06/23 17:41:20 ScanNet]: [0mTest [232]/[312] cloud
+create chunks
+before:  (355413, 3)
+before:  (355413, 3)
+before:  (355413,)
+after:  (355413, 3)
+after:  (355413, 3)
+after:  (355413,)
+[32m[06/23 17:41:45 ScanNet]: [0m[232]/[312] cloud,  test_oa , test_macc, test_miou: 84.84 84.77 42.39, 
+iou per cls is: [ 78.02  95.62   0.23   0.    46.87  67.    41.13  57.28   0.     0.
+  17.05   0.     0.     0.     0.   100.   100.   100.   100.    44.68]
+so far miou is:  46.18369674682617
+[32m[06/23 17:41:45 ScanNet]: [0mTest [233]/[312] cloud
+create chunks
+before:  (170685, 3)
+before:  (170685, 3)
+before:  (170685,)
+after:  (170685, 3)
+after:  (170685, 3)
+after:  (170685,)
+[32m[06/23 17:41:55 ScanNet]: [0m[233]/[312] cloud,  test_oa , test_macc, test_miou: 87.47 87.27 59.70, 
+iou per cls is: [ 54.13  96.5    0.07   0.    95.66   0.    88.88  55.7   51.57   0.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    51.46]
+so far miou is:  46.20119857788086
+[32m[06/23 17:41:55 ScanNet]: [0mTest [234]/[312] cloud
+create chunks
+before:  (91978, 3)
+before:  (91978, 3)
+before:  (91978,)
+after:  (91978, 3)
+after:  (91978, 3)
+after:  (91978,)
+[32m[06/23 17:42:00 ScanNet]: [0m[234]/[312] cloud,  test_oa , test_macc, test_miou: 78.46 83.57 44.18, 
+iou per cls is: [ 74.99  94.68  52.98   0.    78.66   0.    62.98   0.     0.     0.
+ 100.    54.71   0.     0.    12.05 100.   100.    43.26 100.     9.4 ]
+so far miou is:  46.19465255737305
+[32m[06/23 17:42:00 ScanNet]: [0mTest [235]/[312] cloud
+create chunks
+before:  (368473, 3)
+before:  (368473, 3)
+before:  (368473,)
+after:  (368473, 3)
+after:  (368473, 3)
+after:  (368473,)
+[32m[06/23 17:42:27 ScanNet]: [0m[235]/[312] cloud,  test_oa , test_macc, test_miou: 81.39 84.38 39.96, 
+iou per cls is: [ 75.34  94.39   0.     0.    37.94  52.38  28.71  56.26   0.     0.
+  12.07 100.     0.     0.   100.     0.     0.   100.   100.    42.12]
+so far miou is:  46.14055633544922
+[32m[06/23 17:42:27 ScanNet]: [0mTest [236]/[312] cloud
+create chunks
+before:  (226580, 3)
+before:  (226580, 3)
+before:  (226580,)
+after:  (226580, 3)
+after:  (226580, 3)
+after:  (226580,)
+[32m[06/23 17:42:40 ScanNet]: [0m[236]/[312] cloud,  test_oa , test_macc, test_miou: 75.91 92.09 28.87, 
+iou per cls is: [ 52.29  91.23   0.     0.     0.    89.08  43.21   0.     0.     0.
+   0.   100.     0.     0.     0.     0.   100.   100.     0.     1.51]
+so far miou is:  46.09478759765625
+[32m[06/23 17:42:40 ScanNet]: [0mTest [237]/[312] cloud
+create chunks
+before:  (269274, 3)
+before:  (269274, 3)
+before:  (269274,)
+after:  (269274, 3)
+after:  (269274, 3)
+after:  (269274,)
+[32m[06/23 17:42:54 ScanNet]: [0m[237]/[312] cloud,  test_oa , test_macc, test_miou: 69.77 62.59 33.69, 
+iou per cls is: [69.37 92.71 27.27 77.28 36.36 45.82  3.14 11.18 12.66  0.    0.   27.09
+  0.    0.    4.12 38.97 90.18 39.07 66.37 32.12]
+so far miou is:  46.08548355102539
+[32m[06/23 17:42:54 ScanNet]: [0mTest [238]/[312] cloud
+create chunks
+before:  (47709, 3)
+before:  (47709, 3)
+before:  (47709,)
+after:  (47709, 3)
+after:  (47709, 3)
+after:  (47709,)
+[32m[06/23 17:42:57 ScanNet]: [0m[238]/[312] cloud,  test_oa , test_macc, test_miou: 81.48 93.33 57.64, 
+iou per cls is: [ 75.64  92.03  46.55 100.     0.   100.   100.    39.68 100.   100.
+ 100.     0.     0.     0.     0.    70.28  81.33  75.84  71.47   0.  ]
+so far miou is:  46.237369537353516
+[32m[06/23 17:42:57 ScanNet]: [0mTest [239]/[312] cloud
+create chunks
+before:  (113156, 3)
+before:  (113156, 3)
+before:  (113156,)
+after:  (113156, 3)
+after:  (113156, 3)
+after:  (113156,)
+[32m[06/23 17:43:03 ScanNet]: [0m[239]/[312] cloud,  test_oa , test_macc, test_miou: 83.81 87.44 43.13, 
+iou per cls is: [ 74.7   97.96  28.08   0.    58.58   0.    78.5    0.     0.     0.
+ 100.    44.38   0.     0.    15.2  100.   100.    65.21 100.     0.  ]
+so far miou is:  46.2514533996582
+[32m[06/23 17:43:03 ScanNet]: [0mTest [240]/[312] cloud
+create chunks
+before:  (234831, 3)
+before:  (234831, 3)
+before:  (234831,)
+after:  (234831, 3)
+after:  (234831, 3)
+after:  (234831,)
+[32m[06/23 17:43:16 ScanNet]: [0m[240]/[312] cloud,  test_oa , test_macc, test_miou: 71.67 80.32 44.98, 
+iou per cls is: [ 75.66  88.79   0.    48.83  57.29   0.     0.    31.3    6.96   0.
+ 100.     0.    41.44   0.     6.92 100.   100.   100.   100.    42.35]
+so far miou is:  46.20228576660156
+[32m[06/23 17:43:16 ScanNet]: [0mTest [241]/[312] cloud
+create chunks
+before:  (90268, 3)
+before:  (90268, 3)
+before:  (90268,)
+after:  (90268, 3)
+after:  (90268, 3)
+after:  (90268,)
+[32m[06/23 17:43:21 ScanNet]: [0m[241]/[312] cloud,  test_oa , test_macc, test_miou: 57.94 75.89 27.82, 
+iou per cls is: [ 52.16  85.9    0.     0.    57.93   0.     0.     0.    36.13   8.73
+   0.   100.    15.49   0.     0.     0.   100.   100.     0.     0.  ]
+so far miou is:  46.14927291870117
+[32m[06/23 17:43:21 ScanNet]: [0mTest [242]/[312] cloud
+create chunks
+before:  (85459, 3)
+before:  (85459, 3)
+before:  (85459,)
+after:  (85459, 3)
+after:  (85459, 3)
+after:  (85459,)
+[32m[06/23 17:43:26 ScanNet]: [0m[242]/[312] cloud,  test_oa , test_macc, test_miou: 88.91 95.72 52.66, 
+iou per cls is: [ 85.96  95.97  64.59   0.     0.     0.     0.    66.96 100.     0.
+ 100.    71.76   0.   100.     0.   100.   100.     0.   100.    67.88]
+so far miou is:  46.20222091674805
+[32m[06/23 17:43:26 ScanNet]: [0mTest [243]/[312] cloud
+create chunks
+before:  (235777, 3)
+before:  (235777, 3)
+before:  (235777,)
+after:  (235777, 3)
+after:  (235777, 3)
+after:  (235777,)
+[32m[06/23 17:43:39 ScanNet]: [0m[243]/[312] cloud,  test_oa , test_macc, test_miou: 70.26 80.23 34.67, 
+iou per cls is: [ 72.89  88.18   0.    47.51  71.71   0.     0.    29.66   9.62   0.
+   0.     0.    47.17   0.     3.43   0.   100.   100.   100.    23.14]
+so far miou is:  46.142860412597656
+[32m[06/23 17:43:39 ScanNet]: [0mTest [244]/[312] cloud
+create chunks
+before:  (232740, 3)
+before:  (232740, 3)
+before:  (232740,)
+after:  (232740, 3)
+after:  (232740, 3)
+after:  (232740,)
+[32m[06/23 17:43:51 ScanNet]: [0m[244]/[312] cloud,  test_oa , test_macc, test_miou: 81.92 92.27 47.12, 
+iou per cls is: [ 79.45  91.92   0.     0.    41.79 100.    32.92   0.    31.12   0.
+ 100.   100.     0.     0.     0.   100.   100.     0.   100.    65.25]
+so far miou is:  46.13134765625
+[32m[06/23 17:43:51 ScanNet]: [0mTest [245]/[312] cloud
+create chunks
+before:  (78769, 3)
+before:  (78769, 3)
+before:  (78769,)
+after:  (78769, 3)
+after:  (78769, 3)
+after:  (78769,)
+[32m[06/23 17:43:55 ScanNet]: [0m[245]/[312] cloud,  test_oa , test_macc, test_miou: 77.16 88.55 50.54, 
+iou per cls is: [ 64.41  97.73   0.     0.    51.05   0.    32.    19.43   0.     0.
+ 100.   100.     0.   100.   100.   100.   100.   100.     0.    46.27]
+so far miou is:  46.11422348022461
+[32m[06/23 17:43:55 ScanNet]: [0mTest [246]/[312] cloud
+create chunks
+before:  (145650, 3)
+before:  (145650, 3)
+before:  (145650,)
+after:  (145650, 3)
+after:  (145650, 3)
+after:  (145650,)
+[32m[06/23 17:44:03 ScanNet]: [0m[246]/[312] cloud,  test_oa , test_macc, test_miou: 73.77 89.88 50.19, 
+iou per cls is: [ 49.29  97.01   0.     0.    90.12   0.    87.62  29.2    9.84   0.
+   0.   100.     0.     0.   100.   100.   100.   100.   100.    40.77]
+so far miou is:  46.09253692626953
+[32m[06/23 17:44:03 ScanNet]: [0mTest [247]/[312] cloud
+create chunks
+before:  (201003, 3)
+before:  (201003, 3)
+before:  (201003,)
+after:  (201003, 3)
+after:  (201003, 3)
+after:  (201003,)
+[32m[06/23 17:44:16 ScanNet]: [0m[247]/[312] cloud,  test_oa , test_macc, test_miou: 79.08 77.60 42.16, 
+iou per cls is: [ 73.89  93.26  28.57  68.25  70.04   0.    33.29  16.24   0.     0.
+  69.7  100.     0.    79.35   0.     0.     0.   100.   100.    10.68]
+so far miou is:  46.145809173583984
+[32m[06/23 17:44:16 ScanNet]: [0mTest [248]/[312] cloud
+create chunks
+before:  (99171, 3)
+before:  (99171, 3)
+before:  (99171,)
+after:  (99171, 3)
+after:  (99171, 3)
+after:  (99171,)
+[32m[06/23 17:44:21 ScanNet]: [0m[248]/[312] cloud,  test_oa , test_macc, test_miou: 47.89 74.59 15.83, 
+iou per cls is: [ 51.26  86.12   0.     0.    11.5    0.    12.31   0.     0.     0.
+  14.02 100.     0.    33.9    0.     0.     0.     0.     0.     7.51]
+so far miou is:  46.072288513183594
+[32m[06/23 17:44:21 ScanNet]: [0mTest [249]/[312] cloud
+create chunks
+before:  (62475, 3)
+before:  (62475, 3)
+before:  (62475,)
+after:  (62475, 3)
+after:  (62475, 3)
+after:  (62475,)
+[32m[06/23 17:44:24 ScanNet]: [0m[249]/[312] cloud,  test_oa , test_macc, test_miou: 67.59 85.29 34.32, 
+iou per cls is: [ 59.86  93.27  21.99   0.     0.     0.    10.84  44.1    0.   100.
+   0.     0.     0.     0.     0.   100.   100.    37.61 100.    18.71]
+so far miou is:  46.050228118896484
+[32m[06/23 17:44:24 ScanNet]: [0mTest [250]/[312] cloud
+create chunks
+before:  (69167, 3)
+before:  (69167, 3)
+before:  (69167,)
+after:  (69167, 3)
+after:  (69167, 3)
+after:  (69167,)
+[32m[06/23 17:44:27 ScanNet]: [0m[250]/[312] cloud,  test_oa , test_macc, test_miou: 69.14 88.16 43.21, 
+iou per cls is: [ 46.15  88.85  39.47   0.     0.   100.   100.     9.38  77.4  100.
+   0.     0.     0.     0.     0.   100.    71.91   0.   100.    30.98]
+so far miou is:  46.049522399902344
+[32m[06/23 17:44:27 ScanNet]: [0mTest [251]/[312] cloud
+create chunks
+before:  (228074, 3)
+before:  (228074, 3)
+before:  (228074,)
+after:  (228074, 3)
+after:  (228074, 3)
+after:  (228074,)
+[32m[06/23 17:44:40 ScanNet]: [0m[251]/[312] cloud,  test_oa , test_macc, test_miou: 77.26 79.49 35.77, 
+iou per cls is: [ 64.11  95.61  17.14   0.    89.04   0.    84.48  20.25   4.26   0.
+  29.97   0.     0.     0.     0.     0.   100.   100.   100.    10.47]
+so far miou is:  46.02336120605469
+[32m[06/23 17:44:40 ScanNet]: [0mTest [252]/[312] cloud
+create chunks
+before:  (122129, 3)
+before:  (122129, 3)
+before:  (122129,)
+after:  (122129, 3)
+after:  (122129, 3)
+after:  (122129,)
+[32m[06/23 17:44:46 ScanNet]: [0m[252]/[312] cloud,  test_oa , test_macc, test_miou: 84.53 88.35 61.03, 
+iou per cls is: [ 64.68  92.61   0.     0.    93.92 100.    89.84   4.95  52.43   0.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    22.22]
+so far miou is:  46.044273376464844
+[32m[06/23 17:44:46 ScanNet]: [0mTest [253]/[312] cloud
+create chunks
+before:  (51381, 3)
+before:  (51381, 3)
+before:  (51381,)
+after:  (51381, 3)
+after:  (51381, 3)
+after:  (51381,)
+[32m[06/23 17:44:49 ScanNet]: [0m[253]/[312] cloud,  test_oa , test_macc, test_miou: 69.14 91.65 54.25, 
+iou per cls is: [ 26.5   92.     0.     0.     0.    55.53  56.84   0.     0.   100.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.    54.07]
+so far miou is:  46.0530891418457
+[32m[06/23 17:44:49 ScanNet]: [0mTest [254]/[312] cloud
+create chunks
+before:  (177091, 3)
+before:  (177091, 3)
+before:  (177091,)
+after:  (177091, 3)
+after:  (177091, 3)
+after:  (177091,)
+[32m[06/23 17:44:59 ScanNet]: [0m[254]/[312] cloud,  test_oa , test_macc, test_miou: 88.24 90.23 39.37, 
+iou per cls is: [ 85.23  94.2    0.     0.    92.33  44.77   0.     0.     0.     0.
+   0.     0.    69.84   0.     0.93 100.   100.   100.   100.     0.  ]
+so far miou is:  46.07588577270508
+[32m[06/23 17:44:59 ScanNet]: [0mTest [255]/[312] cloud
+create chunks
+before:  (239388, 3)
+before:  (239388, 3)
+before:  (239388,)
+after:  (239388, 3)
+after:  (239388, 3)
+after:  (239388,)
+[32m[06/23 17:45:12 ScanNet]: [0m[255]/[312] cloud,  test_oa , test_macc, test_miou: 79.10 81.07 41.96, 
+iou per cls is: [ 75.26  94.91   0.     0.    14.14  66.69  41.88   0.     0.    78.79
+  36.94 100.     0.     2.65   0.   100.   100.   100.     0.    27.95]
+so far miou is:  46.076515197753906
+[32m[06/23 17:45:12 ScanNet]: [0mTest [256]/[312] cloud
+create chunks
+before:  (173223, 3)
+before:  (173223, 3)
+before:  (173223,)
+after:  (173223, 3)
+after:  (173223, 3)
+after:  (173223,)
+[32m[06/23 17:45:22 ScanNet]: [0m[256]/[312] cloud,  test_oa , test_macc, test_miou: 70.97 86.83 37.15, 
+iou per cls is: [ 43.22  95.23   0.     0.    83.8    0.     0.     0.     5.55  77.15
+  40.69   0.    58.8    0.   100.     0.   100.     0.   100.    38.58]
+so far miou is:  46.11483383178711
+[32m[06/23 17:45:22 ScanNet]: [0mTest [257]/[312] cloud
+create chunks
+before:  (133418, 3)
+before:  (133418, 3)
+before:  (133418,)
+after:  (133418, 3)
+after:  (133418, 3)
+after:  (133418,)
+[32m[06/23 17:45:28 ScanNet]: [0m[257]/[312] cloud,  test_oa , test_macc, test_miou: 68.05 69.32 32.88, 
+iou per cls is: [ 66.35  91.61   1.06  65.59  89.73   0.     0.    24.94  11.35  36.52
+   1.04   0.    34.52  14.43   0.     0.   100.     0.   100.    20.55]
+so far miou is:  46.076236724853516
+[32m[06/23 17:45:28 ScanNet]: [0mTest [258]/[312] cloud
+create chunks
+before:  (252355, 3)
+before:  (252355, 3)
+before:  (252355,)
+after:  (252355, 3)
+after:  (252355, 3)
+after:  (252355,)
+[32m[06/23 17:45:41 ScanNet]: [0m[258]/[312] cloud,  test_oa , test_macc, test_miou: 72.07 86.28 45.69, 
+iou per cls is: [ 61.28  94.17   0.     0.    87.86  41.97   0.    29.89   3.13  71.58
+   0.     0.    67.67   0.     0.   100.   100.   100.   100.    56.21]
+so far miou is:  46.049476623535156
+[32m[06/23 17:45:41 ScanNet]: [0mTest [259]/[312] cloud
+create chunks
+before:  (92825, 3)
+before:  (92825, 3)
+before:  (92825,)
+after:  (92825, 3)
+after:  (92825, 3)
+after:  (92825,)
+[32m[06/23 17:45:46 ScanNet]: [0m[259]/[312] cloud,  test_oa , test_macc, test_miou: 74.46 86.55 57.29, 
+iou per cls is: [ 53.    94.05  78.15   0.   100.   100.     0.    24.56   0.   100.
+   0.    66.85 100.     0.    71.36 100.   100.    57.89 100.     0.  ]
+so far miou is:  46.14127731323242
+[32m[06/23 17:45:46 ScanNet]: [0mTest [260]/[312] cloud
+create chunks
+before:  (41518, 3)
+before:  (41518, 3)
+before:  (41518,)
+after:  (41518, 3)
+after:  (41518, 3)
+after:  (41518,)
+[32m[06/23 17:45:49 ScanNet]: [0m[260]/[312] cloud,  test_oa , test_macc, test_miou: 67.44 94.56 89.52, 
+iou per cls is: [100.    99.73 100.   100.    16.34   0.    74.25 100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  46.096187591552734
+[32m[06/23 17:45:49 ScanNet]: [0mTest [261]/[312] cloud
+create chunks
+before:  (92069, 3)
+before:  (92069, 3)
+before:  (92069,)
+after:  (92069, 3)
+after:  (92069, 3)
+after:  (92069,)
+[32m[06/23 17:45:54 ScanNet]: [0m[261]/[312] cloud,  test_oa , test_macc, test_miou: 71.99 84.02 21.71, 
+iou per cls is: [ 52.27  94.76  48.49  75.96   0.     0.     0.     0.     0.     0.
+   0.     0.     0.    54.81   0.     0.   100.     0.     0.     7.89]
+so far miou is:  46.109737396240234
+[32m[06/23 17:45:54 ScanNet]: [0mTest [262]/[312] cloud
+create chunks
+before:  (86191, 3)
+before:  (86191, 3)
+before:  (86191,)
+after:  (86191, 3)
+after:  (86191, 3)
+after:  (86191,)
+[32m[06/23 17:45:59 ScanNet]: [0m[262]/[312] cloud,  test_oa , test_macc, test_miou: 82.71 91.44 43.29, 
+iou per cls is: [ 79.21  96.8    0.   100.     0.   100.     0.    32.13   0.   100.
+ 100.   100.     0.     0.     0.     0.    36.14  81.92   0.    39.6 ]
+so far miou is:  46.05949020385742
+[32m[06/23 17:45:59 ScanNet]: [0mTest [263]/[312] cloud
+create chunks
+before:  (377683, 3)
+before:  (377683, 3)
+before:  (377683,)
+after:  (377683, 3)
+after:  (377683, 3)
+after:  (377683,)
+[32m[06/23 17:46:28 ScanNet]: [0m[263]/[312] cloud,  test_oa , test_macc, test_miou: 55.22 74.99 15.81, 
+iou per cls is: [ 22.82  94.18   0.     0.     0.     0.    12.44  24.12  14.99   0.
+   1.06   0.     0.     0.     0.   100.     0.    11.28   0.    35.4 ]
+so far miou is:  45.937313079833984
+[32m[06/23 17:46:28 ScanNet]: [0mTest [264]/[312] cloud
+create chunks
+before:  (230672, 3)
+before:  (230672, 3)
+before:  (230672,)
+after:  (230672, 3)
+after:  (230672, 3)
+after:  (230672,)
+[32m[06/23 17:46:40 ScanNet]: [0m[264]/[312] cloud,  test_oa , test_macc, test_miou: 77.23 88.14 57.81, 
+iou per cls is: [ 20.04  89.19   0.     0.    52.22  37.99  65.89  16.72   0.    74.07
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  45.97251892089844
+[32m[06/23 17:46:40 ScanNet]: [0mTest [265]/[312] cloud
+create chunks
+before:  (126879, 3)
+before:  (126879, 3)
+before:  (126879,)
+after:  (126879, 3)
+after:  (126879, 3)
+after:  (126879,)
+[32m[06/23 17:46:46 ScanNet]: [0m[265]/[312] cloud,  test_oa , test_macc, test_miou: 75.06 83.63 45.69, 
+iou per cls is: [ 72.13  95.05   0.    69.46  64.98   0.     4.37  14.9   65.31   0.
+ 100.     0.     0.    27.61 100.   100.   100.     0.   100.     0.  ]
+so far miou is:  45.9619026184082
+[32m[06/23 17:46:46 ScanNet]: [0mTest [266]/[312] cloud
+create chunks
+before:  (91924, 3)
+before:  (91924, 3)
+before:  (91924,)
+after:  (91924, 3)
+after:  (91924, 3)
+after:  (91924,)
+[32m[06/23 17:46:51 ScanNet]: [0m[266]/[312] cloud,  test_oa , test_macc, test_miou: 79.22 91.05 49.01, 
+iou per cls is: [ 59.5   96.58   0.     0.    84.48 100.    50.99  48.77   0.     0.
+   0.     0.     0.     0.   100.   100.   100.   100.   100.    39.93]
+so far miou is:  45.95267868041992
+[32m[06/23 17:46:51 ScanNet]: [0mTest [267]/[312] cloud
+create chunks
+before:  (60071, 3)
+before:  (60071, 3)
+before:  (60071,)
+after:  (60071, 3)
+after:  (60071, 3)
+after:  (60071,)
+[32m[06/23 17:46:54 ScanNet]: [0m[267]/[312] cloud,  test_oa , test_macc, test_miou: 67.30 93.63 68.51, 
+iou per cls is: [  0.    99.41 100.     0.     8.96   0.    61.81 100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.     0.     0.  ]
+so far miou is:  45.89299774169922
+[32m[06/23 17:46:54 ScanNet]: [0mTest [268]/[312] cloud
+create chunks
+before:  (69895, 3)
+before:  (69895, 3)
+before:  (69895,)
+after:  (69895, 3)
+after:  (69895, 3)
+after:  (69895,)
+[32m[06/23 17:46:57 ScanNet]: [0m[268]/[312] cloud,  test_oa , test_macc, test_miou: 92.94 96.09 65.47, 
+iou per cls is: [ 76.39  95.66   0.   100.    94.99   0.    54.78   0.     0.   100.
+ 100.   100.     0.   100.     0.   100.   100.   100.   100.    87.65]
+so far miou is:  45.902652740478516
+[32m[06/23 17:46:57 ScanNet]: [0mTest [269]/[312] cloud
+create chunks
+before:  (92807, 3)
+before:  (92807, 3)
+before:  (92807,)
+after:  (92807, 3)
+after:  (92807, 3)
+after:  (92807,)
+[32m[06/23 17:47:03 ScanNet]: [0m[269]/[312] cloud,  test_oa , test_macc, test_miou: 70.93 85.73 52.40, 
+iou per cls is: [ 52.02  94.18  45.78   0.     0.     0.    39.24  34.09  81.23   0.
+ 100.    44.74   0.     0.   100.   100.   100.   100.   100.    56.71]
+so far miou is:  45.90963363647461
+[32m[06/23 17:47:03 ScanNet]: [0mTest [270]/[312] cloud
+create chunks
+before:  (293811, 3)
+before:  (293811, 3)
+before:  (293811,)
+after:  (293811, 3)
+after:  (293811, 3)
+after:  (293811,)
+[32m[06/23 17:47:20 ScanNet]: [0m[270]/[312] cloud,  test_oa , test_macc, test_miou: 86.47 89.65 46.11, 
+iou per cls is: [ 70.49  95.72   0.     0.    79.4    0.    80.84  17.17  74.39  79.75
+   0.     0.     0.     0.     0.   100.   100.   100.   100.    24.5 ]
+so far miou is:  45.960205078125
+[32m[06/23 17:47:20 ScanNet]: [0mTest [271]/[312] cloud
+create chunks
+before:  (284243, 3)
+before:  (284243, 3)
+before:  (284243,)
+after:  (284243, 3)
+after:  (284243, 3)
+after:  (284243,)
+[32m[06/23 17:47:35 ScanNet]: [0m[271]/[312] cloud,  test_oa , test_macc, test_miou: 87.48 90.94 42.25, 
+iou per cls is: [ 72.07  95.78   0.     0.    81.16   0.    75.15  51.81  76.46  76.58
+   0.     0.     0.     0.     0.   100.   100.   100.     0.    15.91]
+so far miou is:  46.0081672668457
+[32m[06/23 17:47:35 ScanNet]: [0mTest [272]/[312] cloud
+create chunks
+before:  (175557, 3)
+before:  (175557, 3)
+before:  (175557,)
+after:  (175557, 3)
+after:  (175557, 3)
+after:  (175557,)
+[32m[06/23 17:47:46 ScanNet]: [0m[272]/[312] cloud,  test_oa , test_macc, test_miou: 71.61 87.59 30.45, 
+iou per cls is: [ 73.42  91.75   0.     0.     0.     0.    27.07  60.96   0.     0.
+ 100.     0.     0.     0.     0.     0.   100.    21.73 100.    34.1 ]
+so far miou is:  45.976722717285156
+[32m[06/23 17:47:46 ScanNet]: [0mTest [273]/[312] cloud
+create chunks
+before:  (109935, 3)
+before:  (109935, 3)
+before:  (109935,)
+after:  (109935, 3)
+after:  (109935, 3)
+after:  (109935,)
+[32m[06/23 17:47:51 ScanNet]: [0m[273]/[312] cloud,  test_oa , test_macc, test_miou: 58.84 89.50 42.69, 
+iou per cls is: [ 18.69  93.76  20.62   0.    49.96  22.38  62.21   0.     0.    86.27
+   0.     0.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  45.9312629699707
+[32m[06/23 17:47:51 ScanNet]: [0mTest [274]/[312] cloud
+create chunks
+before:  (210308, 3)
+before:  (210308, 3)
+before:  (210308,)
+after:  (210308, 3)
+after:  (210308, 3)
+after:  (210308,)
+[32m[06/23 17:48:04 ScanNet]: [0m[274]/[312] cloud,  test_oa , test_macc, test_miou: 85.47 84.41 50.29, 
+iou per cls is: [ 81.38  90.38   0.    87.68  68.39   0.     0.    43.7    0.     0.
+  40.98   0.    73.66  84.29   1.65 100.   100.   100.   100.    33.6 ]
+so far miou is:  46.0678825378418
+[32m[06/23 17:48:04 ScanNet]: [0mTest [275]/[312] cloud
+create chunks
+before:  (200688, 3)
+before:  (200688, 3)
+before:  (200688,)
+after:  (200688, 3)
+after:  (200688, 3)
+after:  (200688,)
+[32m[06/23 17:48:17 ScanNet]: [0m[275]/[312] cloud,  test_oa , test_macc, test_miou: 83.55 92.61 43.61, 
+iou per cls is: [ 75.5   93.46   0.     0.    66.38   0.    59.91  46.72   0.     0.
+   0.   100.    30.17   0.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.06787109375
+[32m[06/23 17:48:17 ScanNet]: [0mTest [276]/[312] cloud
+create chunks
+before:  (211497, 3)
+before:  (211497, 3)
+before:  (211497,)
+after:  (211497, 3)
+after:  (211497, 3)
+after:  (211497,)
+[32m[06/23 17:48:29 ScanNet]: [0m[276]/[312] cloud,  test_oa , test_macc, test_miou: 66.38 84.69 24.24, 
+iou per cls is: [ 51.32  86.84   0.     0.     0.    45.97   0.26   0.     0.     0.
+   0.     0.     0.     0.     0.     0.   100.   100.   100.     0.32]
+so far miou is:  45.92483139038086
+[32m[06/23 17:48:29 ScanNet]: [0mTest [277]/[312] cloud
+create chunks
+before:  (67632, 3)
+before:  (67632, 3)
+before:  (67632,)
+after:  (67632, 3)
+after:  (67632, 3)
+after:  (67632,)
+[32m[06/23 17:48:32 ScanNet]: [0m[277]/[312] cloud,  test_oa , test_macc, test_miou: 89.64 92.72 64.52, 
+iou per cls is: [ 85.72  95.11   0.   100.     0.     0.     0.    11.43 100.   100.
+ 100.   100.   100.   100.     0.   100.    90.67  80.71 100.    26.84]
+so far miou is:  45.98301315307617
+[32m[06/23 17:48:32 ScanNet]: [0mTest [278]/[312] cloud
+create chunks
+before:  (203737, 3)
+before:  (203737, 3)
+before:  (203737,)
+after:  (203737, 3)
+after:  (203737, 3)
+after:  (203737,)
+[32m[06/23 17:48:45 ScanNet]: [0m[278]/[312] cloud,  test_oa , test_macc, test_miou: 56.02 74.82 36.40, 
+iou per cls is: [ 50.14  88.87   0.    12.68  67.57  78.     0.    30.74  17.77  31.43
+   0.     0.     0.    31.32   7.01   0.   100.   100.   100.    12.48]
+so far miou is:  45.87583923339844
+[32m[06/23 17:48:45 ScanNet]: [0mTest [279]/[312] cloud
+create chunks
+before:  (352477, 3)
+before:  (352477, 3)
+before:  (352477,)
+after:  (352477, 3)
+after:  (352477, 3)
+after:  (352477,)
+[32m[06/23 17:49:10 ScanNet]: [0m[279]/[312] cloud,  test_oa , test_macc, test_miou: 76.74 71.05 44.78, 
+iou per cls is: [69.53 95.38 52.52 81.26 56.25 48.34 19.41 13.81 31.13  0.   21.68  0.
+ 29.23 34.7   0.   59.82 86.01 66.41 79.42 50.64]
+so far miou is:  46.026851654052734
+[32m[06/23 17:49:10 ScanNet]: [0mTest [280]/[312] cloud
+create chunks
+before:  (62048, 3)
+before:  (62048, 3)
+before:  (62048,)
+after:  (62048, 3)
+after:  (62048, 3)
+after:  (62048,)
+[32m[06/23 17:49:13 ScanNet]: [0m[280]/[312] cloud,  test_oa , test_macc, test_miou: 89.51 89.24 60.65, 
+iou per cls is: [ 83.58  95.66 100.   100.    85.68 100.    70.38  52.46  21.76   0.
+ 100.   100.     0.     0.     0.   100.   100.   100.     0.     3.45]
+so far miou is:  46.03071212768555
+[32m[06/23 17:49:13 ScanNet]: [0mTest [281]/[312] cloud
+create chunks
+before:  (73550, 3)
+before:  (73550, 3)
+before:  (73550,)
+after:  (73550, 3)
+after:  (73550, 3)
+after:  (73550,)
+[32m[06/23 17:49:16 ScanNet]: [0m[281]/[312] cloud,  test_oa , test_macc, test_miou: 83.53 95.30 54.95, 
+iou per cls is: [ 69.64  94.42   0.     0.     0.    82.    52.99   0.     0.   100.
+ 100.   100.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  46.09016418457031
+[32m[06/23 17:49:16 ScanNet]: [0mTest [282]/[312] cloud
+create chunks
+before:  (32788, 3)
+before:  (32788, 3)
+before:  (32788,)
+after:  (32788, 3)
+after:  (32788, 3)
+after:  (32788,)
+[32m[06/23 17:49:18 ScanNet]: [0m[282]/[312] cloud,  test_oa , test_macc, test_miou: 76.11 88.07 69.27, 
+iou per cls is: [ 74.6   85.24   0.   100.   100.   100.   100.    27.09 100.   100.
+ 100.   100.   100.     0.     0.     0.    90.46 100.    81.04  27.07]
+so far miou is:  46.16216278076172
+[32m[06/23 17:49:18 ScanNet]: [0mTest [283]/[312] cloud
+create chunks
+before:  (118005, 3)
+before:  (118005, 3)
+before:  (118005,)
+after:  (118005, 3)
+after:  (118005, 3)
+after:  (118005,)
+[32m[06/23 17:49:23 ScanNet]: [0m[283]/[312] cloud,  test_oa , test_macc, test_miou: 78.43 91.19 39.79, 
+iou per cls is: [ 77.28  93.94   0.     0.     0.    55.47  31.9    0.     0.   100.
+   0.   100.     0.     0.     0.   100.   100.   100.     0.    37.21]
+so far miou is:  46.150142669677734
+[32m[06/23 17:49:23 ScanNet]: [0mTest [284]/[312] cloud
+create chunks
+before:  (211406, 3)
+before:  (211406, 3)
+before:  (211406,)
+after:  (211406, 3)
+after:  (211406, 3)
+after:  (211406,)
+[32m[06/23 17:49:36 ScanNet]: [0m[284]/[312] cloud,  test_oa , test_macc, test_miou: 61.39 85.39 26.14, 
+iou per cls is: [ 72.3   89.36   0.     0.    48.9   32.35   0.    25.95   0.   100.
+   0.     0.    42.59   0.     0.     0.   100.     0.     0.    11.32]
+so far miou is:  46.07030487060547
+[32m[06/23 17:49:36 ScanNet]: [0mTest [285]/[312] cloud
+create chunks
+before:  (213949, 3)
+before:  (213949, 3)
+before:  (213949,)
+after:  (213949, 3)
+after:  (213949, 3)
+after:  (213949,)
+[32m[06/23 17:49:49 ScanNet]: [0m[285]/[312] cloud,  test_oa , test_macc, test_miou: 74.74 87.22 57.74, 
+iou per cls is: [ 65.17  95.88   0.     0.    90.43  47.45   0.    39.36   7.52  64.92
+   0.   100.    74.36   0.   100.   100.   100.   100.   100.    69.79]
+so far miou is:  46.059329986572266
+[32m[06/23 17:49:49 ScanNet]: [0mTest [286]/[312] cloud
+create chunks
+before:  (79184, 3)
+before:  (79184, 3)
+before:  (79184,)
+after:  (79184, 3)
+after:  (79184, 3)
+after:  (79184,)
+[32m[06/23 17:49:53 ScanNet]: [0m[286]/[312] cloud,  test_oa , test_macc, test_miou: 80.48 85.71 56.16, 
+iou per cls is: [ 78.23  94.55   0.    89.2   66.82   0.     0.     4.13  71.79   0.
+ 100.     0.    54.78 100.     0.   100.   100.   100.   100.    63.77]
+so far miou is:  46.076595306396484
+[32m[06/23 17:49:53 ScanNet]: [0mTest [287]/[312] cloud
+create chunks
+before:  (88073, 3)
+before:  (88073, 3)
+before:  (88073,)
+after:  (88073, 3)
+after:  (88073, 3)
+after:  (88073,)
+[32m[06/23 17:49:58 ScanNet]: [0m[287]/[312] cloud,  test_oa , test_macc, test_miou: 71.10 86.69 57.42, 
+iou per cls is: [ 50.78  94.81  60.45   0.   100.   100.   100.    27.04   0.     0.
+  16.32  75.89 100.     0.    67.82 100.   100.    55.28 100.     0.  ]
+so far miou is:  46.15846252441406
+[32m[06/23 17:49:58 ScanNet]: [0mTest [288]/[312] cloud
+create chunks
+before:  (173752, 3)
+before:  (173752, 3)
+before:  (173752,)
+after:  (173752, 3)
+after:  (173752, 3)
+after:  (173752,)
+[32m[06/23 17:50:08 ScanNet]: [0m[288]/[312] cloud,  test_oa , test_macc, test_miou: 88.57 92.18 56.20, 
+iou per cls is: [ 91.54  97.16 100.     0.    49.16   0.    74.79   0.     0.     0.
+ 100.   100.     0.   100.   100.   100.     0.   100.   100.    11.32]
+so far miou is:  46.129188537597656
+[32m[06/23 17:50:08 ScanNet]: [0mTest [289]/[312] cloud
+create chunks
+before:  (84445, 3)
+before:  (84445, 3)
+before:  (84445,)
+after:  (84445, 3)
+after:  (84445, 3)
+after:  (84445,)
+[32m[06/23 17:50:12 ScanNet]: [0m[289]/[312] cloud,  test_oa , test_macc, test_miou: 90.36 96.12 53.69, 
+iou per cls is: [ 89.24  95.39  69.38   0.     0.   100.     0.    79.06   0.     0.
+ 100.    74.09   0.   100.     0.   100.   100.     0.   100.    66.64]
+so far miou is:  46.1883659362793
+[32m[06/23 17:50:12 ScanNet]: [0mTest [290]/[312] cloud
+create chunks
+before:  (184428, 3)
+before:  (184428, 3)
+before:  (184428,)
+after:  (184428, 3)
+after:  (184428, 3)
+after:  (184428,)
+[32m[06/23 17:50:24 ScanNet]: [0m[290]/[312] cloud,  test_oa , test_macc, test_miou: 71.91 81.85 38.52, 
+iou per cls is: [ 59.57  90.18  36.05   0.    86.67   0.     0.    51.85  41.46   0.
+   0.     0.    55.96   0.     0.     0.   100.   100.   100.    48.72]
+so far miou is:  46.163570404052734
+[32m[06/23 17:50:24 ScanNet]: [0mTest [291]/[312] cloud
+create chunks
+before:  (310248, 3)
+before:  (310248, 3)
+before:  (310248,)
+after:  (310248, 3)
+after:  (310248, 3)
+after:  (310248,)
+[32m[06/23 17:50:43 ScanNet]: [0m[291]/[312] cloud,  test_oa , test_macc, test_miou: 64.96 84.86 36.58, 
+iou per cls is: [ 55.82  91.88   0.     0.    55.29   0.    69.83  27.75  69.02   0.
+   3.34 100.     0.     0.     0.     0.   100.     0.   100.    58.75]
+so far miou is:  46.066192626953125
+[32m[06/23 17:50:43 ScanNet]: [0mTest [292]/[312] cloud
+create chunks
+before:  (52304, 3)
+before:  (52304, 3)
+before:  (52304,)
+after:  (52304, 3)
+after:  (52304, 3)
+after:  (52304,)
+[32m[06/23 17:50:46 ScanNet]: [0m[292]/[312] cloud,  test_oa , test_macc, test_miou: 75.30 84.53 34.92, 
+iou per cls is: [ 72.38  87.97  60.36   0.     0.   100.     0.    32.12  50.65   0.
+ 100.     0.     0.     0.     0.     0.    84.72  46.29  24.88  39.05]
+so far miou is:  46.02925491333008
+[32m[06/23 17:50:46 ScanNet]: [0mTest [293]/[312] cloud
+create chunks
+before:  (101783, 3)
+before:  (101783, 3)
+before:  (101783,)
+after:  (101783, 3)
+after:  (101783, 3)
+after:  (101783,)
+[32m[06/23 17:50:51 ScanNet]: [0m[293]/[312] cloud,  test_oa , test_macc, test_miou: 78.94 89.87 56.36, 
+iou per cls is: [ 71.8   96.02   0.    77.06  94.5  100.     0.    21.5    0.     0.
+ 100.   100.    48.99  64.95   0.     0.   100.   100.   100.    52.44]
+so far miou is:  46.05398178100586
+[32m[06/23 17:50:51 ScanNet]: [0mTest [294]/[312] cloud
+create chunks
+before:  (143776, 3)
+before:  (143776, 3)
+before:  (143776,)
+after:  (143776, 3)
+after:  (143776, 3)
+after:  (143776,)
+[32m[06/23 17:50:59 ScanNet]: [0m[294]/[312] cloud,  test_oa , test_macc, test_miou: 71.31 86.68 41.86, 
+iou per cls is: [ 75.96  90.59   0.    50.21  83.83   0.     0.     0.     0.    44.52
+   0.     0.    34.12  19.02 100.   100.   100.     0.   100.    38.84]
+so far miou is:  46.02281951904297
+[32m[06/23 17:50:59 ScanNet]: [0mTest [295]/[312] cloud
+create chunks
+before:  (284951, 3)
+before:  (284951, 3)
+before:  (284951,)
+after:  (284951, 3)
+after:  (284951, 3)
+after:  (284951,)
+[32m[06/23 17:51:14 ScanNet]: [0m[295]/[312] cloud,  test_oa , test_macc, test_miou: 81.64 86.31 41.10, 
+iou per cls is: [ 77.9   86.09  11.99   0.    84.21   0.     0.     0.06  74.52   0.
+   0.     0.    49.63   0.     0.   100.   100.   100.   100.    37.6 ]
+so far miou is:  46.06057357788086
+[32m[06/23 17:51:14 ScanNet]: [0mTest [296]/[312] cloud
+create chunks
+before:  (194360, 3)
+before:  (194360, 3)
+before:  (194360,)
+after:  (194360, 3)
+after:  (194360, 3)
+after:  (194360,)
+[32m[06/23 17:51:26 ScanNet]: [0m[296]/[312] cloud,  test_oa , test_macc, test_miou: 77.52 85.05 33.03, 
+iou per cls is: [ 72.1   95.41   0.     0.    39.43  62.36  31.6    0.75   0.     0.
+  58.71   0.     0.     0.     0.     0.   100.   100.   100.     0.24]
+so far miou is:  46.05514144897461
+[32m[06/23 17:51:26 ScanNet]: [0mTest [297]/[312] cloud
+create chunks
+before:  (364811, 3)
+before:  (364811, 3)
+before:  (364811,)
+after:  (364811, 3)
+after:  (364811, 3)
+after:  (364811,)
+[32m[06/23 17:51:53 ScanNet]: [0m[297]/[312] cloud,  test_oa , test_macc, test_miou: 58.26 83.29 14.36, 
+iou per cls is: [ 22.75  96.35   0.     0.     0.     0.     0.    10.59  14.48   0.
+   3.54   0.     0.     0.     0.     0.     0.   100.     0.    39.4 ]
+so far miou is:  45.98822021484375
+[32m[06/23 17:51:53 ScanNet]: [0mTest [298]/[312] cloud
+create chunks
+before:  (146782, 3)
+before:  (146782, 3)
+before:  (146782,)
+after:  (146782, 3)
+after:  (146782, 3)
+after:  (146782,)
+[32m[06/23 17:52:00 ScanNet]: [0m[298]/[312] cloud,  test_oa , test_macc, test_miou: 58.10 66.36 16.66, 
+iou per cls is: [53.89 92.16 34.78  0.    0.    0.    0.   33.62 47.47  0.   36.21  0.
+  0.    0.    0.    0.    9.33 25.08  0.    0.75]
+so far miou is:  45.75562286376953
+[32m[06/23 17:52:00 ScanNet]: [0mTest [299]/[312] cloud
+create chunks
+before:  (83269, 3)
+before:  (83269, 3)
+before:  (83269,)
+after:  (83269, 3)
+after:  (83269, 3)
+after:  (83269,)
+[32m[06/23 17:52:05 ScanNet]: [0m[299]/[312] cloud,  test_oa , test_macc, test_miou: 75.34 94.30 33.16, 
+iou per cls is: [ 78.65  90.84  33.69   0.    81.86   0.     0.     0.     0.     0.
+   0.     0.     0.     0.     0.     0.   100.   100.   100.    78.16]
+so far miou is:  45.72223663330078
+[32m[06/23 17:52:05 ScanNet]: [0mTest [300]/[312] cloud
+create chunks
+before:  (216254, 3)
+before:  (216254, 3)
+before:  (216254,)
+after:  (216254, 3)
+after:  (216254, 3)
+after:  (216254,)
+[32m[06/23 17:52:17 ScanNet]: [0m[300]/[312] cloud,  test_oa , test_macc, test_miou: 85.30 89.79 47.58, 
+iou per cls is: [ 76.28  97.17  75.68   0.    89.72   0.    76.43   0.    26.25   0.
+ 100.     0.     0.     0.     0.   100.   100.   100.   100.    10.13]
+so far miou is:  45.72882080078125
+[32m[06/23 17:52:17 ScanNet]: [0mTest [301]/[312] cloud
+create chunks
+before:  (82251, 3)
+before:  (82251, 3)
+before:  (82251,)
+after:  (82251, 3)
+after:  (82251, 3)
+after:  (82251,)
+[32m[06/23 17:52:22 ScanNet]: [0m[301]/[312] cloud,  test_oa , test_macc, test_miou: 81.92 85.98 57.04, 
+iou per cls is: [ 76.36  93.91   2.14  80.3   60.42 100.     0.     2.99  82.62   0.
+ 100.   100.    75.91   0.     0.     0.   100.   100.   100.    66.05]
+so far miou is:  45.74663543701172
+[32m[06/23 17:52:22 ScanNet]: [0mTest [302]/[312] cloud
+create chunks
+before:  (50328, 3)
+before:  (50328, 3)
+before:  (50328,)
+after:  (50328, 3)
+after:  (50328, 3)
+after:  (50328,)
+[32m[06/23 17:52:24 ScanNet]: [0m[302]/[312] cloud,  test_oa , test_macc, test_miou: 75.57 82.34 37.47, 
+iou per cls is: [ 68.79  89.08  69.28   0.     0.     0.     0.    28.79   0.   100.
+ 100.     0.     0.   100.     0.     0.    82.32  47.13  58.95   5.05]
+so far miou is:  45.754425048828125
+[32m[06/23 17:52:24 ScanNet]: [0mTest [303]/[312] cloud
+create chunks
+before:  (49553, 3)
+before:  (49553, 3)
+before:  (49553,)
+after:  (49553, 3)
+after:  (49553, 3)
+after:  (49553,)
+[32m[06/23 17:52:27 ScanNet]: [0m[303]/[312] cloud,  test_oa , test_macc, test_miou: 77.03 92.15 60.20, 
+iou per cls is: [ 71.3   92.02  43.47 100.     0.   100.   100.    31.18 100.   100.
+ 100.     0.     0.     0.   100.    57.63  84.23  45.71  78.51   0.  ]
+so far miou is:  45.8578987121582
+[32m[06/23 17:52:27 ScanNet]: [0mTest [304]/[312] cloud
+create chunks
+before:  (196185, 3)
+before:  (196185, 3)
+before:  (196185,)
+after:  (196185, 3)
+after:  (196185, 3)
+after:  (196185,)
+[32m[06/23 17:52:40 ScanNet]: [0m[304]/[312] cloud,  test_oa , test_macc, test_miou: 74.59 83.06 36.17, 
+iou per cls is: [ 68.41  95.7    0.     0.    45.76  72.52  28.56   3.13   0.     0.
+   8.85   0.     0.     0.     0.   100.   100.   100.   100.     0.4 ]
+so far miou is:  45.808597564697266
+[32m[06/23 17:52:40 ScanNet]: [0mTest [305]/[312] cloud
+create chunks
+before:  (167755, 3)
+before:  (167755, 3)
+before:  (167755,)
+after:  (167755, 3)
+after:  (167755, 3)
+after:  (167755,)
+[32m[06/23 17:52:49 ScanNet]: [0m[305]/[312] cloud,  test_oa , test_macc, test_miou: 73.02 84.26 48.57, 
+iou per cls is: [ 57.71  92.1   12.38   0.    71.06 100.     0.    32.13  85.48  45.46
+ 100.     0.    41.91   0.     0.   100.   100.     0.   100.    33.08]
+so far miou is:  45.806396484375
+[32m[06/23 17:52:49 ScanNet]: [0mTest [306]/[312] cloud
+create chunks
+before:  (165912, 3)
+before:  (165912, 3)
+before:  (165912,)
+after:  (165912, 3)
+after:  (165912, 3)
+after:  (165912,)
+[32m[06/23 17:52:59 ScanNet]: [0m[306]/[312] cloud,  test_oa , test_macc, test_miou: 64.87 81.35 31.14, 
+iou per cls is: [ 76.07  65.43   0.    58.86   0.     0.     0.    15.95   5.85   0.
+   0.32   0.     0.     0.   100.     0.   100.   100.   100.     0.27]
+so far miou is:  45.766841888427734
+[32m[06/23 17:52:59 ScanNet]: [0mTest [307]/[312] cloud
+create chunks
+before:  (194207, 3)
+before:  (194207, 3)
+before:  (194207,)
+after:  (194207, 3)
+after:  (194207, 3)
+after:  (194207,)
+[32m[06/23 17:53:11 ScanNet]: [0m[307]/[312] cloud,  test_oa , test_macc, test_miou: 89.22 93.00 54.90, 
+iou per cls is: [ 82.96  93.29   0.     0.    94.74 100.    92.36  46.35   6.83   0.
+   0.   100.     0.     0.     0.   100.   100.   100.   100.    81.49]
+so far miou is:  45.784271240234375
+[32m[06/23 17:53:11 ScanNet]: [0mTest [308]/[312] cloud
+create chunks
+before:  (222253, 3)
+before:  (222253, 3)
+before:  (222253,)
+after:  (222253, 3)
+after:  (222253, 3)
+after:  (222253,)
+[32m[06/23 17:53:24 ScanNet]: [0m[308]/[312] cloud,  test_oa , test_macc, test_miou: 79.54 88.05 45.69, 
+iou per cls is: [ 77.59  91.61   0.     0.     0.   100.    26.06  55.59   0.     0.
+   0.     0.     0.     0.   100.   100.   100.   100.   100.    62.99]
+so far miou is:  45.75751876831055
+[32m[06/23 17:53:24 ScanNet]: [0mTest [309]/[312] cloud
+create chunks
+before:  (225983, 3)
+before:  (225983, 3)
+before:  (225983,)
+after:  (225983, 3)
+after:  (225983, 3)
+after:  (225983,)
+[32m[06/23 17:53:36 ScanNet]: [0m[309]/[312] cloud,  test_oa , test_macc, test_miou: 66.08 75.42 26.30, 
+iou per cls is: [ 65.2   88.57  42.28   0.77  50.69   0.     1.28  21.6    0.     0.
+  36.81   0.    18.72   0.     0.     0.   100.   100.     0.     0.  ]
+so far miou is:  45.69960403442383
+[32m[06/23 17:53:36 ScanNet]: [0mTest [310]/[312] cloud
+create chunks
+before:  (232453, 3)
+before:  (232453, 3)
+before:  (232453,)
+after:  (232453, 3)
+after:  (232453, 3)
+after:  (232453,)
+[32m[06/23 17:53:49 ScanNet]: [0m[310]/[312] cloud,  test_oa , test_macc, test_miou: 75.87 80.20 46.57, 
+iou per cls is: [ 71.32  93.51   0.     0.    17.61  76.87  20.4    0.     0.    81.34
+  41.4  100.     0.     1.52 100.   100.   100.   100.     0.    27.52]
+so far miou is:  45.682369232177734
+[32m[06/23 17:53:49 ScanNet]: [0mTest [311]/[312] cloud
+create chunks
+before:  (54769, 3)
+before:  (54769, 3)
+before:  (54769,)
+after:  (54769, 3)
+after:  (54769, 3)
+after:  (54769,)
+[32m[06/23 17:53:52 ScanNet]: [0m[311]/[312] cloud,  test_oa , test_macc, test_miou: 83.39 89.87 54.45, 
+iou per cls is: [ 68.9   95.93   0.   100.     0.   100.     0.    55.02   0.   100.
+   0.   100.   100.     0.     0.    36.23  95.09 100.    87.23  50.54]
+so far miou is:  45.80975341796875
+[32m[06/23 17:53:52 ScanNet]: [0m Please select and zip all the files (DON'T INCLUDE THE FOLDER) in research/DGNet/log/scannet/scannet-test-pointnet++-ngpus1-seed8024-20260623-170610-WeFrL6sejCi99vZ2nAaUnx/results and submit it to Scannet Benchmark https://kaldir.vc.in.tum.de/scannet_benchmark/. 
+FINAL
+tp = [9274100 8708420  665211  615879 2644004  486450  919352  792524  737640
+  798143   58796  121829  437821  298807   60848   38081   83521   63217
+   67514  557804]
+union = [13783284  9350945  1911268  1077111  3771588  1098146  1752990  2694476
+  1909277  1368743   348237   307417  1216340   895835   282215   197581
+   119952   133913   114141  1998688]
+ious = [67.285126 93.12877  34.804695 57.17879  70.1032   44.29739  52.444794
+ 29.412916 38.63452  58.31212  16.883904 39.629883 35.994953 33.355137
+ 21.560867 19.273615 69.628685 47.207516 59.149647 27.908506]
+miou = 45.80975341796875
+[32m[06/23 17:53:52 ScanNet]: [0mBest ckpt @E43,  test_oa , test_macc, test_miou: 76.45 58.15 45.81, 
+iou per cls is: [67.29 93.13 34.8  57.18 70.1  44.3  52.44 29.41 38.63 58.31 16.88 39.63
+ 35.99 33.36 21.56 19.27 69.63 47.21 59.15 27.91]

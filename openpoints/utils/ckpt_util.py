@@ -139,7 +139,10 @@ def resume_checkpoint(config, model, optimizer=None, scheduler=None, pretrained_
 
 def load_checkpoint(model, pretrained_path, module=None):
     if not os.path.exists(pretrained_path):
-        raise NotImplementedError('no checkpoint file from path %s...' % pretrained_path)
+        #raise NotImplementedError('no checkpoint file from path %s...' % pretrained_path)
+        raise NotImplementedError(
+    f"Checkpoint not found. Full path: {pretrained_path!r}"
+)
     # load state dict
     state_dict = torch.load(pretrained_path, map_location='cpu')
 

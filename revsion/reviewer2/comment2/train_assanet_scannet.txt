@@ -1,0 +1,664 @@
+launch mp with 1 GPUs, current rank: 0
+[32m[06/22 19:43:29 ScanNet]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 6526
+epoch: 0
+epochs: 100
+ignore_index: -100
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.2
+  ignore_index: -100
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-ScanNet
+  tags: ['scannet', 'train', 'ASSANet', 'ngpus1', 'seed6526']
+  name: scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: True
+test: False
+finetune: False
+mode: train
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/scannet
+pretrained_path: None
+datatransforms:
+  train: ['ChromaticAutoContrast', 'PointsToTensor', 'PointCloudScaling', 'PointCloudCenterAndNormalize', 'PointCloudRotation', 'PointCloudJitter', 'ChromaticDropGPU']
+  val: ['PointsToTensor', 'PointCloudXYZAlign']
+  test: ['PointsToTensor', 'NumpyChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    rotate_dim: 2
+    scale: [0.9, 1.1]
+    mirror: [0.2, -1, -1]
+    angle: [0, 0, 1]
+    color_mean: [0.46259782, 0.46253258, 0.46253258]
+    color_std: [0.693565, 0.6852543, 0.68061745]
+    jitter_sigma: 0.005
+    jitter_clip: 0.02
+    normalize: False
+feature_keys: pos,x,heights
+dataset:
+  common:
+    NAME: ScanNet
+    data_root: ./data/scannet
+    voxel_size: 0.02
+  train:
+    split: train
+    voxel_max: 64000
+    presample: True
+    loop: 6
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: val
+    voxel_max: None
+no_label: False
+num_classes: 20
+batch_size: 16
+val_batch_size: 1
+dataloader:
+  num_workers: 0
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+lr: 0.02
+min_lr: 1e-05
+sched: cosine
+decay_epochs: [70, 90]
+decay_rate: 0.1
+warmup_epochs: 0
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNet2Encoder
+    in_channels: 4
+    strides: [4, 4, 4, 4]
+    blocks: [3, 3, 3, 3]
+    width_scaling: 3
+    layers: 3
+    use_res: True
+    query_as_support: True
+    mlps: [[[16, 16, 32], [32, 32, 64]], [[64, 64, 128], [64, 96, 128]], [[128, 196, 256], [128, 196, 256]], [[256, 256, 512], [256, 384, 512]]]
+    stem_conv: True
+    stem_aggr: True
+    radius: [[0.1, 0.2], [0.2, 0.4], [0.4, 0.8], [0.8, 1.6]]
+    num_samples: [[16, 32], [16, 32], [16, 32], [16, 32]]
+    sampler: fps
+    aggr_args:
+      NAME: ASSA
+      feature_type: assa
+      anisotropic: True
+      reduction: mean
+    group_args:
+      NAME: ballquery
+      use_xyz: True
+      normalize_dp: True
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNet2Decoder
+    fp_mlps: [[64, 64], [128, 128], [256, 256], [512, 512]]
+  cls_args:
+    NAME: SegHead
+    num_classes: 20
+    in_channels: None
+rank: 0
+distributed: False
+mp: False
+task_name: scannet
+cfg_basename: ASSANet
+opts: mode=train
+is_training: True
+run_name: scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe
+run_dir: research/DGNet/log/scannet/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe
+exp_dir: research/DGNet/log/scannet/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe
+log_dir: research/DGNet/log/scannet/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe
+ckpt_dir: research/DGNet/log/scannet/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe/checkpoint
+log_path: research/DGNet/log/scannet/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe.log
+cfg_path: research/DGNet/log/scannet/scannet-train-ASSANet-ngpus1-seed6526-20260622-194329-VgPM6PVCBwdUV8c38S8LZe/cfg.yaml
+[32m[06/22 19:43:29 ScanNet]: [0mradius is modified to [[0.1, 0.2], [0.2, 0.4], [0.4, 0.8], [0.8, 1.6]]
+[32m[06/22 19:43:29 ScanNet]: [0mnum_samples is modified to [[16, 32], [16, 32], [16, 32], [16, 32]]
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.1
+nsample: 16
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.1
+nsample: 16
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.2
+nsample: 16
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.4
+nsample: 16
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 0.8
+nsample: 16
+[32m[06/22 19:43:29 ScanNet]: [0mNAME: ballquery
+use_xyz: True
+normalize_dp: True
+radius: 1.6
+nsample: 32
+[32m[06/22 19:43:33 ScanNet]: [0mBaseSeg(
+  (encoder): PointNet2Encoder(
+    (conv1): Sequential(
+      (0): Conv1d(4, 16, kernel_size=(1,), stride=(1,))
+    )
+    (stem): LocalAggregation(
+      (SA_CONFIG_operator): ASSA(
+        (act): ReLU(inplace=True)
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(16, 16, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(16, 6, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(6, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (2): Sequential(
+            (0): Conv1d(18, 16, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+        )
+        (skip_layer): Conv1d(6, 16, kernel_size=(1,), stride=(1,), bias=False)
+        (grouper): QueryAndGroup()
+      )
+    )
+    (SA_modules): ModuleList(
+      (0): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(16, 16, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(16, 6, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(6, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(18, 32, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(6, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+          (1): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(32, 11, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(11, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(33, 64, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(11, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (1): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(96, 64, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(64, 22, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(22, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(66, 128, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(22, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+          (1): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(128, 64, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(64, 32, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(96, 128, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(32, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (2): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(128, 66, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(66, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(198, 256, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(66, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+          (1): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(128, 66, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(66, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(198, 256, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(66, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (3): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(512, 256, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(256, 86, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(86, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(258, 512, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(86, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+          (1): LocalAggregation(
+            (SA_CONFIG_operator): ASSA(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv1d(512, 256, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv1d(384, 512, kernel_size=(1,), stride=(1,), bias=False)
+                  (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                )
+              )
+              (skip_layer): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+    )
+  )
+  (decoder): PointNet2Decoder(
+    (FP_modules): ModuleList(
+      (0): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(144, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (1): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(352, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (2): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (3): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(1536, 512, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(512, 512, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(64, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[06/22 19:43:33 ScanNet]: [0mNumber of params: 2.4258 M
+[32m[06/22 19:43:33 ScanNet]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.conv1.0.weight",
+      "encoder.stem.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.stem.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.stem.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.stem.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.skip_layer.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.skip_layer.weight",
+      "decoder.FP_modules.0.convs.0.0.weight",
+      "decoder.FP_modules.0.convs.1.0.weight",
+      "decoder.FP_modules.1.convs.0.0.weight",
+      "decoder.FP_modules.1.convs.1.0.weight",
+      "decoder.FP_modules.2.convs.0.0.weight",
+      "decoder.FP_modules.2.convs.1.0.weight",
+      "decoder.FP_modules.3.convs.0.0.weight",
+      "decoder.FP_modules.3.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.conv1.0.bias",
+      "encoder.stem.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.stem.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.stem.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.stem.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.stem.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.stem.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.0.local_aggregations.1.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.1.local_aggregations.1.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.2.local_aggregations.1.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.3.local_aggregations.1.SA_CONFIG_operator.convs.2.1.bias",
+      "decoder.FP_modules.0.convs.0.1.weight",
+      "decoder.FP_modules.0.convs.0.1.bias",
+      "decoder.FP_modules.0.convs.1.1.weight",
+      "decoder.FP_modules.0.convs.1.1.bias",
+      "decoder.FP_modules.1.convs.0.1.weight",
+      "decoder.FP_modules.1.convs.0.1.bias",
+      "decoder.FP_modules.1.convs.1.1.weight",
+      "decoder.FP_modules.1.convs.1.1.bias",
+      "decoder.FP_modules.2.convs.0.1.weight",
+      "decoder.FP_modules.2.convs.0.1.bias",
+      "decoder.FP_modules.2.convs.1.1.weight",
+      "decoder.FP_modules.2.convs.1.1.bias",
+      "decoder.FP_modules.3.convs.0.1.weight",
+      "decoder.FP_modules.3.convs.0.1.bias",
+      "decoder.FP_modules.3.convs.1.1.weight",
+      "decoder.FP_modules.3.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+val
+this recipt: ------------------------
+
+split = val
+data_root = ./data/scannet
+len(data_list) = 312
+first few = ['./data/scannet/val/scene0700_02_inst_nostuff.pth', './data/scannet/val/scene0377_01_inst_nostuff.pth', './data/scannet/val/scene0193_01_inst_nostuff.pth', './data/scannet/val/scene0686_01_inst_nostuff.pth', './data/scannet/val/scene0655_00_inst_nostuff.pth']
+len(self.data) = 312
+
+------------------------
+[32m[06/22 19:43:33 ScanNet]: [0mTotally 312 samples in val set.
+./data/scannet/processed/scannet_val_0.020.pkl load successfully
+[32m[06/22 19:43:34 ScanNet]: [0mlength of validation dataset: 312
+[32m[06/22 19:43:34 ScanNet]: [0mnumber of classes of the dataset: 20
+[32m[06/22 19:43:34 ScanNet]: [0mTraining from scratch
+train
+this recipt: ------------------------
+
+split = train
+data_root = ./data/scannet
+len(data_list) = 1201
+first few = ['./data/scannet/sparse_nonuniform/scene0111_02_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0416_02_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0165_02_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0468_00_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0444_00_inst_nostuff.pth']
+len(self.data) = 1201
+
+------------------------
+[32m[06/22 19:43:34 ScanNet]: [0mTotally 1201 samples in train set.
+./data/scannet/processed/scannet_train_0.020.pkl load successfully
+[32m[06/22 19:43:36 ScanNet]: [0mlength of training dataset: 7206

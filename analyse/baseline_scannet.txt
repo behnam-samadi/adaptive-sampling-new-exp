@@ -1,0 +1,665 @@
+===> Anaconda env loaded
+Wed Jun 10 04:10:58 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.58.03              Driver Version: 595.58.03      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA TITAN RTX               On  |   00000000:04:00.0 Off |                  N/A |
+| 41%   35C    P8              9W /  280W |   12646MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA TITAN RTX               On  |   00000000:0A:00.0 Off |                  N/A |
+| 40%   32C    P8             15W /  260W |   17400MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA TITAN RTX               On  |   00000000:84:00.0 Off |                  N/A |
+| 41%   39C    P8              3W /  280W |   13508MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA TITAN RTX               On  |   00000000:8A:00.0 Off |                  N/A |
+| 40%   41C    P2             61W /  280W |    6834MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         2869002      C   /app/llama-server                     12642MiB |
+|    1   N/A  N/A         2875805      C   VLLM::EngineCore                      17396MiB |
+|    2   N/A  N/A         2869002      C   /app/llama-server                     13504MiB |
+|    3   N/A  N/A         2869069      C   python3                                2380MiB |
+|    3   N/A  N/A         3139840      C   python                                 4450MiB |
++-----------------------------------------------------------------------------------------+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2021 NVIDIA Corporation
+Built on Mon_May__3_19:15:13_PDT_2021
+Cuda compilation tools, release 11.3, V11.3.109
+Build cuda_11.3.r11.3/compiler.29920130_0
+ubuntu135
+4
+launch mp with 1 GPUs, current rank: 0
+[32m[06/10 04:11:01 ScanNet]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 1741
+epoch: 0
+epochs: 100
+ignore_index: -100
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.0
+  ignore_index: -100
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-ScanNet
+  tags: ['test']
+  name: scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: False
+test: False
+finetune: False
+mode: test
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/scannet
+pretrained_path: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/checkpoint/best_model.pth
+datatransforms:
+  train: ['RandomRotateZ', 'RandomScale', 'ChromaticAutoContrast', 'RandomDropFeature', 'NumpyChromaticNormalize']
+  val: ['NumpyChromaticNormalize']
+  test: ['PointsToTensor', 'NumpyChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    rotate_dim: 2
+    scale: [0.8, 1.2]
+    mirror: [0.2, -1, -1]
+    angle: 1
+    color_mean: [0.46259782, 0.46253258, 0.46253258]
+    color_std: [0.693565, 0.6852543, 0.68061745]
+feature_keys: pos,x,heights
+dataset:
+  common:
+    NAME: ScanNet
+    data_root: ./data/scannet
+    voxel_size: 0.02
+  train:
+    split: train
+    voxel_max: 64000
+    presample: True
+    loop: 6
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: val
+    voxel_max: None
+no_label: False
+num_classes: 20
+batch_size: 8
+val_batch_size: 1
+dataloader:
+  num_workers: 0
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+lr: 0.001
+min_lr: None
+sched: multistep
+decay_epochs: [70, 90]
+decay_rate: 0.1
+warmup_epochs: 0
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNet2Encoder
+    in_channels: 7
+    width: None
+    strides: [4, 4, 4, 4]
+    layers: 3
+    use_res: False
+    mlps: [[[32, 32, 64]], [[64, 64, 128]], [[128, 128, 256]], [[256, 256, 512]]]
+    radius: 0.05
+    num_samples: 32
+    sampler: fps
+    aggr_args:
+      NAME: convpool
+      feature_type: dp_fj
+      anisotropic: False
+      reduction: max
+    group_args:
+      NAME: ballquery
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNet2Decoder
+    fp_mlps: [[128, 128, 128], [256, 128], [256, 256], [256, 256]]
+  cls_args:
+    NAME: SegHead
+    num_classes: 20
+    in_channels: None
+rank: 0
+distributed: False
+mp: False
+task_name: scannet
+cfg_basename: pointnet++
+opts: mode=test
+is_training: False
+run_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT
+log_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT
+run_name: scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT
+ckpt_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/checkpoint
+code_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/code
+log_path: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT20260610-041101-SQf3p7TwaBq6vVThJAXLxC.log
+cfg_path: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/cfg.yaml
+[32m[06/10 04:11:01 ScanNet]: [0mradius is modified to [[0.05], [0.1], [0.2], [0.4]]
+[32m[06/10 04:11:01 ScanNet]: [0mnum_samples is modified to [[32], [32], [32], [32]]
+[32m[06/10 04:11:01 ScanNet]: [0mNAME: ballquery
+radius: 0.05
+nsample: 32
+[32m[06/10 04:11:01 ScanNet]: [0mNAME: ballquery
+radius: 0.1
+nsample: 32
+[32m[06/10 04:11:01 ScanNet]: [0mNAME: ballquery
+radius: 0.2
+nsample: 32
+[32m[06/10 04:11:01 ScanNet]: [0mNAME: ballquery
+radius: 0.4
+nsample: 32
+[32m[06/10 04:11:05 ScanNet]: [0mBaseSeg(
+  (encoder): PointNet2Encoder(
+    (SA_modules): ModuleList(
+      (0): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(10, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(32, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (1): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (2): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (3): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+    )
+  )
+  (decoder): PointNet2Decoder(
+    (FP_modules): ModuleList(
+      (0): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(135, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (2): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (1): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(320, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (2): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(384, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (3): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(128, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[06/10 04:11:05 ScanNet]: [0mNumber of params: 0.9662 M
+[32m[06/10 04:11:05 ScanNet]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "decoder.FP_modules.0.convs.0.0.weight",
+      "decoder.FP_modules.0.convs.1.0.weight",
+      "decoder.FP_modules.0.convs.2.0.weight",
+      "decoder.FP_modules.1.convs.0.0.weight",
+      "decoder.FP_modules.1.convs.1.0.weight",
+      "decoder.FP_modules.2.convs.0.0.weight",
+      "decoder.FP_modules.2.convs.1.0.weight",
+      "decoder.FP_modules.3.convs.0.0.weight",
+      "decoder.FP_modules.3.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "decoder.FP_modules.0.convs.0.1.weight",
+      "decoder.FP_modules.0.convs.0.1.bias",
+      "decoder.FP_modules.0.convs.1.1.weight",
+      "decoder.FP_modules.0.convs.1.1.bias",
+      "decoder.FP_modules.0.convs.2.1.weight",
+      "decoder.FP_modules.0.convs.2.1.bias",
+      "decoder.FP_modules.1.convs.0.1.weight",
+      "decoder.FP_modules.1.convs.0.1.bias",
+      "decoder.FP_modules.1.convs.1.1.weight",
+      "decoder.FP_modules.1.convs.1.1.bias",
+      "decoder.FP_modules.2.convs.0.1.weight",
+      "decoder.FP_modules.2.convs.0.1.bias",
+      "decoder.FP_modules.2.convs.1.1.weight",
+      "decoder.FP_modules.2.convs.1.1.bias",
+      "decoder.FP_modules.3.convs.0.1.weight",
+      "decoder.FP_modules.3.convs.0.1.bias",
+      "decoder.FP_modules.3.convs.1.1.weight",
+      "decoder.FP_modules.3.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+val
+this recipt: ------------------------
+
+split = val
+data_root = ./data/scannet
+len(data_list) = 32
+first few = ['./data/scannet/val/scene0030_01_inst_nostuff.pth', './data/scannet/val/scene0050_02_inst_nostuff.pth', './data/scannet/val/scene0081_02_inst_nostuff.pth', './data/scannet/val/scene0077_01_inst_nostuff.pth', './data/scannet/val/scene0046_01_inst_nostuff.pth']
+len(self.data) = 32
+
+------------------------
+[32m[06/10 04:11:05 ScanNet]: [0mTotally 32 samples in val set.
+./data/scannet/processed/scannet_val_0.020.pkl load successfully
+[32m[06/10 04:11:06 ScanNet]: [0mlength of validation dataset: 32
+[32m[06/10 04:11:06 ScanNet]: [0mnumber of classes of the dataset: 20
+[32m[06/10 04:11:06 ScanNet]: [0mSuccessful Loading the ckpt from research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/checkpoint/best_model.pth
+[32m[06/10 04:11:06 ScanNet]: [0mckpts @ 39 epoch( {'best_val': 45.070438385009766} )
+[32m[06/10 04:11:06 ScanNet]: [0mlength of test dataset: 32
+[32m[06/10 04:11:06 ScanNet]: [0mTest [0]/[32] cloud
+[32m[06/10 04:11:38 ScanNet]: [0m[0]/[32] cloud,  test_oa , test_macc, test_miou: 90.01 90.39 57.97, 
+iou per cls is: [ 77.45  96.44   0.     0.    77.43   0.    81.43   1.04  90.65  90.37
+ 100.     0.     0.     0.   100.   100.   100.   100.   100.    44.49]
+so far miou is:  57.96550369262695
+[32m[06/10 04:11:38 ScanNet]: [0mTest [1]/[32] cloud
+[32m[06/10 04:11:53 ScanNet]: [0m[1]/[32] cloud,  test_oa , test_macc, test_miou: 69.68 78.92 40.06, 
+iou per cls is: [ 82.86  91.     0.     0.    66.32  44.27   0.    33.08   0.     0.
+   0.   100.    39.65   0.     0.   100.   100.   100.     0.    44.06]
+so far miou is:  44.08195877075195
+[32m[06/10 04:11:53 ScanNet]: [0mTest [2]/[32] cloud
+[32m[06/10 04:12:04 ScanNet]: [0m[2]/[32] cloud,  test_oa , test_macc, test_miou: 95.41 98.98 63.65, 
+iou per cls is: [  0.    94.19 100.   100.    95.07 100.    83.71 100.     0.     0.
+ 100.     0.     0.     0.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  44.85506057739258
+[32m[06/10 04:12:04 ScanNet]: [0mTest [3]/[32] cloud
+[32m[06/10 04:12:08 ScanNet]: [0m[3]/[32] cloud,  test_oa , test_macc, test_miou: 81.46 87.36 69.37, 
+iou per cls is: [ 68.56  97.28  50.11 100.     0.   100.    27.12  43.07  82.85 100.
+ 100.    28.76   0.     0.   100.   100.   100.   100.   100.    89.65]
+so far miou is:  49.01827621459961
+[32m[06/10 04:12:08 ScanNet]: [0mTest [4]/[32] cloud
+[32m[06/10 04:12:28 ScanNet]: [0m[4]/[32] cloud,  test_oa , test_macc, test_miou: 63.54 69.93 30.37, 
+iou per cls is: [ 60.92  90.18   0.    53.69  58.05   0.     0.    10.5    0.   100.
+   0.     0.     0.    25.77   0.    11.7   41.16  72.46  78.95   3.98]
+so far miou is:  44.99796676635742
+[32m[06/10 04:12:28 ScanNet]: [0mTest [5]/[32] cloud
+[32m[06/10 04:12:35 ScanNet]: [0m[5]/[32] cloud,  test_oa , test_macc, test_miou: 85.67 81.77 43.11, 
+iou per cls is: [ 82.7   94.25   0.     0.     0.   100.     0.    22.18  84.46 100.
+ 100.    56.25   0.     0.   100.     0.35  71.69  17.79   0.    32.52]
+so far miou is:  45.58344650268555
+[32m[06/10 04:12:35 ScanNet]: [0mTest [6]/[32] cloud
+[32m[06/10 04:12:42 ScanNet]: [0m[6]/[32] cloud,  test_oa , test_macc, test_miou: 81.98 83.25 38.56, 
+iou per cls is: [ 78.4   94.64   0.   100.     0.   100.     0.    28.43  73.34   0.
+   0.    53.15   0.     0.     0.     0.02  76.09  36.09 100.    31.13]
+so far miou is:  45.48273468017578
+[32m[06/10 04:12:42 ScanNet]: [0mTest [7]/[32] cloud
+[32m[06/10 04:12:43 ScanNet]: [0m[7]/[32] cloud,  test_oa , test_macc, test_miou: 79.06 94.88 84.81, 
+iou per cls is: [100.    99.69 100.   100.    50.59   0.    46.01 100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  44.61927795410156
+[32m[06/10 04:12:43 ScanNet]: [0mTest [8]/[32] cloud
+[32m[06/10 04:12:50 ScanNet]: [0m[8]/[32] cloud,  test_oa , test_macc, test_miou: 81.33 88.85 82.03, 
+iou per cls is: [ 66.85  96.85   0.   100.   100.   100.   100.    16.93  74.97 100.
+ 100.   100.   100.   100.   100.   100.    95.59  87.15 100.     2.35]
+so far miou is:  45.70695114135742
+[32m[06/10 04:12:50 ScanNet]: [0mTest [9]/[32] cloud
+[32m[06/10 04:13:06 ScanNet]: [0m[9]/[32] cloud,  test_oa , test_macc, test_miou: 67.91 74.27 34.27, 
+iou per cls is: [ 63.7   92.56   1.85  54.79  53.35   0.     0.    15.07   0.   100.
+   0.     0.    70.99  35.81   0.     0.    43.78  76.56  66.41  10.45]
+so far miou is:  45.499549865722656
+[32m[06/10 04:13:06 ScanNet]: [0mTest [10]/[32] cloud
+[32m[06/10 04:13:11 ScanNet]: [0m[10]/[32] cloud,  test_oa , test_macc, test_miou: 81.63 83.94 53.51, 
+iou per cls is: [ 77.47  94.69   0.   100.     0.   100.     0.    29.77  84.43 100.
+ 100.    46.02   0.     0.   100.     0.4   70.49  24.72 100.    42.28]
+so far miou is:  45.240516662597656
+[32m[06/10 04:13:11 ScanNet]: [0mTest [11]/[32] cloud
+[32m[06/10 04:13:26 ScanNet]: [0m[11]/[32] cloud,  test_oa , test_macc, test_miou: 66.47 62.77 38.62, 
+iou per cls is: [ 60.13  91.28   0.    48.97  73.39   0.     0.06  15.49   0.   100.
+   3.15 100.    59.2   35.88   0.    13.37  18.44  72.5   75.41   5.12]
+so far miou is:  45.090023040771484
+[32m[06/10 04:13:26 ScanNet]: [0mTest [12]/[32] cloud
+[32m[06/10 04:13:29 ScanNet]: [0m[12]/[32] cloud,  test_oa , test_macc, test_miou: 85.69 88.60 54.08, 
+iou per cls is: [ 78.84  98.2   43.37 100.    56.48   0.    65.18  72.42   0.     0.
+ 100.     0.71   0.   100.    66.34 100.   100.     0.   100.     0.  ]
+so far miou is:  48.06770706176758
+[32m[06/10 04:13:29 ScanNet]: [0mTest [13]/[32] cloud
+[32m[06/10 04:13:38 ScanNet]: [0m[13]/[32] cloud,  test_oa , test_macc, test_miou: 87.87 92.70 50.98, 
+iou per cls is: [ 83.05  94.97  79.41 100.     0.     0.    34.51   0.     0.     0.
+ 100.    68.94   0.     0.     0.   100.   100.   100.   100.    58.69]
+so far miou is:  49.506561279296875
+[32m[06/10 04:13:38 ScanNet]: [0mTest [14]/[32] cloud
+[32m[06/10 04:13:54 ScanNet]: [0m[14]/[32] cloud,  test_oa , test_macc, test_miou: 61.75 86.55 32.50, 
+iou per cls is: [ 76.01  92.94   0.     0.    63.79  44.48   0.    15.28   0.     0.
+   0.     0.    27.61   0.     0.     0.   100.   100.   100.    29.92]
+so far miou is:  48.634803771972656
+[32m[06/10 04:13:54 ScanNet]: [0mTest [15]/[32] cloud
+[32m[06/10 04:14:02 ScanNet]: [0m[15]/[32] cloud,  test_oa , test_macc, test_miou: 73.37 86.99 34.50, 
+iou per cls is: [ 67.24  95.05   0.     0.    23.22  37.79   0.    28.65   0.     0.
+   0.     0.     0.     0.     0.   100.   100.   100.   100.    37.97]
+so far miou is:  47.9229850769043
+[32m[06/10 04:14:02 ScanNet]: [0mTest [16]/[32] cloud
+[32m[06/10 04:14:15 ScanNet]: [0m[16]/[32] cloud,  test_oa , test_macc, test_miou: 90.66 97.98 52.36, 
+iou per cls is: [  0.    92.51   0.     0.    91.32   0.    63.43 100.     0.     0.
+ 100.     0.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  48.065185546875
+[32m[06/10 04:14:15 ScanNet]: [0mTest [17]/[32] cloud
+[32m[06/10 04:14:40 ScanNet]: [0m[17]/[32] cloud,  test_oa , test_macc, test_miou: 74.38 72.86 36.75, 
+iou per cls is: [ 59.11  97.1   38.96   0.    76.58   0.    52.29  32.95  47.81   0.
+   0.    10.55   0.     0.     0.   100.   100.     4.39 100.    15.32]
+so far miou is:  45.45087814331055
+[32m[06/10 04:14:40 ScanNet]: [0mTest [18]/[32] cloud
+[32m[06/10 04:14:54 ScanNet]: [0m[18]/[32] cloud,  test_oa , test_macc, test_miou: 82.04 88.23 48.42, 
+iou per cls is: [ 81.62  93.67  45.71   0.    66.05  72.23   0.    50.22  31.99   0.
+   0.     0.    48.47 100.   100.   100.   100.     0.     0.    78.46]
+so far miou is:  46.20526885986328
+[32m[06/10 04:14:54 ScanNet]: [0mTest [19]/[32] cloud
+[32m[06/10 04:15:08 ScanNet]: [0m[19]/[32] cloud,  test_oa , test_macc, test_miou: 80.59 92.46 49.68, 
+iou per cls is: [ 52.43  89.84   0.     0.    72.98   0.    65.44  39.59   0.    73.31
+ 100.   100.     0.     0.   100.   100.     0.   100.   100.     0.  ]
+so far miou is:  45.56498336791992
+[32m[06/10 04:15:08 ScanNet]: [0mTest [20]/[32] cloud
+[32m[06/10 04:15:31 ScanNet]: [0m[20]/[32] cloud,  test_oa , test_macc, test_miou: 74.02 75.43 38.97, 
+iou per cls is: [ 54.7   96.5   38.12   0.    85.32   0.    65.47  33.41  20.62   0.
+   0.    24.5    0.     0.     0.   100.   100.    26.94 100.    33.86]
+so far miou is:  44.84896469116211
+[32m[06/10 04:15:31 ScanNet]: [0mTest [21]/[32] cloud
+[32m[06/10 04:15:50 ScanNet]: [0m[21]/[32] cloud,  test_oa , test_macc, test_miou: 94.04 98.57 60.49, 
+iou per cls is: [ 87.54  95.57   0.   100.    94.7    0.    82.77   0.    49.19 100.
+ 100.   100.     0.     0.   100.   100.   100.   100.     0.     0.  ]
+so far miou is:  45.159122467041016
+[32m[06/10 04:15:50 ScanNet]: [0mTest [22]/[32] cloud
+[32m[06/10 04:16:01 ScanNet]: [0m[22]/[32] cloud,  test_oa , test_macc, test_miou: 73.04 86.41 39.53, 
+iou per cls is: [ 66.52  95.69   0.     0.    24.01  53.89   0.    30.47   0.     0.
+   0.     0.     0.   100.     0.   100.   100.   100.   100.    20.12]
+so far miou is:  44.805782318115234
+[32m[06/10 04:16:01 ScanNet]: [0mTest [23]/[32] cloud
+[32m[06/10 04:16:16 ScanNet]: [0m[23]/[32] cloud,  test_oa , test_macc, test_miou: 80.40 89.13 44.46, 
+iou per cls is: [ 85.7   91.76  35.     0.    54.44  59.6    0.    54.14  66.33   0.
+   0.   100.    42.22 100.   100.   100.     0.     0.     0.     0.  ]
+so far miou is:  45.12751007080078
+[32m[06/10 04:16:16 ScanNet]: [0mTest [24]/[32] cloud
+[32m[06/10 04:16:24 ScanNet]: [0m[24]/[32] cloud,  test_oa , test_macc, test_miou: 80.10 88.14 61.47, 
+iou per cls is: [ 67.31  97.75   0.   100.   100.   100.   100.    16.2   68.88   0.
+   0.     0.   100.   100.   100.     0.    90.39  86.55 100.     2.3 ]
+so far miou is:  45.61445617675781
+[32m[06/10 04:16:24 ScanNet]: [0mTest [25]/[32] cloud
+[32m[06/10 04:16:36 ScanNet]: [0m[25]/[32] cloud,  test_oa , test_macc, test_miou: 80.35 86.37 54.40, 
+iou per cls is: [ 86.1   93.43  40.59   0.    45.62  54.15  21.91  62.77  50.04   0.
+   0.     0.    33.42 100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  45.717403411865234
+[32m[06/10 04:16:36 ScanNet]: [0mTest [26]/[32] cloud
+[32m[06/10 04:16:38 ScanNet]: [0m[26]/[32] cloud,  test_oa , test_macc, test_miou: 82.64 95.87 79.20, 
+iou per cls is: [ 74.76  92.22 100.   100.     0.    72.93  74.18   0.     0.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.    69.83]
+so far miou is:  46.05887985229492
+[32m[06/10 04:16:38 ScanNet]: [0mTest [27]/[32] cloud
+[32m[06/10 04:17:03 ScanNet]: [0m[27]/[32] cloud,  test_oa , test_macc, test_miou: 68.71 87.64 51.82, 
+iou per cls is: [ 31.57  89.28   0.     0.    54.5   44.43  55.43   7.19   0.    53.95
+ 100.   100.     0.   100.   100.   100.     0.   100.   100.     0.  ]
+so far miou is:  44.961181640625
+[32m[06/10 04:17:03 ScanNet]: [0mTest [28]/[32] cloud
+[32m[06/10 04:17:06 ScanNet]: [0m[28]/[32] cloud,  test_oa , test_macc, test_miou: 69.86 86.38 57.05, 
+iou per cls is: [ 54.58  93.1   39.93   0.     0.     0.    74.11  11.57  92.09 100.
+ 100.    10.48   0.   100.     0.   100.   100.   100.   100.    65.17]
+so far miou is:  44.97430419921875
+[32m[06/10 04:17:06 ScanNet]: [0mTest [29]/[32] cloud
+[32m[06/10 04:17:42 ScanNet]: [0m[29]/[32] cloud,  test_oa , test_macc, test_miou: 86.65 89.82 56.87, 
+iou per cls is: [ 69.67  96.2    0.     0.    82.37   0.    83.59   0.03  78.61  78.5
+   0.   100.     0.     0.   100.   100.   100.   100.   100.    48.39]
+so far miou is:  45.22751998901367
+[32m[06/10 04:17:42 ScanNet]: [0mTest [30]/[32] cloud
+[32m[06/10 04:18:18 ScanNet]: [0m[30]/[32] cloud,  test_oa , test_macc, test_miou: 87.87 91.17 52.13, 
+iou per cls is: [ 74.5   95.85   0.     0.    81.63   0.    82.82  17.03  91.7   75.02
+   0.     0.     0.   100.     0.   100.   100.   100.   100.    23.99]
+so far miou is:  45.418331146240234
+[32m[06/10 04:18:18 ScanNet]: [0mTest [31]/[32] cloud
+[32m[06/10 04:18:35 ScanNet]: [0m[31]/[32] cloud,  test_oa , test_macc, test_miou: 65.42 87.38 43.73, 
+iou per cls is: [ 75.87  90.13   0.   100.    68.62  50.34   0.    22.92   0.   100.
+   0.     0.    49.1    0.     0.   100.   100.     0.   100.    17.63]
+so far miou is:  45.14932632446289
+[32m[06/10 04:18:35 ScanNet]: [0m Please select and zip all the files (DON'T INCLUDE THE FOLDER) in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed3671-20260608-153021-nkQKR9EvtPrVPuNtijPYtT/results and submit it to Scannet Benchmark https://kaldir.vc.in.tum.de/scannet_benchmark/. 
+FINAL
+tp = [1043031 1005469   43922   19138  356609   73601  167756   86144   83523
+  168317      52   12207   26938   24499    4332    1394   13832    9819
+    8162   41680]
+union = [1469161 1064416  151717   41793  499526  164720  263298  354662  225788
+  242659   12099   35789   77506   86734   31646   25566   19802   15546
+   11078  143795]
+ious = [70.99501    94.46203    28.949951   45.792355   71.38948    44.68249
+ 63.71336    24.289042   36.99178    69.363594    0.42978758 34.108246
+ 34.75602    28.246132   13.688934    5.452554   69.85153    63.160942
+ 73.67756    28.985708  ]
+miou = 45.14932632446289
+[32m[06/10 04:18:35 ScanNet]: [0mBest ckpt @E39,  test_oa , test_macc, test_miou: 78.51 55.43 45.15, 
+iou per cls is: [71.   94.46 28.95 45.79 71.39 44.68 63.71 24.29 36.99 69.36  0.43 34.11
+ 34.76 28.25 13.69  5.45 69.85 63.16 73.68 28.99]

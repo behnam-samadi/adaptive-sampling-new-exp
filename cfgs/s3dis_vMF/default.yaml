@@ -1,4 +1,4 @@
-root_dir: /home/pzy/code/DGNet/log/
+root_dir: /mnt/clientshare/samadi/research/DGNet/log/
 feature_keys: x,heights
 num_classes: 13
 batch_size: 32

@@ -1,0 +1,18 @@
+: length of validation dataset: 68
+[06/19 09:50:50 S3DIS]: number of classes of the dataset: 13
+[06/19 09:50:50 S3DIS]: Successful Loading the ckpt from /mnt/clientshare/samadi/research/DGNet/checkpoints/s3dis_pointnext.pth
+[06/19 09:50:50 S3DIS]: ckpts @ 100 epoch( {'best_val': 67.57476806640625} )
+[06/19 09:50:50 S3DIS]: length of test dataset: 68
+<class 'list'>
+[06/19 09:50:50 S3DIS]: Test [0]/[68] cloud
+Pre PRocessing time:  7.654638290405273
+FPS Time:  120.27253937721252
+Test on 0-th cloud [9]/[10]]: 100%|██████████████████████████████████████████████████████████████████████████| 10/10 [00:21<00:00,  2.19s/it]
+[06/19 09:53:23 S3DIS]: [0]/[68] cloud,  test_oa , test_macc, test_miou: 90.42 96.09 78.83,
+iou per cls is: [ 98.06  98.79  76.74 100.   100.   100.    94.04   0.   100.   100.
+   0.   100.    57.23]
+so far miou is:  78.83495330810547
+[06/19 09:53:23 S3DIS]: Test [1]/[68] cloud
+^CTraceback (most recent call last):
+  File "examples/segmentation/main.py", line 961, in <module>
+    main(0, cfg)

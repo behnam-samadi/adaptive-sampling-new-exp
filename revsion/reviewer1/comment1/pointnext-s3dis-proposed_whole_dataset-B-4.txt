@@ -1,0 +1,1614 @@
+===> Anaconda env loaded
+Thu Jul  2 14:43:53 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.58.03              Driver Version: 595.58.03      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA TITAN RTX               On  |   00000000:04:00.0 Off |                  N/A |
+| 41%   36C    P8             10W /  280W |   12646MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA TITAN RTX               On  |   00000000:0A:00.0 Off |                  N/A |
+| 41%   41C    P2             65W /  260W |   23268MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA TITAN RTX               On  |   00000000:84:00.0 Off |                  N/A |
+| 41%   43C    P8              3W /  280W |   13508MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA TITAN RTX               On  |   00000000:8A:00.0 Off |                  N/A |
+| 43%   62C    P0            101W /  280W |       4MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         3428826      C   /app/llama-server                     12642MiB |
+|    1   N/A  N/A          500022      C   VLLM::EngineCore                      10180MiB |
+|    1   N/A  N/A          797654      C   python3                                2312MiB |
+|    1   N/A  N/A          801284      C   python3                                3468MiB |
+|    1   N/A  N/A         1995768      C   python                                 2516MiB |
+|    1   N/A  N/A         2318485      C   python                                 4788MiB |
+|    2   N/A  N/A         3428826      C   /app/llama-server                     13504MiB |
++-----------------------------------------------------------------------------------------+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2021 NVIDIA Corporation
+Built on Mon_May__3_19:15:13_PDT_2021
+Cuda compilation tools, release 11.3, V11.3.109
+Build cuda_11.3.r11.3/compiler.29920130_0
+ubuntu135
+4
+launch mp with 1 GPUs, current rank: 0
+[32m[07/02 14:43:57 S3DIS]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 6688
+epoch: 0
+epochs: 100
+ignore_index: 255
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.2
+  ignore_index: 255
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-S3DIS
+  tags: ['test']
+  name: s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: True
+test: False
+finetune: False
+mode: test
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/s3dis
+pretrained_path: /mnt/clientshare/samadi/research/DGNet/checkpoints/s3dis_pointnext_l.pth
+datatransforms:
+  train: ['ChromaticAutoContrast', 'PointsToTensor', 'PointCloudScaling', 'PointCloudXYZAlign', 'PointCloudRotation', 'PointCloudJitter', 'ChromaticDropGPU', 'ChromaticNormalize']
+  val: ['PointsToTensor', 'PointCloudXYZAlign', 'ChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    scale: [0.9, 1.1]
+    angle: [0, 0, 1]
+    jitter_sigma: 0.005
+    jitter_clip: 0.02
+feature_keys: x,heights
+num_classes: 13
+batch_size: 8
+val_batch_size: 1
+dataloader:
+  num_workers: 6
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+sched: cosine
+warmup_epochs: 0
+min_lr: 1e-05
+lr: 0.01
+log_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi
+dataset:
+  common:
+    NAME: S3DIS
+    data_root: ./data/S3DIS/s3disfull
+    data_raw: raw
+    test_area: 5
+    voxel_size: 0.04
+    rate: 0
+  train:
+    split: train
+    voxel_max: 24000
+    loop: 30
+    presample: False
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: test
+    voxel_max: None
+    presample: False
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNextEncoder
+    blocks: [1, 3, 5, 3, 3]
+    strides: [1, 4, 4, 4, 4]
+    sa_layers: 1
+    sa_use_res: False
+    width: 32
+    in_channels: 4
+    expansion: 4
+    radius: 0.1
+    nsample: 32
+    aggr_args:
+      feature_type: dp_fj
+      reduction: max
+    group_args:
+      NAME: ballquery
+      normalize_dp: True
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNextDecoder
+  cls_args:
+    NAME: SegHead
+    num_classes: 13
+    in_channels: None
+    norm_args:
+      norm: bn
+b_val: 4
+rank: 0
+distributed: False
+mp: False
+task_name: s3dis
+cfg_basename: pointnext-l
+opts: b_val=4-mode=test
+is_training: False
+run_name: s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi
+run_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi
+ckpt_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi/checkpoint
+code_dir: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi/code
+log_path: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi.log
+cfg_path: research/DGNet/log/s3dis/s3dis-test-pointnext-l-ngpus1-seed6688-20260702-144357-XxVVmnoXh4H2vMtzpuCHVi/cfg.yaml
+[32m[07/02 14:43:57 S3DIS]: [0mradius: [[0.1], [0.1, 0.2, 0.2], [0.2, 0.4, 0.4, 0.4, 0.4], [0.4, 0.8, 0.8], [0.8, 1.6, 1.6]],
+ nsample: [[32], [32, 32, 32], [32, 32, 32, 32, 32], [32, 32, 32], [32, 32, 32]]
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.1
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 1.6
+nsample: 32
+[32m[07/02 14:43:57 S3DIS]: [0mNAME: ballquery
+normalize_dp: True
+radius: 1.6
+nsample: 32
+[32m[07/02 14:44:01 S3DIS]: [0mBaseSeg(
+  (encoder): PointNextEncoder(
+    (encoder): Sequential(
+      (0): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(4, 32, kernel_size=(1,), stride=(1,))
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(35, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(64, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(64, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (2): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(67, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (3): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (4): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (3): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(131, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(256, 1024, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(1024, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(256, 1024, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(1024, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (4): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(259, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(515, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(512, 2048, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(2048, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(515, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(512, 2048, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(2048, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (decoder): PointNextDecoder(
+    (decoder): Sequential(
+      (0): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(96, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(192, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (2): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (3): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(32, 13, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[07/02 14:44:01 S3DIS]: [0mNumber of params: 7.1251 M
+[32m[07/02 14:44:01 S3DIS]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.encoder.0.0.convs.0.0.weight",
+      "encoder.encoder.1.0.convs.0.0.weight",
+      "encoder.encoder.1.1.convs.convs.0.0.weight",
+      "encoder.encoder.1.1.pwconv.0.0.weight",
+      "encoder.encoder.1.1.pwconv.1.0.weight",
+      "encoder.encoder.1.2.convs.convs.0.0.weight",
+      "encoder.encoder.1.2.pwconv.0.0.weight",
+      "encoder.encoder.1.2.pwconv.1.0.weight",
+      "encoder.encoder.2.0.convs.0.0.weight",
+      "encoder.encoder.2.1.convs.convs.0.0.weight",
+      "encoder.encoder.2.1.pwconv.0.0.weight",
+      "encoder.encoder.2.1.pwconv.1.0.weight",
+      "encoder.encoder.2.2.convs.convs.0.0.weight",
+      "encoder.encoder.2.2.pwconv.0.0.weight",
+      "encoder.encoder.2.2.pwconv.1.0.weight",
+      "encoder.encoder.2.3.convs.convs.0.0.weight",
+      "encoder.encoder.2.3.pwconv.0.0.weight",
+      "encoder.encoder.2.3.pwconv.1.0.weight",
+      "encoder.encoder.2.4.convs.convs.0.0.weight",
+      "encoder.encoder.2.4.pwconv.0.0.weight",
+      "encoder.encoder.2.4.pwconv.1.0.weight",
+      "encoder.encoder.3.0.convs.0.0.weight",
+      "encoder.encoder.3.1.convs.convs.0.0.weight",
+      "encoder.encoder.3.1.pwconv.0.0.weight",
+      "encoder.encoder.3.1.pwconv.1.0.weight",
+      "encoder.encoder.3.2.convs.convs.0.0.weight",
+      "encoder.encoder.3.2.pwconv.0.0.weight",
+      "encoder.encoder.3.2.pwconv.1.0.weight",
+      "encoder.encoder.4.0.convs.0.0.weight",
+      "encoder.encoder.4.1.convs.convs.0.0.weight",
+      "encoder.encoder.4.1.pwconv.0.0.weight",
+      "encoder.encoder.4.1.pwconv.1.0.weight",
+      "encoder.encoder.4.2.convs.convs.0.0.weight",
+      "encoder.encoder.4.2.pwconv.0.0.weight",
+      "encoder.encoder.4.2.pwconv.1.0.weight",
+      "decoder.decoder.0.0.convs.0.0.weight",
+      "decoder.decoder.0.0.convs.1.0.weight",
+      "decoder.decoder.1.0.convs.0.0.weight",
+      "decoder.decoder.1.0.convs.1.0.weight",
+      "decoder.decoder.2.0.convs.0.0.weight",
+      "decoder.decoder.2.0.convs.1.0.weight",
+      "decoder.decoder.3.0.convs.0.0.weight",
+      "decoder.decoder.3.0.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.encoder.0.0.convs.0.0.bias",
+      "encoder.encoder.1.0.convs.0.1.weight",
+      "encoder.encoder.1.0.convs.0.1.bias",
+      "encoder.encoder.1.1.convs.convs.0.1.weight",
+      "encoder.encoder.1.1.convs.convs.0.1.bias",
+      "encoder.encoder.1.1.pwconv.0.1.weight",
+      "encoder.encoder.1.1.pwconv.0.1.bias",
+      "encoder.encoder.1.1.pwconv.1.1.weight",
+      "encoder.encoder.1.1.pwconv.1.1.bias",
+      "encoder.encoder.1.2.convs.convs.0.1.weight",
+      "encoder.encoder.1.2.convs.convs.0.1.bias",
+      "encoder.encoder.1.2.pwconv.0.1.weight",
+      "encoder.encoder.1.2.pwconv.0.1.bias",
+      "encoder.encoder.1.2.pwconv.1.1.weight",
+      "encoder.encoder.1.2.pwconv.1.1.bias",
+      "encoder.encoder.2.0.convs.0.1.weight",
+      "encoder.encoder.2.0.convs.0.1.bias",
+      "encoder.encoder.2.1.convs.convs.0.1.weight",
+      "encoder.encoder.2.1.convs.convs.0.1.bias",
+      "encoder.encoder.2.1.pwconv.0.1.weight",
+      "encoder.encoder.2.1.pwconv.0.1.bias",
+      "encoder.encoder.2.1.pwconv.1.1.weight",
+      "encoder.encoder.2.1.pwconv.1.1.bias",
+      "encoder.encoder.2.2.convs.convs.0.1.weight",
+      "encoder.encoder.2.2.convs.convs.0.1.bias",
+      "encoder.encoder.2.2.pwconv.0.1.weight",
+      "encoder.encoder.2.2.pwconv.0.1.bias",
+      "encoder.encoder.2.2.pwconv.1.1.weight",
+      "encoder.encoder.2.2.pwconv.1.1.bias",
+      "encoder.encoder.2.3.convs.convs.0.1.weight",
+      "encoder.encoder.2.3.convs.convs.0.1.bias",
+      "encoder.encoder.2.3.pwconv.0.1.weight",
+      "encoder.encoder.2.3.pwconv.0.1.bias",
+      "encoder.encoder.2.3.pwconv.1.1.weight",
+      "encoder.encoder.2.3.pwconv.1.1.bias",
+      "encoder.encoder.2.4.convs.convs.0.1.weight",
+      "encoder.encoder.2.4.convs.convs.0.1.bias",
+      "encoder.encoder.2.4.pwconv.0.1.weight",
+      "encoder.encoder.2.4.pwconv.0.1.bias",
+      "encoder.encoder.2.4.pwconv.1.1.weight",
+      "encoder.encoder.2.4.pwconv.1.1.bias",
+      "encoder.encoder.3.0.convs.0.1.weight",
+      "encoder.encoder.3.0.convs.0.1.bias",
+      "encoder.encoder.3.1.convs.convs.0.1.weight",
+      "encoder.encoder.3.1.convs.convs.0.1.bias",
+      "encoder.encoder.3.1.pwconv.0.1.weight",
+      "encoder.encoder.3.1.pwconv.0.1.bias",
+      "encoder.encoder.3.1.pwconv.1.1.weight",
+      "encoder.encoder.3.1.pwconv.1.1.bias",
+      "encoder.encoder.3.2.convs.convs.0.1.weight",
+      "encoder.encoder.3.2.convs.convs.0.1.bias",
+      "encoder.encoder.3.2.pwconv.0.1.weight",
+      "encoder.encoder.3.2.pwconv.0.1.bias",
+      "encoder.encoder.3.2.pwconv.1.1.weight",
+      "encoder.encoder.3.2.pwconv.1.1.bias",
+      "encoder.encoder.4.0.convs.0.1.weight",
+      "encoder.encoder.4.0.convs.0.1.bias",
+      "encoder.encoder.4.1.convs.convs.0.1.weight",
+      "encoder.encoder.4.1.convs.convs.0.1.bias",
+      "encoder.encoder.4.1.pwconv.0.1.weight",
+      "encoder.encoder.4.1.pwconv.0.1.bias",
+      "encoder.encoder.4.1.pwconv.1.1.weight",
+      "encoder.encoder.4.1.pwconv.1.1.bias",
+      "encoder.encoder.4.2.convs.convs.0.1.weight",
+      "encoder.encoder.4.2.convs.convs.0.1.bias",
+      "encoder.encoder.4.2.pwconv.0.1.weight",
+      "encoder.encoder.4.2.pwconv.0.1.bias",
+      "encoder.encoder.4.2.pwconv.1.1.weight",
+      "encoder.encoder.4.2.pwconv.1.1.bias",
+      "decoder.decoder.0.0.convs.0.1.weight",
+      "decoder.decoder.0.0.convs.0.1.bias",
+      "decoder.decoder.0.0.convs.1.1.weight",
+      "decoder.decoder.0.0.convs.1.1.bias",
+      "decoder.decoder.1.0.convs.0.1.weight",
+      "decoder.decoder.1.0.convs.0.1.bias",
+      "decoder.decoder.1.0.convs.1.1.weight",
+      "decoder.decoder.1.0.convs.1.1.bias",
+      "decoder.decoder.2.0.convs.0.1.weight",
+      "decoder.decoder.2.0.convs.0.1.bias",
+      "decoder.decoder.2.0.convs.1.1.weight",
+      "decoder.decoder.2.0.convs.1.1.bias",
+      "decoder.decoder.3.0.convs.0.1.weight",
+      "decoder.decoder.3.0.convs.0.1.bias",
+      "decoder.decoder.3.0.convs.1.1.weight",
+      "decoder.decoder.3.0.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+./data/S3DIS/s3disfull raw ./data/S3DIS/s3disfull/raw
+./data/S3DIS/s3disfull/raw load successfully
+label rate is 100%
+./data/S3DIS/s3disfull/processed/s3dis_val_area5_0.040.pkl load successfully
+[32m[07/02 14:44:01 S3DIS]: [0m
+Totally 68 samples in val set
+[32m[07/02 14:44:01 S3DIS]: [0mlength of validation dataset: 68
+[32m[07/02 14:44:01 S3DIS]: [0mnumber of classes of the dataset: 13
+[32m[07/02 14:44:01 S3DIS]: [0mSuccessful Loading the ckpt from /mnt/clientshare/samadi/research/DGNet/checkpoints/s3dis_pointnext_l.pth
+[32m[07/02 14:44:01 S3DIS]: [0mckpts @ 79 epoch( {'best_val': 67.57476806640625} )
+[32m[07/02 14:44:01 S3DIS]: [0mlength of test dataset: 68
+<class 'list'>
+[32m[07/02 14:44:01 S3DIS]: [0mTest [0]/[68] cloud
+create chunks
+before:  (719348, 3)
+before:  (719348, 3)
+before:  (719348,)
+after:  (719348, 3)
+after:  (719348, 3)
+after:  (719348,)
+[32m[07/02 14:44:26 S3DIS]: [0m[0]/[68] cloud,  test_oa , test_macc, test_miou: 88.49 94.26 61.40, 
+iou per cls is: [ 98.12  98.69  73.49   0.     0.   100.    76.61   0.   100.   100.
+   0.   100.    51.23]
+so far miou is:  61.39610290527344
+[32m[07/02 14:44:26 S3DIS]: [0mTest [1]/[68] cloud
+create chunks
+before:  (640250, 3)
+before:  (640250, 3)
+before:  (640250,)
+after:  (640250, 3)
+after:  (640250, 3)
+after:  (640250,)
+[32m[07/02 14:44:53 S3DIS]: [0m[1]/[68] cloud,  test_oa , test_macc, test_miou: 84.27 92.53 58.80, 
+iou per cls is: [ 93.18  98.84  67.64   0.     0.   100.    62.81   0.   100.   100.
+   0.   100.    41.97]
+so far miou is:  60.10468673706055
+[32m[07/02 14:44:53 S3DIS]: [0mTest [2]/[68] cloud
+create chunks
+before:  (1047554, 3)
+before:  (1047554, 3)
+before:  (1047554,)
+after:  (1047554, 3)
+after:  (1047554, 3)
+after:  (1047554,)
+[32m[07/02 14:45:23 S3DIS]: [0m[2]/[68] cloud,  test_oa , test_macc, test_miou: 86.00 84.40 63.28, 
+iou per cls is: [ 90.38  98.33  78.72   0.    27.66  53.44  87.91  85.91  92.74 100.
+   0.    89.23  18.26]
+so far miou is:  64.2067642211914
+[32m[07/02 14:45:23 S3DIS]: [0mTest [3]/[68] cloud
+create chunks
+before:  (1922357, 3)
+before:  (1922357, 3)
+before:  (1922357,)
+after:  (1922357, 3)
+after:  (1922357, 3)
+after:  (1922357,)
+[32m[07/02 14:47:09 S3DIS]: [0m[3]/[68] cloud,  test_oa , test_macc, test_miou: 85.40 83.89 69.07, 
+iou per cls is: [ 96.78  96.98  71.99   0.    30.48 100.    79.79  85.95  90.14  82.34
+  83.39  18.21  61.92]
+so far miou is:  64.45252990722656
+[32m[07/02 14:47:09 S3DIS]: [0mTest [4]/[68] cloud
+create chunks
+before:  (1507439, 3)
+before:  (1507439, 3)
+before:  (1507439,)
+after:  (1507439, 3)
+after:  (1507439, 3)
+after:  (1507439,)
+[32m[07/02 14:48:29 S3DIS]: [0m[4]/[68] cloud,  test_oa , test_macc, test_miou: 77.57 70.82 41.16, 
+iou per cls is: [91.25 99.58 54.85  0.   31.18 35.7  29.48 68.78 91.67  0.    0.   15.12
+ 17.52]
+so far miou is:  58.23906326293945
+[32m[07/02 14:48:29 S3DIS]: [0mTest [5]/[68] cloud
+create chunks
+before:  (3361173, 3)
+before:  (3361173, 3)
+before:  (3361173,)
+after:  (3361173, 3)
+after:  (3361173, 3)
+after:  (3361173,)
+[32m[07/02 14:54:53 S3DIS]: [0m[5]/[68] cloud,  test_oa , test_macc, test_miou: 71.08 71.26 27.75, 
+iou per cls is: [65.06 98.54 42.45  0.   37.    0.    0.05  0.    0.   62.78 22.15  0.
+ 32.66]
+so far miou is:  50.7934684753418
+[32m[07/02 14:54:53 S3DIS]: [0mTest [6]/[68] cloud
+create chunks
+before:  (1210360, 3)
+before:  (1210360, 3)
+before:  (1210360,)
+after:  (1210360, 3)
+after:  (1210360, 3)
+after:  (1210360,)
+[32m[07/02 14:56:03 S3DIS]: [0m[6]/[68] cloud,  test_oa , test_macc, test_miou: 88.88 94.46 70.22, 
+iou per cls is: [ 97.12  98.89  80.39   0.     0.   100.    44.58 100.   100.   100.
+   0.   100.    91.86]
+so far miou is:  51.373687744140625
+[32m[07/02 14:56:03 S3DIS]: [0mTest [7]/[68] cloud
+create chunks
+before:  (811640, 3)
+before:  (811640, 3)
+before:  (811640,)
+after:  (811640, 3)
+after:  (811640, 3)
+after:  (811640,)
+[32m[07/02 14:56:31 S3DIS]: [0m[7]/[68] cloud,  test_oa , test_macc, test_miou: 96.15 96.20 80.39, 
+iou per cls is: [ 97.91  98.16  93.91 100.     0.   100.    55.12 100.   100.   100.
+ 100.   100.     0.  ]
+so far miou is:  51.79155731201172
+[32m[07/02 14:56:31 S3DIS]: [0mTest [8]/[68] cloud
+create chunks
+before:  (810024, 3)
+before:  (810024, 3)
+before:  (810024,)
+after:  (810024, 3)
+after:  (810024, 3)
+after:  (810024,)
+[32m[07/02 14:57:00 S3DIS]: [0m[8]/[68] cloud,  test_oa , test_macc, test_miou: 95.28 92.99 82.78, 
+iou per cls is: [ 99.02  98.43  92.21 100.     0.   100.    18.63 100.   100.   100.
+ 100.   100.    67.86]
+so far miou is:  51.975990295410156
+[32m[07/02 14:57:00 S3DIS]: [0mTest [9]/[68] cloud
+create chunks
+before:  (1286197, 3)
+before:  (1286197, 3)
+before:  (1286197,)
+after:  (1286197, 3)
+after:  (1286197, 3)
+after:  (1286197,)
+[32m[07/02 14:58:33 S3DIS]: [0m[9]/[68] cloud,  test_oa , test_macc, test_miou: 75.12 84.91 57.87, 
+iou per cls is: [ 97.61  98.38  53.47   0.     0.     0.    22.17 100.   100.   100.
+   0.   100.    80.67]
+so far miou is:  51.40086364746094
+[32m[07/02 14:58:33 S3DIS]: [0mTest [10]/[68] cloud
+create chunks
+before:  (743965, 3)
+before:  (743965, 3)
+before:  (743965,)
+after:  (743965, 3)
+after:  (743965, 3)
+after:  (743965,)
+[32m[07/02 14:58:56 S3DIS]: [0m[10]/[68] cloud,  test_oa , test_macc, test_miou: 78.83 90.33 42.98, 
+iou per cls is: [ 98.64  98.02  66.2    0.     0.   100.    14.64   0.     0.     0.
+   0.   100.    81.24]
+so far miou is:  51.25455093383789
+[32m[07/02 14:58:56 S3DIS]: [0mTest [11]/[68] cloud
+create chunks
+before:  (1280664, 3)
+before:  (1280664, 3)
+before:  (1280664,)
+after:  (1280664, 3)
+after:  (1280664, 3)
+after:  (1280664,)
+[32m[07/02 15:00:27 S3DIS]: [0m[11]/[68] cloud,  test_oa , test_macc, test_miou: 74.22 80.58 41.70, 
+iou per cls is: [ 96.84  98.    38.69   0.     8.17   0.    25.36   0.   100.   100.
+   0.     0.    75.05]
+so far miou is:  50.867183685302734
+[32m[07/02 15:00:27 S3DIS]: [0mTest [12]/[68] cloud
+create chunks
+before:  (4481021, 3)
+before:  (4481021, 3)
+before:  (4481021,)
+after:  (4481021, 3)
+after:  (4481021, 3)
+after:  (4481021,)
+[32m[07/02 15:10:41 S3DIS]: [0m[12]/[68] cloud,  test_oa , test_macc, test_miou: 83.82 91.85 43.84, 
+iou per cls is: [ 93.48  97.65  73.07   0.     0.   100.    25.53   0.     0.   100.
+   0.     0.    80.16]
+so far miou is:  50.94809341430664
+[32m[07/02 15:10:41 S3DIS]: [0mTest [13]/[68] cloud
+create chunks
+before:  (1272342, 3)
+before:  (1272342, 3)
+before:  (1272342,)
+after:  (1272342, 3)
+after:  (1272342, 3)
+after:  (1272342,)
+[32m[07/02 15:12:11 S3DIS]: [0m[13]/[68] cloud,  test_oa , test_macc, test_miou: 85.40 89.16 42.07, 
+iou per cls is: [ 98.64  99.01  76.73   0.     0.   100.    10.3    0.   100.     0.
+   0.     0.    62.29]
+so far miou is:  50.828182220458984
+[32m[07/02 15:12:11 S3DIS]: [0mTest [14]/[68] cloud
+create chunks
+before:  (1027382, 3)
+before:  (1027382, 3)
+before:  (1027382,)
+after:  (1027382, 3)
+after:  (1027382, 3)
+after:  (1027382,)
+[32m[07/02 15:12:40 S3DIS]: [0m[14]/[68] cloud,  test_oa , test_macc, test_miou: 92.89 83.99 41.40, 
+iou per cls is: [ 98.56  98.95  95.22 100.     0.     0.    75.15   0.     0.     2.02
+  39.78   0.    28.55]
+so far miou is:  48.522315979003906
+[32m[07/02 15:12:40 S3DIS]: [0mTest [15]/[68] cloud
+create chunks
+before:  (2865301, 3)
+before:  (2865301, 3)
+before:  (2865301,)
+after:  (2865301, 3)
+after:  (2865301, 3)
+after:  (2865301,)
+[32m[07/02 15:17:30 S3DIS]: [0m[15]/[68] cloud,  test_oa , test_macc, test_miou: 92.68 84.43 40.27, 
+iou per cls is: [ 98.25  99.79  88.39   0.     0.   100.    28.13   0.     0.    24.46
+  53.4    0.    31.06]
+so far miou is:  48.54695129394531
+[32m[07/02 15:17:30 S3DIS]: [0mTest [16]/[68] cloud
+create chunks
+before:  (1100937, 3)
+before:  (1100937, 3)
+before:  (1100937,)
+after:  (1100937, 3)
+after:  (1100937, 3)
+after:  (1100937,)
+[32m[07/02 15:18:11 S3DIS]: [0m[16]/[68] cloud,  test_oa , test_macc, test_miou: 93.61 94.83 77.84, 
+iou per cls is: [ 98.44  98.68  88.32 100.   100.   100.    70.83 100.   100.   100.
+   0.     0.    55.61]
+so far miou is:  48.68014144897461
+[32m[07/02 15:18:11 S3DIS]: [0mTest [17]/[68] cloud
+create chunks
+before:  (1256534, 3)
+before:  (1256534, 3)
+before:  (1256534,)
+after:  (1256534, 3)
+after:  (1256534, 3)
+after:  (1256534,)
+[32m[07/02 15:19:34 S3DIS]: [0m[17]/[68] cloud,  test_oa , test_macc, test_miou: 86.26 90.24 42.59, 
+iou per cls is: [ 97.08  98.74  73.55   0.     0.   100.    12.06   0.   100.     0.
+   0.     0.    72.25]
+so far miou is:  48.65056228637695
+[32m[07/02 15:19:34 S3DIS]: [0mTest [18]/[68] cloud
+create chunks
+before:  (526782, 3)
+before:  (526782, 3)
+before:  (526782,)
+after:  (526782, 3)
+after:  (526782, 3)
+after:  (526782,)
+[32m[07/02 15:19:44 S3DIS]: [0m[18]/[68] cloud,  test_oa , test_macc, test_miou: 95.51 89.45 73.30, 
+iou per cls is: [ 97.25  99.11  91.47 100.     0.   100.    65.07   0.   100.   100.
+ 100.   100.     0.  ]
+so far miou is:  48.7681884765625
+[32m[07/02 15:19:44 S3DIS]: [0mTest [19]/[68] cloud
+create chunks
+before:  (1201560, 3)
+before:  (1201560, 3)
+before:  (1201560,)
+after:  (1201560, 3)
+after:  (1201560, 3)
+after:  (1201560,)
+[32m[07/02 15:20:50 S3DIS]: [0m[19]/[68] cloud,  test_oa , test_macc, test_miou: 90.34 80.73 61.43, 
+iou per cls is: [ 87.62  99.08  86.24   0.    19.35   0.    28.04 100.   100.   100.
+   0.   100.    78.26]
+so far miou is:  48.75808334350586
+[32m[07/02 15:20:50 S3DIS]: [0mTest [20]/[68] cloud
+create chunks
+before:  (1162766, 3)
+before:  (1162766, 3)
+before:  (1162766,)
+after:  (1162766, 3)
+after:  (1162766, 3)
+after:  (1162766,)
+[32m[07/02 15:21:46 S3DIS]: [0m[20]/[68] cloud,  test_oa , test_macc, test_miou: 93.73 94.41 61.92, 
+iou per cls is: [ 99.73  97.3   66.95 100.     0.   100.     0.    81.7   90.93 100.
+   0.     0.    68.41]
+so far miou is:  49.22004699707031
+[32m[07/02 15:21:46 S3DIS]: [0mTest [21]/[68] cloud
+create chunks
+before:  (816136, 3)
+before:  (816136, 3)
+before:  (816136,)
+after:  (816136, 3)
+after:  (816136, 3)
+after:  (816136,)
+[32m[07/02 15:22:14 S3DIS]: [0m[21]/[68] cloud,  test_oa , test_macc, test_miou: 82.00 80.19 56.47, 
+iou per cls is: [93.91 98.21 47.88  0.   18.7  68.17 81.67 92.06 95.21  0.   81.06 21.14
+ 36.07]
+so far miou is:  50.651302337646484
+[32m[07/02 15:22:14 S3DIS]: [0mTest [22]/[68] cloud
+create chunks
+before:  (752349, 3)
+before:  (752349, 3)
+before:  (752349,)
+after:  (752349, 3)
+after:  (752349, 3)
+after:  (752349,)
+[32m[07/02 15:22:37 S3DIS]: [0m[22]/[68] cloud,  test_oa , test_macc, test_miou: 85.85 78.94 65.47, 
+iou per cls is: [ 97.15  97.71  59.16   0.     1.78  80.35  90.2   78.91  91.27 100.
+  82.42  18.21  54.  ]
+so far miou is:  51.5846061706543
+[32m[07/02 15:22:37 S3DIS]: [0mTest [23]/[68] cloud
+create chunks
+before:  (868668, 3)
+before:  (868668, 3)
+before:  (868668,)
+after:  (868668, 3)
+after:  (868668, 3)
+after:  (868668,)
+[32m[07/02 15:23:05 S3DIS]: [0m[23]/[68] cloud,  test_oa , test_macc, test_miou: 91.93 88.72 71.69, 
+iou per cls is: [ 96.04  97.32  71.08   0.    33.49  54.98  90.34  68.5   77.75 100.
+  93.57  85.9   62.97]
+so far miou is:  53.24881362915039
+[32m[07/02 15:23:05 S3DIS]: [0mTest [24]/[68] cloud
+create chunks
+before:  (844731, 3)
+before:  (844731, 3)
+before:  (844731,)
+after:  (844731, 3)
+after:  (844731, 3)
+after:  (844731,)
+[32m[07/02 15:23:34 S3DIS]: [0m[24]/[68] cloud,  test_oa , test_macc, test_miou: 81.24 82.82 58.45, 
+iou per cls is: [ 94.71  96.1   63.76   0.    36.28  16.62  82.46  78.09  76.34 100.
+  70.05   0.    45.44]
+so far miou is:  53.385257720947266
+[32m[07/02 15:23:34 S3DIS]: [0mTest [25]/[68] cloud
+create chunks
+before:  (1031980, 3)
+before:  (1031980, 3)
+before:  (1031980,)
+after:  (1031980, 3)
+after:  (1031980, 3)
+after:  (1031980,)
+[32m[07/02 15:24:03 S3DIS]: [0m[25]/[68] cloud,  test_oa , test_macc, test_miou: 86.25 85.63 71.44, 
+iou per cls is: [ 97.86  97.57  58.27   0.    17.48  76.82  83.03  81.3   94.75 100.
+  86.47  81.35  53.85]
+so far miou is:  54.476444244384766
+[32m[07/02 15:24:03 S3DIS]: [0mTest [26]/[68] cloud
+create chunks
+before:  (1192488, 3)
+before:  (1192488, 3)
+before:  (1192488,)
+after:  (1192488, 3)
+after:  (1192488, 3)
+after:  (1192488,)
+[32m[07/02 15:25:06 S3DIS]: [0m[26]/[68] cloud,  test_oa , test_macc, test_miou: 80.45 77.31 61.07, 
+iou per cls is: [ 96.49  97.53  59.27   0.     1.12   5.08  84.86  57.27  87.15 100.
+  69.15  73.98  61.97]
+so far miou is:  54.56525421142578
+[32m[07/02 15:25:06 S3DIS]: [0mTest [27]/[68] cloud
+create chunks
+before:  (1317779, 3)
+before:  (1317779, 3)
+before:  (1317779,)
+after:  (1317779, 3)
+after:  (1317779, 3)
+after:  (1317779,)
+[32m[07/02 15:26:25 S3DIS]: [0m[27]/[68] cloud,  test_oa , test_macc, test_miou: 82.17 76.34 61.45, 
+iou per cls is: [ 96.76  98.57  65.53   0.    46.63   0.11  86.3   84.67  78.14 100.
+  62.58  33.64  45.95]
+so far miou is:  54.655765533447266
+[32m[07/02 15:26:25 S3DIS]: [0mTest [28]/[68] cloud
+create chunks
+before:  (745900, 3)
+before:  (745900, 3)
+before:  (745900,)
+after:  (745900, 3)
+after:  (745900, 3)
+after:  (745900,)
+[32m[07/02 15:26:47 S3DIS]: [0m[28]/[68] cloud,  test_oa , test_macc, test_miou: 87.79 75.18 62.17, 
+iou per cls is: [ 95.5   98.34  85.84   0.     6.74 100.    92.31  83.92  80.78 100.
+  31.56   0.15  33.13]
+so far miou is:  54.56288146972656
+[32m[07/02 15:26:47 S3DIS]: [0mTest [29]/[68] cloud
+create chunks
+before:  (1012866, 3)
+before:  (1012866, 3)
+before:  (1012866,)
+after:  (1012866, 3)
+after:  (1012866, 3)
+after:  (1012866,)
+[32m[07/02 15:27:16 S3DIS]: [0m[29]/[68] cloud,  test_oa , test_macc, test_miou: 85.86 91.56 48.03, 
+iou per cls is: [ 95.28  98.4   89.59   0.     0.     0.    88.55  51.02   0.     0.
+  56.83 100.    44.73]
+so far miou is:  54.48906707763672
+[32m[07/02 15:27:16 S3DIS]: [0mTest [30]/[68] cloud
+create chunks
+before:  (1310739, 3)
+before:  (1310739, 3)
+before:  (1310739,)
+after:  (1310739, 3)
+after:  (1310739, 3)
+after:  (1310739,)
+[32m[07/02 15:28:34 S3DIS]: [0m[30]/[68] cloud,  test_oa , test_macc, test_miou: 84.16 86.54 62.91, 
+iou per cls is: [ 98.38  97.9   64.12   0.     7.49   0.    49.29  95.89  85.64 100.
+  90.82  44.88  83.44]
+so far miou is:  54.82192611694336
+[32m[07/02 15:28:34 S3DIS]: [0mTest [31]/[68] cloud
+create chunks
+before:  (1641506, 3)
+before:  (1641506, 3)
+before:  (1641506,)
+after:  (1641506, 3)
+after:  (1641506, 3)
+after:  (1641506,)
+[32m[07/02 15:30:16 S3DIS]: [0m[31]/[68] cloud,  test_oa , test_macc, test_miou: 86.37 83.19 55.46, 
+iou per cls is: [ 91.88  98.88  76.73   0.     0.   100.    70.78  85.4   93.31   0.
+  60.43   5.78  37.78]
+so far miou is:  54.825191497802734
+[32m[07/02 15:30:16 S3DIS]: [0mTest [32]/[68] cloud
+create chunks
+before:  (867248, 3)
+before:  (867248, 3)
+before:  (867248,)
+after:  (867248, 3)
+after:  (867248, 3)
+after:  (867248,)
+[32m[07/02 15:30:44 S3DIS]: [0m[32]/[68] cloud,  test_oa , test_macc, test_miou: 88.20 79.38 65.79, 
+iou per cls is: [ 94.69  98.11  64.09   0.     0.23  74.75  93.81  81.19  96.35 100.
+  89.21   4.37  58.54]
+so far miou is:  55.091312408447266
+[32m[07/02 15:30:44 S3DIS]: [0mTest [33]/[68] cloud
+create chunks
+before:  (513674, 3)
+before:  (513674, 3)
+before:  (513674,)
+after:  (513674, 3)
+after:  (513674, 3)
+after:  (513674,)
+[32m[07/02 15:30:54 S3DIS]: [0m[33]/[68] cloud,  test_oa , test_macc, test_miou: 88.60 90.01 74.90, 
+iou per cls is: [ 97.16  97.03  84.67   0.    49.27 100.    84.81  90.66  90.16 100.
+  52.42 100.    27.59]
+so far miou is:  55.18797302246094
+[32m[07/02 15:30:54 S3DIS]: [0mTest [34]/[68] cloud
+create chunks
+before:  (2047655, 3)
+before:  (2047655, 3)
+before:  (2047655,)
+after:  (2047655, 3)
+after:  (2047655, 3)
+after:  (2047655,)
+[32m[07/02 15:32:36 S3DIS]: [0m[34]/[68] cloud,  test_oa , test_macc, test_miou: 89.37 88.22 65.92, 
+iou per cls is: [ 97.98  99.57  78.84   0.    38.03   0.    87.8   90.42  91.67 100.
+  35.09  94.6   42.98]
+so far miou is:  55.62358856201172
+[32m[07/02 15:32:36 S3DIS]: [0mTest [35]/[68] cloud
+create chunks
+before:  (789364, 3)
+before:  (789364, 3)
+before:  (789364,)
+after:  (789364, 3)
+after:  (789364, 3)
+after:  (789364,)
+[32m[07/02 15:33:04 S3DIS]: [0m[35]/[68] cloud,  test_oa , test_macc, test_miou: 85.87 79.95 64.78, 
+iou per cls is: [ 94.34  97.46  70.35   0.    23.31  22.52  84.79  85.31  91.55 100.
+  83.34  27.42  61.75]
+so far miou is:  55.736366271972656
+[32m[07/02 15:33:04 S3DIS]: [0mTest [36]/[68] cloud
+create chunks
+before:  (897251, 3)
+before:  (897251, 3)
+before:  (897251,)
+after:  (897251, 3)
+after:  (897251, 3)
+after:  (897251,)
+[32m[07/02 15:33:33 S3DIS]: [0m[36]/[68] cloud,  test_oa , test_macc, test_miou: 88.40 87.38 71.78, 
+iou per cls is: [ 96.37  96.23  72.83   0.    27.44  69.13  81.09  82.95  89.66 100.
+  86.25  76.5   54.75]
+so far miou is:  56.193607330322266
+[32m[07/02 15:33:33 S3DIS]: [0mTest [37]/[68] cloud
+create chunks
+before:  (1588824, 3)
+before:  (1588824, 3)
+before:  (1588824,)
+after:  (1588824, 3)
+after:  (1588824, 3)
+after:  (1588824,)
+[32m[07/02 15:35:14 S3DIS]: [0m[37]/[68] cloud,  test_oa , test_macc, test_miou: 75.07 71.00 54.77, 
+iou per cls is: [90.52 93.17 39.92  0.   41.32 31.05 82.32 71.87 82.18 59.49 58.72 26.29
+ 35.23]
+so far miou is:  56.255794525146484
+[32m[07/02 15:35:14 S3DIS]: [0mTest [38]/[68] cloud
+create chunks
+before:  (633286, 3)
+before:  (633286, 3)
+before:  (633286,)
+after:  (633286, 3)
+after:  (633286, 3)
+after:  (633286,)
+[32m[07/02 15:35:39 S3DIS]: [0m[38]/[68] cloud,  test_oa , test_macc, test_miou: 80.87 80.45 59.39, 
+iou per cls is: [ 88.69  94.96  65.35   0.     0.    72.93  66.62  65.46  97.7  100.
+  78.4    0.    41.96]
+so far miou is:  56.254093170166016
+[32m[07/02 15:35:39 S3DIS]: [0mTest [39]/[68] cloud
+create chunks
+before:  (744988, 3)
+before:  (744988, 3)
+before:  (744988,)
+after:  (744988, 3)
+after:  (744988, 3)
+after:  (744988,)
+[32m[07/02 15:36:01 S3DIS]: [0m[39]/[68] cloud,  test_oa , test_macc, test_miou: 78.75 74.99 58.05, 
+iou per cls is: [ 90.42  96.69  57.21   0.    39.5   20.4   79.74  65.48  89.35 100.
+  81.45   0.    34.42]
+so far miou is:  56.20417022705078
+[32m[07/02 15:36:01 S3DIS]: [0mTest [40]/[68] cloud
+create chunks
+before:  (737347, 3)
+before:  (737347, 3)
+before:  (737347,)
+after:  (737347, 3)
+after:  (737347, 3)
+after:  (737347,)
+[32m[07/02 15:36:24 S3DIS]: [0m[40]/[68] cloud,  test_oa , test_macc, test_miou: 87.09 82.25 69.46, 
+iou per cls is: [ 92.48  98.2   73.9    0.    12.92  72.7   76.62  87.97  86.65 100.
+  80.29  74.15  47.12]
+so far miou is:  56.46247100830078
+[32m[07/02 15:36:24 S3DIS]: [0mTest [41]/[68] cloud
+create chunks
+before:  (777028, 3)
+before:  (777028, 3)
+before:  (777028,)
+after:  (777028, 3)
+after:  (777028, 3)
+after:  (777028,)
+[32m[07/02 15:36:46 S3DIS]: [0m[41]/[68] cloud,  test_oa , test_macc, test_miou: 89.26 81.17 67.97, 
+iou per cls is: [ 93.61  98.09  80.45   0.    26.2   92.41  84.13  79.09  92.5  100.
+  89.37   8.36  39.41]
+so far miou is:  56.603065490722656
+[32m[07/02 15:36:46 S3DIS]: [0mTest [42]/[68] cloud
+create chunks
+before:  (1654230, 3)
+before:  (1654230, 3)
+before:  (1654230,)
+after:  (1654230, 3)
+after:  (1654230, 3)
+after:  (1654230,)
+[32m[07/02 15:38:29 S3DIS]: [0m[42]/[68] cloud,  test_oa , test_macc, test_miou: 75.29 78.12 63.28, 
+iou per cls is: [ 92.5   97.36  51.14   0.    35.52  47.89  92.74  82.49  92.84 100.
+  21.9   74.3   33.93]
+so far miou is:  56.629085540771484
+[32m[07/02 15:38:29 S3DIS]: [0mTest [43]/[68] cloud
+create chunks
+before:  (760563, 3)
+before:  (760563, 3)
+before:  (760563,)
+after:  (760563, 3)
+after:  (760563, 3)
+after:  (760563,)
+[32m[07/02 15:38:51 S3DIS]: [0m[43]/[68] cloud,  test_oa , test_macc, test_miou: 86.25 86.61 65.26, 
+iou per cls is: [ 92.84  97.6   60.     0.     0.    61.92  78.29  75.51  92.91 100.
+  83.52  54.99  50.85]
+so far miou is:  56.79346466064453
+[32m[07/02 15:38:51 S3DIS]: [0mTest [44]/[68] cloud
+create chunks
+before:  (481837, 3)
+before:  (481837, 3)
+before:  (481837,)
+after:  (481837, 3)
+after:  (481837, 3)
+after:  (481837,)
+[32m[07/02 15:39:00 S3DIS]: [0m[44]/[68] cloud,  test_oa , test_macc, test_miou: 93.58 93.82 74.18, 
+iou per cls is: [ 93.66  96.64  89.7    0.     0.   100.    89.79  79.75  89.07 100.
+  88.1   75.01  62.63]
+so far miou is:  56.970211029052734
+[32m[07/02 15:39:00 S3DIS]: [0mTest [45]/[68] cloud
+create chunks
+before:  (818107, 3)
+before:  (818107, 3)
+before:  (818107,)
+after:  (818107, 3)
+after:  (818107, 3)
+after:  (818107,)
+[32m[07/02 15:39:29 S3DIS]: [0m[45]/[68] cloud,  test_oa , test_macc, test_miou: 79.87 83.69 60.58, 
+iou per cls is: [ 92.31  99.03  48.05   0.    18.44  73.26  77.16  77.68  92.2    0.
+  64.92 100.    44.48]
+so far miou is:  57.091163635253906
+[32m[07/02 15:39:29 S3DIS]: [0mTest [46]/[68] cloud
+create chunks
+before:  (809428, 3)
+before:  (809428, 3)
+before:  (809428,)
+after:  (809428, 3)
+after:  (809428, 3)
+after:  (809428,)
+[32m[07/02 15:39:57 S3DIS]: [0m[46]/[68] cloud,  test_oa , test_macc, test_miou: 81.44 82.14 67.79, 
+iou per cls is: [ 92.88  99.02  64.59   0.     2.47  82.35  88.59  73.75  69.99 100.
+  59.22 100.    48.39]
+so far miou is:  57.15062713623047
+[32m[07/02 15:39:57 S3DIS]: [0mTest [47]/[68] cloud
+create chunks
+before:  (852519, 3)
+before:  (852519, 3)
+before:  (852519,)
+after:  (852519, 3)
+after:  (852519, 3)
+after:  (852519,)
+[32m[07/02 15:40:26 S3DIS]: [0m[47]/[68] cloud,  test_oa , test_macc, test_miou: 83.23 79.58 64.03, 
+iou per cls is: [ 92.22  99.53  66.79   0.     8.52  36.52  84.44  90.02  95.15 100.
+  73.43  37.4   48.34]
+so far miou is:  57.19374084472656
+[32m[07/02 15:40:26 S3DIS]: [0mTest [48]/[68] cloud
+create chunks
+before:  (889970, 3)
+before:  (889970, 3)
+before:  (889970,)
+after:  (889970, 3)
+after:  (889970, 3)
+after:  (889970,)
+[32m[07/02 15:40:54 S3DIS]: [0m[48]/[68] cloud,  test_oa , test_macc, test_miou: 78.56 80.85 64.78, 
+iou per cls is: [ 89.72  97.65  53.35   0.    22.74  61.47  74.29  55.72  95.94 100.
+  73.97  78.74  38.54]
+so far miou is:  57.31576919555664
+[32m[07/02 15:40:54 S3DIS]: [0mTest [49]/[68] cloud
+create chunks
+before:  (909089, 3)
+before:  (909089, 3)
+before:  (909089,)
+after:  (909089, 3)
+after:  (909089, 3)
+after:  (909089,)
+[32m[07/02 15:41:23 S3DIS]: [0m[49]/[68] cloud,  test_oa , test_macc, test_miou: 95.60 96.41 85.89, 
+iou per cls is: [ 97.82  96.54  88.59   0.   100.   100.    96.15  87.08  94.08 100.
+  91.75  88.5   76.02]
+so far miou is:  57.63335037231445
+[32m[07/02 15:41:23 S3DIS]: [0mTest [50]/[68] cloud
+create chunks
+before:  (1232000, 3)
+before:  (1232000, 3)
+before:  (1232000,)
+after:  (1232000, 3)
+after:  (1232000, 3)
+after:  (1232000,)
+[32m[07/02 15:42:38 S3DIS]: [0m[50]/[68] cloud,  test_oa , test_macc, test_miou: 87.35 83.29 61.33, 
+iou per cls is: [ 97.06  97.6   86.16   0.     0.   100.    79.2   66.07  93.28 100.
+  51.23   0.2   26.55]
+so far miou is:  57.475013732910156
+[32m[07/02 15:42:38 S3DIS]: [0mTest [51]/[68] cloud
+create chunks
+before:  (2575390, 3)
+before:  (2575390, 3)
+before:  (2575390,)
+after:  (2575390, 3)
+after:  (2575390, 3)
+after:  (2575390,)
+[32m[07/02 15:48:28 S3DIS]: [0m[51]/[68] cloud,  test_oa , test_macc, test_miou: 76.00 76.04 50.78, 
+iou per cls is: [ 80.2   98.    65.34   0.    14.87 100.    63.53  63.76  72.7    0.
+  45.22  10.12  46.4 ]
+so far miou is:  56.95517349243164
+[32m[07/02 15:48:28 S3DIS]: [0mTest [52]/[68] cloud
+create chunks
+before:  (2721241, 3)
+before:  (2721241, 3)
+before:  (2721241,)
+after:  (2721241, 3)
+after:  (2721241, 3)
+after:  (2721241,)
+[32m[07/02 15:53:20 S3DIS]: [0m[52]/[68] cloud,  test_oa , test_macc, test_miou: 72.30 78.57 44.26, 
+iou per cls is: [81.58 97.25 51.23  0.   18.59  0.   74.73 48.96 67.33 37.04 55.89  0.
+ 42.82]
+so far miou is:  56.44605255126953
+[32m[07/02 15:53:20 S3DIS]: [0mTest [53]/[68] cloud
+create chunks
+before:  (928712, 3)
+before:  (928712, 3)
+before:  (928712,)
+after:  (928712, 3)
+after:  (928712, 3)
+after:  (928712,)
+[32m[07/02 15:53:49 S3DIS]: [0m[53]/[68] cloud,  test_oa , test_macc, test_miou: 88.61 81.62 68.21, 
+iou per cls is: [ 96.17  97.65  86.3    0.49   0.   100.    69.05  81.16  86.81 100.
+  47.29  73.78  48.  ]
+so far miou is:  56.543731689453125
+[32m[07/02 15:53:49 S3DIS]: [0mTest [54]/[68] cloud
+create chunks
+before:  (820397, 3)
+before:  (820397, 3)
+before:  (820397,)
+after:  (820397, 3)
+after:  (820397, 3)
+after:  (820397,)
+[32m[07/02 15:54:17 S3DIS]: [0m[54]/[68] cloud,  test_oa , test_macc, test_miou: 91.14 86.91 72.67, 
+iou per cls is: [ 94.39  97.69  76.3    0.    31.23  80.07  79.08  77.95  95.59 100.
+  89.46  83.85  39.06]
+so far miou is:  56.7951774597168
+[32m[07/02 15:54:17 S3DIS]: [0mTest [55]/[68] cloud
+create chunks
+before:  (2495982, 3)
+before:  (2495982, 3)
+before:  (2495982,)
+after:  (2495982, 3)
+after:  (2495982, 3)
+after:  (2495982,)
+[32m[07/02 15:59:17 S3DIS]: [0m[55]/[68] cloud,  test_oa , test_macc, test_miou: 81.78 77.44 58.38, 
+iou per cls is: [ 97.4   96.32  76.75   0.    36.44 100.    12.24  59.88  72.27 100.
+  57.18   3.    47.41]
+so far miou is:  56.49789047241211
+[32m[07/02 15:59:17 S3DIS]: [0mTest [56]/[68] cloud
+create chunks
+before:  (1423998, 3)
+before:  (1423998, 3)
+before:  (1423998,)
+after:  (1423998, 3)
+after:  (1423998, 3)
+after:  (1423998,)
+[32m[07/02 16:00:36 S3DIS]: [0m[56]/[68] cloud,  test_oa , test_macc, test_miou: 82.10 84.21 66.88, 
+iou per cls is: [ 91.    97.45  48.74   0.    23.73  55.04  83.1   91.86  81.18 100.
+  63.71  85.34  48.23]
+so far miou is:  56.710784912109375
+[32m[07/02 16:00:36 S3DIS]: [0mTest [57]/[68] cloud
+create chunks
+before:  (844478, 3)
+before:  (844478, 3)
+before:  (844478,)
+after:  (844478, 3)
+after:  (844478, 3)
+after:  (844478,)
+[32m[07/02 16:01:05 S3DIS]: [0m[57]/[68] cloud,  test_oa , test_macc, test_miou: 88.28 88.16 66.70, 
+iou per cls is: [ 96.31  97.2   71.6    0.    29.84  57.19  88.25  89.23  95.75 100.
+  84.63   0.    57.11]
+so far miou is:  56.85166931152344
+[32m[07/02 16:01:05 S3DIS]: [0mTest [58]/[68] cloud
+create chunks
+before:  (766453, 3)
+before:  (766453, 3)
+before:  (766453,)
+after:  (766453, 3)
+after:  (766453, 3)
+after:  (766453,)
+[32m[07/02 16:01:27 S3DIS]: [0m[58]/[68] cloud,  test_oa , test_macc, test_miou: 88.19 89.50 61.24, 
+iou per cls is: [ 92.11  97.92  75.93   0.     0.    67.54  79.21  91.85  96.32 100.
+  82.3    0.    12.97]
+so far miou is:  56.94789505004883
+[32m[07/02 16:01:27 S3DIS]: [0mTest [59]/[68] cloud
+create chunks
+before:  (750592, 3)
+before:  (750592, 3)
+before:  (750592,)
+after:  (750592, 3)
+after:  (750592, 3)
+after:  (750592,)
+[32m[07/02 16:01:50 S3DIS]: [0m[59]/[68] cloud,  test_oa , test_macc, test_miou: 89.05 89.99 69.04, 
+iou per cls is: [ 96.77  97.45  70.94   0.     0.    54.84  87.04  85.26  81.24 100.
+  83.53  91.71  48.75]
+so far miou is:  57.12999725341797
+[32m[07/02 16:01:50 S3DIS]: [0mTest [60]/[68] cloud
+create chunks
+before:  (821442, 3)
+before:  (821442, 3)
+before:  (821442,)
+after:  (821442, 3)
+after:  (821442, 3)
+after:  (821442,)
+[32m[07/02 16:02:18 S3DIS]: [0m[60]/[68] cloud,  test_oa , test_macc, test_miou: 88.37 81.99 69.18, 
+iou per cls is: [ 96.26  97.41  61.31   0.     0.96  72.75  84.64  82.22  96.39 100.
+  85.84  59.37  62.21]
+so far miou is:  57.28815841674805
+[32m[07/02 16:02:18 S3DIS]: [0mTest [61]/[68] cloud
+create chunks
+before:  (884812, 3)
+before:  (884812, 3)
+before:  (884812,)
+after:  (884812, 3)
+after:  (884812, 3)
+after:  (884812,)
+[32m[07/02 16:02:47 S3DIS]: [0m[61]/[68] cloud,  test_oa , test_macc, test_miou: 90.95 89.53 73.40, 
+iou per cls is: [ 97.96  95.56  75.74   0.    43.54  36.08  92.41  94.15  94.49 100.
+  89.37  90.36  44.5 ]
+so far miou is:  57.511409759521484
+[32m[07/02 16:02:47 S3DIS]: [0mTest [62]/[68] cloud
+create chunks
+before:  (780337, 3)
+before:  (780337, 3)
+before:  (780337,)
+after:  (780337, 3)
+after:  (780337, 3)
+after:  (780337,)
+[32m[07/02 16:03:10 S3DIS]: [0m[62]/[68] cloud,  test_oa , test_macc, test_miou: 88.36 90.21 61.30, 
+iou per cls is: [91.27 95.21 79.3   0.    0.   54.4  87.7  68.64 91.43 84.11 90.72  0.
+ 54.13]
+so far miou is:  57.87714385986328
+[32m[07/02 16:03:10 S3DIS]: [0mTest [63]/[68] cloud
+create chunks
+before:  (721359, 3)
+before:  (721359, 3)
+before:  (721359,)
+after:  (721359, 3)
+after:  (721359, 3)
+after:  (721359,)
+[32m[07/02 16:03:32 S3DIS]: [0m[63]/[68] cloud,  test_oa , test_macc, test_miou: 73.63 93.09 53.55, 
+iou per cls is: [ 94.68  97.72  75.76   0.     0.   100.     0.     0.   100.   100.
+   0.   100.    27.97]
+so far miou is:  57.754432678222656
+[32m[07/02 16:03:32 S3DIS]: [0mTest [64]/[68] cloud
+create chunks
+before:  (637533, 3)
+before:  (637533, 3)
+before:  (637533,)
+after:  (637533, 3)
+after:  (637533, 3)
+after:  (637533,)
+[32m[07/02 16:03:58 S3DIS]: [0m[64]/[68] cloud,  test_oa , test_macc, test_miou: 55.42 77.03 35.01, 
+iou per cls is: [ 73.65  95.66  33.77   0.    16.15   0.    58.78   0.     0.   100.
+  47.94   0.    29.21]
+so far miou is:  57.66032409667969
+[32m[07/02 16:03:58 S3DIS]: [0mTest [65]/[68] cloud
+create chunks
+before:  (780299, 3)
+before:  (780299, 3)
+before:  (780299,)
+after:  (780299, 3)
+after:  (780299, 3)
+after:  (780299,)
+[32m[07/02 16:04:20 S3DIS]: [0m[65]/[68] cloud,  test_oa , test_macc, test_miou: 49.53 77.67 49.53, 
+iou per cls is: [  2.02  96.55  47.91   0.     0.   100.    36.38 100.   100.   100.
+  32.15   0.    28.9 ]
+so far miou is:  57.394691467285156
+[32m[07/02 16:04:20 S3DIS]: [0mTest [66]/[68] cloud
+create chunks
+before:  (175538, 3)
+before:  (175538, 3)
+before:  (175538,)
+after:  (175538, 3)
+after:  (175538, 3)
+after:  (175538,)
+[32m[07/02 16:04:23 S3DIS]: [0m[66]/[68] cloud,  test_oa , test_macc, test_miou: 52.71 80.44 40.84, 
+iou per cls is: [  0.    99.47  44.82   0.     0.   100.    45.03 100.     0.   100.
+   0.     0.    41.64]
+so far miou is:  57.348907470703125
+[32m[07/02 16:04:23 S3DIS]: [0mTest [67]/[68] cloud
+create chunks
+before:  (685639, 3)
+before:  (685639, 3)
+before:  (685639,)
+after:  (685639, 3)
+after:  (685639, 3)
+after:  (685639,)
+[32m[07/02 16:04:45 S3DIS]: [0m[67]/[68] cloud,  test_oa , test_macc, test_miou: 82.66 81.49 55.46, 
+iou per cls is: [ 87.69  98.63  91.09   0.     0.   100.    31.38  15.29  59.3  100.
+   0.   100.    37.65]
+so far miou is:  57.25471496582031
+FINAL
+tp = [14580333 12935180 19321306       70   625085  1165923  1551146  2554559
+  1330517   111885  6462596   451879  4454113]
+union = [16065166 13194956 27088932   550608  3727801  2802386  2813252  3310062
+  1563885   224970 10002478   977061  9312547]
+ious = [9.0757439e+01 9.8031250e+01 7.1325462e+01 1.2713218e-02 1.6768196e+01
+ 4.1604652e+01 5.5137115e+01 7.7175560e+01 8.5077675e+01 4.9733299e+01
+ 6.4609947e+01 4.6248802e+01 4.7829159e+01]
+miou = 57.25471496582031
+[32m[07/02 16:04:45 S3DIS]: [0mBest ckpt @E79,  test_oa , test_macc, test_miou: 83.40 65.60 57.25, 
+iou per cls is: [90.76 98.03 71.33  0.01 16.77 41.6  55.14 77.18 85.08 49.73 64.61 46.25
+ 47.83]

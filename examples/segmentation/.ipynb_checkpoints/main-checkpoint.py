@@ -556,7 +556,7 @@ def test(model, data_list, cfg, num_votes=1):
     dataset_name = cfg.dataset.common.NAME.lower()
     len_data = len(data_list)
 
-    cfg.save_path = cfg.get('save_path', f'/userhome/PointNeXt/results/{cfg.task_name}/{cfg.dataset.test.split}/{cfg.cfg_basename}')
+    cfg.save_path = cfg.get('save_path', f'/mnt/clientshare/samadi/PointNeXt/results/{cfg.task_name}/{cfg.dataset.test.split}/{cfg.cfg_basename}')
     if 'semantickitti' in cfg.dataset.common.NAME.lower():
         cfg.save_path = os.path.join(cfg.save_path, str(cfg.dataset.test.test_id + 11), 'predictions')
     os.makedirs(cfg.save_path, exist_ok=True)
@@ -641,7 +641,7 @@ def test(model, data_list, cfg, num_votes=1):
                 center_i = torch.sum(all_feat[pred==i,:],dim=0)
                 center_i = F.normalize(center_i,p=2,dim=0)
                 sim_i = torch.mm(all_feat,center_i.reshape(-1,1))
-                np.save(os.path.join('/userhome', f'sim-{i}.npy'), sim_i.cpu().numpy())
+                np.save(os.path.join('/mnt/clientshare/samadi', f'sim-{i}.npy'), sim_i.cpu().numpy())
             gt = label.cpu().numpy().squeeze() if label is not None else None
             pred = pred.cpu().numpy().squeeze()
             gt = cfg.cmap[gt, :] if gt is not None else None
@@ -652,7 +652,7 @@ def test(model, data_list, cfg, num_votes=1):
             else:
                 file_name = f'{dataset_name}-{cloud_idx}'
             tmp=all_logits.argmax(dim=1)
-            np.save(os.path.join('/userhome', 'area5-22.npy'), np.concatenate((coord,tmp.unsqueeze(dim=1).cpu().numpy()),axis=1))
+            np.save(os.path.join('/mnt/clientshare/samadi', 'area5-22.npy'), np.concatenate((coord,tmp.unsqueeze(dim=1).cpu().numpy()),axis=1))
 
             #write_obj(coord, feat,
             #          os.path.join(cfg.vis_dir, f'input-{file_name}.obj'))

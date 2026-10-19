@@ -1,0 +1,589 @@
+launch mp with 1 GPUs, current rank: 0
+[32m[06/22 19:50:47 ScanNet]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 644
+epoch: 0
+epochs: 100
+ignore_index: -100
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.0
+  ignore_index: -100
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-ScanNet
+  tags: ['scannet', 'train', 'pointnet++', 'ngpus1', 'seed644']
+  name: scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: True
+test: False
+finetune: False
+mode: train
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/scannet
+pretrained_path: None
+datatransforms:
+  train: ['RandomRotateZ', 'RandomScale', 'ChromaticAutoContrast', 'RandomDropFeature', 'NumpyChromaticNormalize']
+  val: ['NumpyChromaticNormalize']
+  test: ['PointsToTensor', 'NumpyChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    rotate_dim: 2
+    scale: [0.8, 1.2]
+    mirror: [0.2, -1, -1]
+    angle: 1
+    color_mean: [0.46259782, 0.46253258, 0.46253258]
+    color_std: [0.693565, 0.6852543, 0.68061745]
+feature_keys: pos,x,heights
+dataset:
+  common:
+    NAME: ScanNet
+    data_root: ./data/scannet
+    voxel_size: 0.02
+  train:
+    split: train
+    voxel_max: 64000
+    presample: True
+    loop: 6
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: val
+    voxel_max: None
+no_label: False
+num_classes: 20
+batch_size: 12
+val_batch_size: 1
+dataloader:
+  num_workers: 0
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+lr: 0.001
+min_lr: None
+sched: multistep
+decay_epochs: [70, 90]
+decay_rate: 0.1
+warmup_epochs: 0
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNet2Encoder
+    in_channels: 7
+    width: None
+    strides: [4, 4, 4, 4]
+    layers: 3
+    use_res: False
+    mlps: [[[32, 32, 64]], [[64, 64, 128]], [[128, 128, 256]], [[256, 256, 512]]]
+    radius: 0.05
+    num_samples: 32
+    sampler: fps
+    aggr_args:
+      NAME: convpool
+      feature_type: dp_fj
+      anisotropic: False
+      reduction: max
+    group_args:
+      NAME: ballquery
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNet2Decoder
+    fp_mlps: [[128, 128, 128], [256, 128], [256, 256], [256, 256]]
+  cls_args:
+    NAME: SegHead
+    num_classes: 20
+    in_channels: None
+rank: 0
+distributed: False
+mp: False
+task_name: scannet
+cfg_basename: pointnet++
+opts: 
+is_training: True
+run_name: scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF
+run_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF
+exp_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF
+log_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF
+ckpt_dir: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint
+log_path: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF.log
+cfg_path: research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/cfg.yaml
+[32m[06/22 19:50:47 ScanNet]: [0mradius is modified to [[0.05], [0.1], [0.2], [0.4]]
+[32m[06/22 19:50:47 ScanNet]: [0mnum_samples is modified to [[32], [32], [32], [32]]
+[32m[06/22 19:50:47 ScanNet]: [0mNAME: ballquery
+radius: 0.05
+nsample: 32
+[32m[06/22 19:50:47 ScanNet]: [0mNAME: ballquery
+radius: 0.1
+nsample: 32
+[32m[06/22 19:50:47 ScanNet]: [0mNAME: ballquery
+radius: 0.2
+nsample: 32
+[32m[06/22 19:50:47 ScanNet]: [0mNAME: ballquery
+radius: 0.4
+nsample: 32
+[32m[06/22 19:50:51 ScanNet]: [0mBaseSeg(
+  (encoder): PointNet2Encoder(
+    (SA_modules): ModuleList(
+      (0): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(10, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(32, 32, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(32, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (1): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (2): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(128, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+      (3): PointNetSAModuleMSG(
+        (local_aggregations): ModuleList(
+          (0): LocalAggregation(
+            (SA_CONFIG_operator): ConvPool(
+              (act): ReLU(inplace=True)
+              (convs): Sequential(
+                (0): Sequential(
+                  (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (1): Sequential(
+                  (0): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+                (2): Sequential(
+                  (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                  (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                  (2): ReLU(inplace=True)
+                )
+              )
+              (grouper): QueryAndGroup()
+            )
+          )
+        )
+      )
+    )
+  )
+  (decoder): PointNet2Decoder(
+    (FP_modules): ModuleList(
+      (0): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(135, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (2): Sequential(
+            (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (1): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(320, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 128, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (2): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(384, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+      (3): PointNetFPModule(
+        (convs): Sequential(
+          (0): Sequential(
+            (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+          (1): Sequential(
+            (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+            (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): ReLU(inplace=True)
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(128, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[06/22 19:50:51 ScanNet]: [0mNumber of params: 0.9662 M
+[32m[06/22 19:50:51 ScanNet]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.0.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.0.weight",
+      "decoder.FP_modules.0.convs.0.0.weight",
+      "decoder.FP_modules.0.convs.1.0.weight",
+      "decoder.FP_modules.0.convs.2.0.weight",
+      "decoder.FP_modules.1.convs.0.0.weight",
+      "decoder.FP_modules.1.convs.1.0.weight",
+      "decoder.FP_modules.2.convs.0.0.weight",
+      "decoder.FP_modules.2.convs.1.0.weight",
+      "decoder.FP_modules.3.convs.0.0.weight",
+      "decoder.FP_modules.3.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.0.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.1.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.2.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.0.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.1.1.bias",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.weight",
+      "encoder.SA_modules.3.local_aggregations.0.SA_CONFIG_operator.convs.2.1.bias",
+      "decoder.FP_modules.0.convs.0.1.weight",
+      "decoder.FP_modules.0.convs.0.1.bias",
+      "decoder.FP_modules.0.convs.1.1.weight",
+      "decoder.FP_modules.0.convs.1.1.bias",
+      "decoder.FP_modules.0.convs.2.1.weight",
+      "decoder.FP_modules.0.convs.2.1.bias",
+      "decoder.FP_modules.1.convs.0.1.weight",
+      "decoder.FP_modules.1.convs.0.1.bias",
+      "decoder.FP_modules.1.convs.1.1.weight",
+      "decoder.FP_modules.1.convs.1.1.bias",
+      "decoder.FP_modules.2.convs.0.1.weight",
+      "decoder.FP_modules.2.convs.0.1.bias",
+      "decoder.FP_modules.2.convs.1.1.weight",
+      "decoder.FP_modules.2.convs.1.1.bias",
+      "decoder.FP_modules.3.convs.0.1.weight",
+      "decoder.FP_modules.3.convs.0.1.bias",
+      "decoder.FP_modules.3.convs.1.1.weight",
+      "decoder.FP_modules.3.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+val
+this recipt: ------------------------
+
+split = val
+data_root = ./data/scannet
+len(data_list) = 312
+first few = ['./data/scannet/val/scene0700_02_inst_nostuff.pth', './data/scannet/val/scene0377_01_inst_nostuff.pth', './data/scannet/val/scene0193_01_inst_nostuff.pth', './data/scannet/val/scene0686_01_inst_nostuff.pth', './data/scannet/val/scene0655_00_inst_nostuff.pth']
+len(self.data) = 312
+
+------------------------
+[32m[06/22 19:50:51 ScanNet]: [0mTotally 312 samples in val set.
+./data/scannet/processed/scannet_val_0.020.pkl load successfully
+[32m[06/22 19:50:52 ScanNet]: [0mlength of validation dataset: 312
+[32m[06/22 19:50:52 ScanNet]: [0mnumber of classes of the dataset: 20
+[32m[06/22 19:50:52 ScanNet]: [0mTraining from scratch
+train
+this recipt: ------------------------
+
+split = train
+data_root = ./data/scannet
+len(data_list) = 1201
+first few = ['./data/scannet/sparse_nonuniform/scene0111_02_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0416_02_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0165_02_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0468_00_inst_nostuff.pth', './data/scannet/sparse_nonuniform/scene0444_00_inst_nostuff.pth']
+len(self.data) = 1201
+
+------------------------
+[32m[06/22 19:50:52 ScanNet]: [0mTotally 1201 samples in train set.
+./data/scannet/processed/scannet_train_0.020.pkl load successfully
+[32m[06/22 19:50:54 ScanNet]: [0mlength of training dataset: 7206
+[32m[06/22 20:11:29 ScanNet]: [0mFind a better ckpt @E1, val_miou 13.72 val_macc 20.47, val_oa 62.84
+mious: [55.27 88.57  3.95  2.52 41.79  0.18 31.29  0.   15.41  1.75  0.    0.09
+  9.98  0.    0.    0.   16.65  0.    6.94  0.  ]
+[32m[06/22 20:11:29 ScanNet]: [0mEpoch 1 LR 0.001000 train_miou 9.50, val_miou 13.72, best val miou 13.72
+[32m[06/22 20:11:29 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 20:31:18 ScanNet]: [0mFind a better ckpt @E2, val_miou 20.16 val_macc 30.32, val_oa 66.25
+mious: [60.   89.65 10.37 17.44 46.01 15.47 37.18  0.   20.43 20.82  0.   12.29
+  6.61  0.    0.    0.   25.28 15.16 24.23  2.31]
+[32m[06/22 20:31:18 ScanNet]: [0mEpoch 2 LR 0.001000 train_miou 15.85, val_miou 20.16, best val miou 20.16
+[32m[06/22 20:31:18 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 20:51:06 ScanNet]: [0mFind a better ckpt @E3, val_miou 21.99 val_macc 29.70, val_oa 67.90
+mious: [60.58 91.77 16.13 13.26 50.88 16.28 36.4   1.02 14.66 25.89  0.    2.99
+ 15.21  0.    0.    0.66 35.16 13.27 39.55  6.18]
+[32m[06/22 20:51:06 ScanNet]: [0mEpoch 3 LR 0.001000 train_miou 21.12, val_miou 21.99, best val miou 21.99
+[32m[06/22 20:51:06 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 21:10:56 ScanNet]: [0mFind a better ckpt @E4, val_miou 29.16 val_macc 39.20, val_oa 71.50
+mious: [62.9  92.69 20.   30.88 63.23 35.85 39.26  1.68 26.03 37.86  0.   15.61
+ 26.65  0.    0.    2.81 46.61 25.94 45.38  9.74]
+[32m[06/22 21:10:56 ScanNet]: [0mEpoch 4 LR 0.001000 train_miou 26.22, val_miou 29.16, best val miou 29.16
+[32m[06/22 21:10:56 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 21:30:42 ScanNet]: [0mFind a better ckpt @E5, val_miou 31.31 val_macc 41.26, val_oa 72.47
+mious: [63.7  92.85 16.8  37.93 59.39 38.98 47.37  6.69 22.1  40.39  0.   22.16
+ 25.18  0.04  0.    6.51 56.05 24.15 51.74 14.11]
+[32m[06/22 21:30:42 ScanNet]: [0mEpoch 5 LR 0.001000 train_miou 30.87, val_miou 31.31, best val miou 31.31
+[32m[06/22 21:30:42 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 21:50:28 ScanNet]: [0mFind a better ckpt @E6, val_miou 34.00 val_macc 43.76, val_oa 73.59
+mious: [64.95 93.08 25.63 36.6  65.99 31.92 48.88  7.99 31.14 42.01  0.   26.89
+ 27.82  6.66  0.   11.76 51.25 32.22 58.88 16.31]
+[32m[06/22 21:50:28 ScanNet]: [0mEpoch 6 LR 0.001000 train_miou 34.27, val_miou 34.00, best val miou 34.00
+[32m[06/22 21:50:28 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 22:10:16 ScanNet]: [0mFind a better ckpt @E7, val_miou 35.41 val_macc 45.13, val_oa 74.59
+mious: [65.07 93.41 25.05 44.49 66.1  41.61 48.84  4.93 27.94 51.09  0.76 32.53
+ 29.77  1.62  0.5   4.1  64.99 35.57 54.01 15.73]
+[32m[06/22 22:10:16 ScanNet]: [0mEpoch 7 LR 0.001000 train_miou 37.26, val_miou 35.41, best val miou 35.41
+[32m[06/22 22:10:16 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 22:30:02 ScanNet]: [0mFind a better ckpt @E8, val_miou 36.03 val_macc 45.82, val_oa 74.82
+mious: [65.54 93.55 21.61 45.9  66.22 39.55 48.18 15.06 25.21 50.37 13.58 26.19
+ 32.54  4.67  1.91  6.56 54.63 36.79 51.17 21.3 ]
+[32m[06/22 22:30:02 ScanNet]: [0mEpoch 8 LR 0.001000 train_miou 39.84, val_miou 36.03, best val miou 36.03
+[32m[06/22 22:30:02 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 22:49:48 ScanNet]: [0mEpoch 9 LR 0.001000 train_miou 42.43, val_miou 34.31, best val miou 36.03
+[32m[06/22 23:09:35 ScanNet]: [0mFind a better ckpt @E10, val_miou 38.02 val_macc 51.98, val_oa 75.71
+mious: [67.07 93.95 27.18 49.89 65.37 45.2  50.58 10.63 30.26 52.85 10.3  34.08
+ 35.32 16.93  1.18 18.9  47.78 36.5  47.91 18.54]
+[32m[06/22 23:09:35 ScanNet]: [0mEpoch 10 LR 0.001000 train_miou 44.63, val_miou 38.02, best val miou 38.02
+[32m[06/22 23:09:35 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 23:29:22 ScanNet]: [0mFind a better ckpt @E11, val_miou 40.82 val_macc 52.20, val_oa 76.27
+mious: [67.96 93.93 30.74 50.33 68.85 45.64 47.79 15.95 32.05 54.25 14.83 33.07
+ 33.44 19.45 10.48 12.61 67.09 35.95 60.26 21.63]
+[32m[06/22 23:29:22 ScanNet]: [0mEpoch 11 LR 0.001000 train_miou 46.87, val_miou 40.82, best val miou 40.82
+[32m[06/22 23:29:22 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/22 23:49:09 ScanNet]: [0mEpoch 12 LR 0.001000 train_miou 48.73, val_miou 40.68, best val miou 40.82
+[32m[06/23 00:08:56 ScanNet]: [0mEpoch 13 LR 0.001000 train_miou 50.17, val_miou 40.66, best val miou 40.82
+[32m[06/23 00:28:45 ScanNet]: [0mFind a better ckpt @E14, val_miou 42.57 val_macc 54.91, val_oa 76.61
+mious: [68.89 94.01 33.16 40.1  70.91 40.94 46.37 23.68 32.65 56.65 14.2  39.06
+ 36.83 25.44 16.98 12.11 68.95 43.1  61.19 26.17]
+[32m[06/23 00:28:45 ScanNet]: [0mEpoch 14 LR 0.001000 train_miou 51.73, val_miou 42.57, best val miou 42.57
+[32m[06/23 00:28:45 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 00:48:32 ScanNet]: [0mFind a better ckpt @E15, val_miou 42.72 val_macc 53.47, val_oa 76.59
+mious: [68.46 93.85 32.38 51.83 68.97 45.69 52.44 22.12 34.82 52.77 16.67 28.78
+ 25.15 22.88 17.97 19.79 71.84 42.8  60.77 24.4 ]
+[32m[06/23 00:48:32 ScanNet]: [0mEpoch 15 LR 0.001000 train_miou 53.02, val_miou 42.72, best val miou 42.72
+[32m[06/23 00:48:32 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 01:08:18 ScanNet]: [0mFind a better ckpt @E16, val_miou 42.76 val_macc 56.65, val_oa 76.97
+mious: [69.07 93.84 35.13 54.64 67.36 46.73 52.06 23.51 36.12 56.77  5.61 32.48
+ 32.28 25.21 16.88 18.86 65.35 39.76 55.95 27.53]
+[32m[06/23 01:08:18 ScanNet]: [0mEpoch 16 LR 0.001000 train_miou 54.80, val_miou 42.76, best val miou 42.76
+[32m[06/23 01:08:18 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 01:28:03 ScanNet]: [0mEpoch 17 LR 0.001000 train_miou 56.10, val_miou 41.31, best val miou 42.76
+[32m[06/23 01:47:48 ScanNet]: [0mFind a better ckpt @E18, val_miou 43.61 val_macc 55.62, val_oa 77.14
+mious: [68.77 94.38 34.13 48.05 68.32 44.2  52.95 25.88 35.93 54.98 21.37 35.16
+ 30.83 24.04 20.09 17.26 69.46 46.01 59.08 21.4 ]
+[32m[06/23 01:47:48 ScanNet]: [0mEpoch 18 LR 0.001000 train_miou 57.17, val_miou 43.61, best val miou 43.61
+[32m[06/23 01:47:48 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 02:07:35 ScanNet]: [0mEpoch 19 LR 0.001000 train_miou 58.56, val_miou 43.12, best val miou 43.61
+[32m[06/23 02:27:22 ScanNet]: [0mFind a better ckpt @E20, val_miou 44.63 val_macc 55.71, val_oa 77.82
+mious: [69.75 93.83 34.61 53.   69.06 45.43 51.98 15.01 36.62 58.98 17.66 41.25
+ 39.42 23.37 15.86 14.72 73.84 43.07 66.49 28.69]
+[32m[06/23 02:27:22 ScanNet]: [0mEpoch 20 LR 0.001000 train_miou 59.15, val_miou 44.63, best val miou 44.63
+[32m[06/23 02:27:22 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 02:47:12 ScanNet]: [0mEpoch 21 LR 0.001000 train_miou 60.33, val_miou 43.55, best val miou 44.63
+[32m[06/23 03:06:59 ScanNet]: [0mEpoch 22 LR 0.001000 train_miou 61.70, val_miou 43.86, best val miou 44.63
+[32m[06/23 03:26:45 ScanNet]: [0mEpoch 23 LR 0.001000 train_miou 62.10, val_miou 44.48, best val miou 44.63
+[32m[06/23 03:46:31 ScanNet]: [0mEpoch 24 LR 0.001000 train_miou 63.17, val_miou 43.04, best val miou 44.63
+[32m[06/23 04:06:18 ScanNet]: [0mEpoch 25 LR 0.001000 train_miou 64.32, val_miou 44.32, best val miou 44.63
+[32m[06/23 04:26:06 ScanNet]: [0mFind a better ckpt @E26, val_miou 45.41 val_macc 57.08, val_oa 78.18
+mious: [70.34 94.39 34.39 55.87 69.29 47.91 53.94 21.57 38.55 55.09 15.26 35.45
+ 38.1  29.25 20.73 21.73 73.64 45.36 61.56 25.85]
+[32m[06/23 04:26:06 ScanNet]: [0mEpoch 26 LR 0.001000 train_miou 65.19, val_miou 45.41, best val miou 45.41
+[32m[06/23 04:26:06 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 04:45:54 ScanNet]: [0mFind a better ckpt @E27, val_miou 45.55 val_macc 56.77, val_oa 78.07
+mious: [70.35 94.15 35.99 57.41 69.04 48.63 51.25 21.33 36.19 54.78 18.12 39.33
+ 37.81 29.76 16.54 20.79 69.87 46.13 64.57 29.05]
+[32m[06/23 04:45:54 ScanNet]: [0mEpoch 27 LR 0.001000 train_miou 65.62, val_miou 45.55, best val miou 45.55
+[32m[06/23 04:45:54 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 05:05:43 ScanNet]: [0mEpoch 28 LR 0.001000 train_miou 66.54, val_miou 45.52, best val miou 45.55
+[32m[06/23 05:25:31 ScanNet]: [0mFind a better ckpt @E29, val_miou 45.64 val_macc 56.50, val_oa 77.60
+mious: [67.88 94.51 35.01 56.41 70.25 48.36 54.72 28.14 33.65 54.83 17.66 37.38
+ 37.14 27.55 23.55 17.08 72.58 48.19 64.44 23.44]
+[32m[06/23 05:25:31 ScanNet]: [0mEpoch 29 LR 0.001000 train_miou 66.98, val_miou 45.64, best val miou 45.64
+[32m[06/23 05:25:31 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 05:45:19 ScanNet]: [0mEpoch 30 LR 0.001000 train_miou 67.96, val_miou 44.81, best val miou 45.64
+[32m[06/23 06:05:07 ScanNet]: [0mEpoch 31 LR 0.001000 train_miou 68.59, val_miou 44.93, best val miou 45.64
+[32m[06/23 06:24:55 ScanNet]: [0mEpoch 32 LR 0.001000 train_miou 69.22, val_miou 45.09, best val miou 45.64
+[32m[06/23 06:44:44 ScanNet]: [0mEpoch 33 LR 0.001000 train_miou 69.97, val_miou 43.94, best val miou 45.64
+[32m[06/23 07:04:32 ScanNet]: [0mFind a better ckpt @E34, val_miou 46.09 val_macc 57.19, val_oa 78.23
+mious: [69.3  94.56 35.45 57.72 70.51 49.89 54.64 29.78 37.98 57.56 22.28 33.94
+ 33.83 30.91 21.71 18.08 71.11 42.69 61.22 28.58]
+[32m[06/23 07:04:32 ScanNet]: [0mEpoch 34 LR 0.001000 train_miou 70.21, val_miou 46.09, best val miou 46.09
+[32m[06/23 07:04:32 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 07:24:20 ScanNet]: [0mEpoch 35 LR 0.001000 train_miou 70.78, val_miou 45.66, best val miou 46.09
+[32m[06/23 07:44:07 ScanNet]: [0mFind a better ckpt @E36, val_miou 46.40 val_macc 58.87, val_oa 78.11
+mious: [70.26 93.53 35.77 54.52 70.52 48.25 52.08 21.71 36.66 57.71 17.44 43.3
+ 39.22 32.67 23.04 20.03 74.   47.74 60.93 28.71]
+[32m[06/23 07:44:07 ScanNet]: [0mEpoch 36 LR 0.001000 train_miou 71.70, val_miou 46.40, best val miou 46.40
+[32m[06/23 07:44:07 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 08:03:55 ScanNet]: [0mEpoch 37 LR 0.001000 train_miou 72.13, val_miou 45.29, best val miou 46.40
+[32m[06/23 08:23:40 ScanNet]: [0mFind a better ckpt @E38, val_miou 46.43 val_macc 57.82, val_oa 78.25
+mious: [69.06 94.35 33.82 57.38 70.77 49.16 53.93 29.66 38.14 56.14 21.11 43.2
+ 30.87 31.34 21.16 16.35 74.32 42.16 64.27 31.32]
+[32m[06/23 08:23:40 ScanNet]: [0mEpoch 38 LR 0.001000 train_miou 72.67, val_miou 46.43, best val miou 46.43
+[32m[06/23 08:23:40 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 08:43:27 ScanNet]: [0mEpoch 39 LR 0.001000 train_miou 73.04, val_miou 45.70, best val miou 46.43
+[32m[06/23 09:03:15 ScanNet]: [0mEpoch 40 LR 0.001000 train_miou 73.65, val_miou 46.20, best val miou 46.43
+[32m[06/23 09:23:04 ScanNet]: [0mEpoch 41 LR 0.001000 train_miou 73.96, val_miou 45.25, best val miou 46.43
+[32m[06/23 09:42:51 ScanNet]: [0mEpoch 42 LR 0.001000 train_miou 74.42, val_miou 45.83, best val miou 46.43
+[32m[06/23 10:02:38 ScanNet]: [0mFind a better ckpt @E43, val_miou 47.16 val_macc 59.76, val_oa 78.04
+mious: [68.78 94.48 36.78 58.29 71.06 46.78 54.75 30.2  36.88 58.14 19.27 43.05
+ 37.95 33.33 21.37 19.59 72.26 48.83 63.03 28.42]
+[32m[06/23 10:02:38 ScanNet]: [0mEpoch 43 LR 0.001000 train_miou 74.90, val_miou 47.16, best val miou 47.16
+[32m[06/23 10:02:38 ScanNet]: [0mFound the best model and saved in research/DGNet/log/scannet/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF/checkpoint/scannet-train-pointnet++-ngpus1-seed644-20260622-195047-iMy9mWzN9XnN2YNVberSCF_ckpt_best.pth
+[32m[06/23 10:22:27 ScanNet]: [0mEpoch 44 LR 0.001000 train_miou 75.01, val_miou 45.47, best val miou 47.16
+[32m[06/23 10:42:16 ScanNet]: [0mEpoch 45 LR 0.001000 train_miou 75.86, val_miou 45.97, best val miou 47.16

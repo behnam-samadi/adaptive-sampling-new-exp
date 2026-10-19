@@ -2,11 +2,12 @@
 dataset:
   common:
     NAME: ScanNet
-    data_root: /dataset
+    data_root: ./data/scannet
     voxel_size: 0.02
   train:
     split: train
     voxel_max: 64000  # using 32000 points can make training faster but achieves ~0.5 miou lower for PointNeXt-XL 
+    presample: True
     loop: 6
   val:
     split: val
@@ -21,11 +22,11 @@ no_label: False
 feature_keys: pos,x,heights # appending heights has insiginificant effects on ScanNet
 
 num_classes: 20 
-batch_size: 2
+batch_size: 7
 val_batch_size: 1
 
 dataloader:
-  num_workers: 6
+  num_workers: 0
 
 datatransforms:
   train: [RandomRotateZ, RandomScale, ChromaticAutoContrast, RandomDropFeature, NumpyChromaticNormalize]

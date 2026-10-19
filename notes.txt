@@ -1,0 +1,4 @@
+export PYTHONPATH=$HOME/research/DGNet/openpoints/cpp/pointnet2_batch:$PYTHONPATH
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib/python3.7/site-packages/torch/lib:$LD_LIBRARY_PATH
+
+ CUDA_VISIBLE_DEVICES=3 bash script/main_segmentation.sh cfgs/s3dis/assanet.yaml wandb.use_wandb=False mode=test --pretrained_path ~/research/s3dis-train-assanet-ngpus1-seed3640-20220529-154659-aHua8PnnhV9akjcdCvQhss_ckpt_latest.pth

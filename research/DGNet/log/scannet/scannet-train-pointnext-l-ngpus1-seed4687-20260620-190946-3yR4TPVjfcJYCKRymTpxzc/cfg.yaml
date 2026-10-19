@@ -1,0 +1,199 @@
+!!python/object/new:openpoints.utils.config.EasyConfig
+dictitems:
+  batch_size: 3
+  cfg_basename: pointnext-l
+  ckpt_dir: /mnt/clientshare/samadi/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc/checkpoint
+  cls_weighed_loss: false
+  criterion_args: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      NAME: CrossEntropy
+      ignore_index: -100
+      label_smoothing: 0.0
+  dataloader: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      num_workers: 0
+  dataset: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      common: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          NAME: ScanNet
+          data_root: ./data/scannet
+          ignore_index: -100
+          rate: 0
+          voxel_size: 0.02
+      test: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          split: val
+          voxel_max: null
+      train: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          loop: 6
+          presample: true
+          split: train
+          voxel_max: 64000
+      val: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          presample: true
+          split: val
+          voxel_max: null
+  datatransforms: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      kwargs: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          angle: 1
+          color_drop: 0.2
+          color_mean:
+          - 0.46259782
+          - 0.46253258
+          - 0.46253258
+          color_std:
+          - 0.693565
+          - 0.6852543
+          - 0.68061745
+          gravity_dim: 2
+          mirror:
+          - 0.2
+          - -1
+          - -1
+          rotate_dim: 2
+          scale:
+          - 0.8
+          - 1.2
+      test:
+      - PointsToTensor
+      - NumpyChromaticNormalize
+      train:
+      - RandomRotateZ
+      - RandomScale
+      - ChromaticAutoContrast
+      - RandomDropFeature
+      - NumpyChromaticNormalize
+      val:
+      - NumpyChromaticNormalize
+      vote:
+      - ChromaticDropGPU
+  decay_epochs:
+  - 70
+  - 90
+  decay_rate: 0.1
+  deterministic: false
+  dist_backend: nccl
+  dist_url: tcp://localhost:8888
+  distributed: false
+  epoch: 0
+  epochs: 100
+  exp_dir: /mnt/clientshare/samadi/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc
+  feature_keys: pos,x,heights
+  finetune: false
+  grad_norm_clip: 10
+  ignore_index: -100
+  is_training: true
+  launcher: mp
+  layer_decay: 0
+  load_path: null
+  local_rank: 0
+  log_dir: /mnt/clientshare/samadi/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc
+  log_path: /mnt/clientshare/samadi/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc/scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc.log
+  logname: null
+  lr: 0.001
+  min_lr: null
+  mode: train
+  model: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      NAME: BaseSeg
+      cls_args: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          NAME: SegHead
+          global_feat: max
+          in_channels: null
+          norm_args: !!python/object/new:openpoints.utils.config.EasyConfig
+            dictitems:
+              norm: bn
+          num_classes: 20
+      decoder_args: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          NAME: PointNextDecoder
+      encoder_args: !!python/object/new:openpoints.utils.config.EasyConfig
+        dictitems:
+          NAME: PointNextEncoder
+          act_args: !!python/object/new:openpoints.utils.config.EasyConfig
+            dictitems:
+              act: relu
+          aggr_args: !!python/object/new:openpoints.utils.config.EasyConfig
+            dictitems:
+              feature_type: dp_fj
+              reduction: max
+          blocks:
+          - 1
+          - 3
+          - 5
+          - 3
+          - 3
+          conv_args: !!python/object/new:openpoints.utils.config.EasyConfig
+            dictitems:
+              order: conv-norm-act
+          expansion: 4
+          group_args: !!python/object/new:openpoints.utils.config.EasyConfig
+            dictitems:
+              NAME: ballquery
+              normalize_dp: true
+          in_channels: 7
+          norm_args: !!python/object/new:openpoints.utils.config.EasyConfig
+            dictitems:
+              norm: bn
+          nsample: 32
+          radius: 0.05
+          sa_layers: 1
+          sa_use_res: false
+          strides:
+          - 1
+          - 4
+          - 4
+          - 4
+          - 4
+          width: 32
+  mp: false
+  multiprocessing_distributed: false
+  ngpus_per_node: 1
+  no_label: false
+  num_classes: 20
+  optimizer: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      NAME: adamw
+      weight_decay: 0.0001
+  opts: ''
+  pretrained_path: null
+  print_freq: 50
+  rank: 0
+  resume: false
+  root_dir: /mnt/clientshare/samadi/research/DGNet/log/scannet
+  run_dir: /mnt/clientshare/samadi/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc
+  run_name: scannet-train-pointnext-l-ngpus1-seed4687-20260620-190946-3yR4TPVjfcJYCKRymTpxzc
+  save_freq: -1
+  sched: multistep
+  sched_on_epoch: true
+  seed: 4687
+  start_epoch: 1
+  step_per_update: 1
+  sync_bn: false
+  task_name: scannet
+  test: false
+  use_amp: false
+  use_gpu: true
+  use_mask: false
+  use_voting: false
+  val_batch_size: 1
+  val_fn: validate
+  val_freq: 1
+  wandb: !!python/object/new:openpoints.utils.config.EasyConfig
+    dictitems:
+      project: PointNeXt-ScanNet
+      tags:
+      - scannet
+      - train
+      - pointnext-l
+      - ngpus1
+      - seed4687
+      use_wandb: false
+  warmup_epochs: 0
+  world_size: 1

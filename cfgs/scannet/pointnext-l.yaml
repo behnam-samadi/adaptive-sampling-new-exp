@@ -1,6 +1,6 @@
 dataset:
   common:
-    data_root: /dataset
+    data_root: ./data/scannet
     rate: 0
     ignore_index: -100
     

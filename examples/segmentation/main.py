@@ -22,12 +22,25 @@ from openpoints.optim import build_optimizer_from_cfg
 from openpoints.scheduler import build_scheduler_from_cfg
 from openpoints.loss import build_criterion_from_cfg
 from openpoints.models import build_model_from_cfg
+import math
+from proposedGrouping.kdtree_grouping_split import *
+#from proposedGrouping.kdtree_grouping_variance_fast import *
+#from proposedGrouping.kdtree_grouping_variance_fast_condition import *
+#from proposedGrouping.kdtree_grouping_bucket_size import *
+#from proposedGrouping.kdtree_grouping_bucket_size import *
+
+#from proposedGrouping.octree_grouping import *
 import warnings
 import shutil
+import time
+global NOISE_LEVEL
+
+#from proposedGrouping.farthest_sampling import farthest_point_sampling
 
 from sklearn.cluster import KMeans 
 from IPython.core.debugger import set_trace
 
+DOWNSAMPLE_RATE_FOR_CHUNKING = 0.1
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def write_to_csv(oa, macc, miou, ious, best_epoch, cfg, write_header=True, area=5):
@@ -64,7 +77,242 @@ def generate_data_list(cfg):
     return data_list
 
 
-def load_data(data_path, cfg):
+
+def add_cluster_with_features_and_labels(coord, feat, label, num_points=800, spread=0.000002,
+                                         feature_mode='zero', label_mode='zero'):
+    """
+    Adds a cluster of points near the middle of the original coord array,
+    and adds corresponding dummy features and labels.
+
+    Args:
+        coord (np.ndarray): Original coordinates, shape (n, 3)
+        feat (np.ndarray): Original features, shape (n, d)
+        label (np.ndarray): Original labels, shape (n,)
+        num_points (int): Number of points to add
+        spread (float): Max deviation from center in each axis
+        feature_mode (str): 'zero', 'random', or 'mean'
+        label_mode (str): 'new_class', 'zero', or 'copy_mode'
+
+    Returns:
+        new_coord (np.ndarray)
+        new_feat (np.ndarray)
+        new_label (np.ndarray)
+        added_cluster (np.ndarray)
+        added_features (np.ndarray)
+        added_labels (np.ndarray)
+    """
+    assert coord.shape[0] == feat.shape[0] == label.shape[0], "Mismatched input lengths"
+    assert coord.shape[1] == 3, "coord must have shape (n, 3)"
+
+    n, d = feat.shape
+
+    # Step 1: Compute center of coord
+    center = (coord.min(axis=0) + coord.max(axis=0)) / 2
+
+    # Step 2: Generate cluster of new points
+    added_cluster = center + np.random.uniform(-spread, spread, size=(num_points, 3))
+
+    # Step 3: Generate features
+    if feature_mode == 'zero':
+        added_features = np.zeros((num_points, d))
+    elif feature_mode == 'random':
+        added_features = np.random.rand(num_points, d)
+    elif feature_mode == 'mean':
+        mean_feat = feat.mean(axis=0)
+        added_features = np.tile(mean_feat, (num_points, 1))
+    else:
+        raise ValueError(f"Unknown feature_mode: {feature_mode}")
+
+    # Step 4: Generate labels
+    if label_mode == 'new_class':
+        new_label_value = label.max() + 1
+        added_labels = np.full(num_points, new_label_value)
+    elif label_mode == 'zero':
+        added_labels = np.zeros(num_points, dtype=label.dtype)
+    elif label_mode == 'copy_mode':
+        most_common = mode(label, keepdims=True).mode[0]
+        added_labels = np.full(num_points, most_common)
+    else:
+        raise ValueError(f"Unknown label_mode: {label_mode}")
+
+    # Step 5: Stack everything
+    new_coord = np.vstack((coord, added_cluster))
+    new_feat = np.vstack((feat, added_features))
+    new_label = np.concatenate((label, added_labels))
+
+    return new_coord, new_feat, new_label, added_cluster, added_features, added_labels
+
+
+
+def load_data_orig(data_path, cfg, fake = 0):
+    label, feat = None, None
+    if 's3dis' in cfg.dataset.common.NAME.lower():
+        data = np.load(data_path)  # xyzrgbl, N*7
+        coord, feat, label = data[:, :3], data[:, 3:6], data[:, 6]
+        feat = np.clip(feat / 255., 0, 1).astype(np.float32)
+    elif 'scannet' in cfg.dataset.common.NAME.lower():
+        data = torch.load(data_path)  # xyzrgbl, N*7
+        coord, feat = data[0], data[1]
+        if cfg.dataset.test.split != 'test':
+            label = data[2]
+        else:
+            label = None
+        feat = np.clip((feat + 1) / 2., 0, 1).astype(np.float32)
+    elif 'semantickitti' in cfg.dataset.common.NAME.lower():
+        coord = load_pc_kitti(data_path[0])
+        if cfg.dataset.test.split != 'test':
+            label = load_label_kitti(data_path[1], remap_lut_read)
+    print("1before: ", coord.shape)
+    print("1before: ", feat.shape)
+    print("1before: ", label.shape)
+    global NOISE_LEVEL
+    print(NOISE_LEVEL)
+    coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, NOISE_LEVEL)
+    print("1after: ", coord.shape)
+    print("1after: ", feat.shape)
+    print("1after: ", label.shape)
+    coord -= coord.min(0)
+
+    idx_points = []
+    voxel_idx, reverse_idx_part,reverse_idx_sort = None, None, None
+    voxel_size = cfg.dataset.common.get('voxel_size', None)
+
+    if voxel_size is not None:
+        # idx_sort: original point indicies sorted by voxel NO.
+        # voxel_idx: Voxel NO. for the sorted points
+        idx_sort, voxel_idx, count = voxelize(coord, voxel_size = voxel_size, mode=1)
+        if cfg.get('test_mode', 'multi_voxel') == 'nearest_neighbor':
+            idx_select = np.cumsum(np.insert(count, 0, 0)[0:-1]) + np.random.randint(0, count.max(), count.size) % count
+            idx_part = idx_sort[idx_select]
+            npoints_subcloud = voxel_idx.max()+1
+            idx_shuffle = np.random.permutation(npoints_subcloud)
+            idx_part = idx_part[idx_shuffle] # idx_part: randomly sampled points of a voxel
+            reverse_idx_part = np.argsort(idx_shuffle, axis=0) # revevers idx_part to sorted
+            idx_points.append(idx_part)
+            reverse_idx_sort = np.argsort(idx_sort, axis=0)
+        else:
+            #print(type(count))
+            #np.save("/mnt/clientshare/samadi/research/temp/count/count.npy", count)
+            for i in range(count.max()):
+                idx_select = np.cumsum(np.insert(count, 0, 0)[0:-1]) + i % count
+                idx_part = idx_sort[idx_select]
+                np.random.shuffle(idx_part)
+                voxel_max = cfg.dataset.test.voxel_max
+                if (voxel_max is not None) and (voxel_max < len(idx_part)):
+                    for j in range(len(idx_part)//voxel_max):
+                        idx_points.append(idx_part[j*voxel_max:(j+1)*voxel_max])
+                    idx_points.append(idx_part[-voxel_max:])
+                else:
+                    idx_points.append(idx_part)
+    else:
+        idx_points.append(np.arange(label.shape[0]))
+    
+    # print(coord.shape)
+    # print(len(idx_points))
+    # for id in idx_points:
+    #     print(id.shape)
+    # sample = np.concatenate((coord[idx_points[0]], feat[idx_points[0]]), 1)
+    # np.save("/mnt/clientshare/samadi/research/frames/f2.npy", sample)
+    
+    return coord, feat, label, idx_points, voxel_idx, reverse_idx_part, reverse_idx_sort
+
+def estimate_max_k(N, max_leafs, min_k=1, max_k=None):
+    """
+    Estimates the maximum k such that a KD-tree built with a splitting rule
+    (splitting until number of points ≤ k) results in no more than max_leafs leaves.
+    Uses binary search over possible k values.
+
+    Parameters:
+    - N (int): Total number of points
+    - max_leafs (int): Desired max number of leaf nodes
+    - min_k (int): Lower bound of search
+    - max_k (int): Upper bound of search (optional, defaults to N)
+
+    Returns:
+    - int: Estimated max k satisfying the constraint
+    """
+    if max_k is None:
+        max_k = N
+
+    def num_leaves(n, k):
+        """Estimate number of leaves in a kd-tree recursively."""
+        if n <= k:
+            return 1
+        left = n // 2
+        right = n - left
+        return num_leaves(left, k) + num_leaves(right, k)
+
+    low, high = min_k, max_k
+    best_k = max_k
+
+    while low <= high:
+        mid_k = (low + high) // 2
+        leaves = num_leaves(N, mid_k)
+        if leaves <= max_leafs:
+            best_k = mid_k
+            high = mid_k - 1
+        else:
+            low = mid_k + 1
+
+    return best_k
+
+def data_load_proposed(data_path, cfg, suggested_threshold = -1):
+    label, feat = None, None
+    if 's3dis' in cfg.dataset.common.NAME.lower():
+        data = np.load(data_path)  # xyzrgbl, N*7
+        coord, feat, label = data[:, :3], data[:, 3:6], data[:, 6]
+        feat = np.clip(feat / 255., 0, 1).astype(np.float32)
+    elif 'scannet' in cfg.dataset.common.NAME.lower():
+        data = torch.load(data_path)  # xyzrgbl, N*7
+        coord, feat = data[0], data[1]
+        if cfg.dataset.test.split != 'test':
+            label = data[2]
+        else:
+            label = None
+        feat = np.clip((feat + 1) / 2., 0, 1).astype(np.float32)
+    elif 'semantickitti' in cfg.dataset.common.NAME.lower():
+        coord = load_pc_kitti(data_path[0])
+        if cfg.dataset.test.split != 'test':
+            label = load_label_kitti(data_path[1], remap_lut_read)
+    # print(coord.shape)
+    # print(feat.shape)
+    # merged = np.concatenate((coord, feat), 1)
+    # print(merged.shape)
+    # np.save("/mnt/clientshare/samadi/research/frames/scannet_1.npy", np.concatenate((coord, feat), 1))
+    
+    coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, NOISE_LEVEL)
+    coord -= coord.min(0)
+    if suggested_threshold == -1:
+        optimum_threshold = estimate_max_k(coord.shape[0], int(coord.shape[0]*DOWNSAMPLE_RATE_FOR_CHUNKING))
+        #optimum_threshold = 2
+        print("--------\n", optimum_threshold, "---------")
+        #optimum_threshold = 8
+    else:
+        optimum_threshold = suggested_threshold
+    idx_data, grouping = create_chunks(coord, optimum_threshold)
+
+    idx_points = []
+    voxel_max = cfg.dataset.test.voxel_max
+    for idx_part in idx_data:
+        if (voxel_max is not None) and (voxel_max < len(idx_part)):
+            print("niaz dasht")
+            for j in range(len(idx_part)//voxel_max):
+                idx_points.append(idx_part[j*voxel_max:(j+1)*voxel_max])
+            idx_points.append(idx_part[-voxel_max:])
+        else:
+            idx_points.append(idx_part)
+    # print(coord.shape)
+    # print(len(idx_points))
+    # for id in idx_points:
+    #     print(id.shape)
+    # sample = np.concatenate((coord[idx_points[0]], feat[idx_points[0]]), 1)
+    # np.save("/mnt/clientshare/samadi/research/frames/f1.npy", sample)
+    # exit(0)
+    return coord, feat, label, idx_points, None, None, None
+
+
+
+def load_data_(data_path, cfg):
     label, feat = None, None
     if 's3dis' in cfg.dataset.common.NAME.lower():
         data = np.load(data_path)  # xyzrgbl, N*7
@@ -88,33 +336,27 @@ def load_data(data_path, cfg):
     voxel_idx, reverse_idx_part,reverse_idx_sort = None, None, None
     voxel_size = cfg.dataset.common.get('voxel_size', None)
 
-    if voxel_size is not None:
-        # idx_sort: original point indicies sorted by voxel NO.
-        # voxel_idx: Voxel NO. for the sorted points
-        idx_sort, voxel_idx, count = voxelize(coord, voxel_size = voxel_size, mode=1)
-        if cfg.get('test_mode', 'multi_voxel') == 'nearest_neighbor':
-            idx_select = np.cumsum(np.insert(count, 0, 0)[0:-1]) + np.random.randint(0, count.max(), count.size) % count
-            idx_part = idx_sort[idx_select]
-            npoints_subcloud = voxel_idx.max()+1
-            idx_shuffle = np.random.permutation(npoints_subcloud)
-            idx_part = idx_part[idx_shuffle] # idx_part: randomly sampled points of a voxel
-            reverse_idx_part = np.argsort(idx_shuffle, axis=0) # revevers idx_part to sorted
-            idx_points.append(idx_part)
-            reverse_idx_sort = np.argsort(idx_sort, axis=0)
+    # idx_sort: original point indicies sorted by voxel NO.
+    # voxel_idx: Voxel NO. for the sorted points
+
+
+    # from this ine it start voxelizaition
+    idx_sort, voxel_idx, count = voxelize(coord, voxel_size = voxel_size, mode=1)
+
+    for i in range(count.max()):
+        print(count.max())
+        exit(0)
+        idx_select = np.cumsum(np.insert(count, 0, 0)[0:-1]) + i % count
+        idx_part = idx_sort[idx_select]
+        np.random.shuffle(idx_part)
+
+        voxel_max = cfg.dataset.test.voxel_max
+        if (voxel_max is not None) and (voxel_max < len(idx_part)):
+            for j in range(len(idx_part)//voxel_max):
+                idx_points.append(idx_part[j*voxel_max:(j+1)*voxel_max])
+            idx_points.append(idx_part[-voxel_max:])
         else:
-            for i in range(count.max()):
-                idx_select = np.cumsum(np.insert(count, 0, 0)[0:-1]) + i % count
-                idx_part = idx_sort[idx_select]
-                np.random.shuffle(idx_part)
-                voxel_max = cfg.dataset.test.voxel_max
-                if (voxel_max is not None) and (voxel_max < len(idx_part)):
-                    for j in range(len(idx_part)//voxel_max):
-                        idx_points.append(idx_part[j*voxel_max:(j+1)*voxel_max])
-                    idx_points.append(idx_part[-voxel_max:])
-                else:
-                    idx_points.append(idx_part)
-    else:
-        idx_points.append(np.arange(label.shape[0]))
+            idx_points.append(idx_part)
     return coord, feat, label, idx_points, voxel_idx, reverse_idx_part, reverse_idx_sort
 
 
@@ -187,7 +429,9 @@ def main(gpu, cfg):
         else:
             if cfg.mode == 'val':
                 best_epoch, best_val = load_checkpoint(model, pretrained_path=cfg.pretrained_path)
+                
                 val_miou, val_macc, val_oa, val_ious, val_accs = validate_fn(model, val_loader, cfg, num_votes=1)
+                
                 with np.printoptions(precision=2, suppress=True):
                     logging.info(
                         f'Best ckpt @E{best_epoch},  val_oa , val_macc, val_miou: {val_oa:.2f} {val_macc:.2f} {val_miou:.2f}, '
@@ -413,6 +657,7 @@ def train_one_epoch(model, train_loader, criterion, optimizer, scheduler, scaler
 def validate(model, val_loader, cfg, num_votes=1, data_transform=None):
     model.eval()  # set model to eval mode
     cm = ConfusionMatrix(num_classes=cfg.num_classes, ignore_index=cfg.ignore_index)
+    
     pbar = tqdm(enumerate(val_loader), total=val_loader.__len__(), desc='Val')
     for idx, data in pbar:
         keys = data.keys() if callable(data.keys) else data.keys
@@ -563,12 +808,133 @@ def test(model, data_list, cfg, num_votes=1):
 
     gravity_dim = cfg.datatransforms.kwargs.gravity_dim
     nearest_neighbor = cfg.get('test_mode', 'multi_voxel') == 'nearest_neighbor'
+    print(type(data_list))
+    
+    #data_list = data_list[0, 1, 2, 3, 10, 13, 14, 17, 19, 21, 24, 26, 28, 29, 52]
+    #indices = [0, 1,2, 3, 10, 13, 14, 17, 19, 21, 24, 26, 28, 29, 52]
+    #indices = [251]
+    # indices = list(range(0,64))
+    # print(indices)
+    #data_list = [data_list[i] for i in indices]
+
+    
     for cloud_idx, data_path in enumerate(data_list):
         logging.info(f'Test [{cloud_idx}]/[{len_data}] cloud')
         cm = ConfusionMatrix(num_classes=cfg.num_classes, ignore_index=cfg.ignore_index)
         all_logits = []
         all_feat = []
-        coord, feat, label, idx_points, voxel_idx, reverse_idx_part, reverse_idx  = load_data(data_path, cfg)
+        #coord, _, _, idx_points, _, _, _  = load_data_orig(data_path, cfg)
+        #desired_size = (idx_points[0].shape[0])
+        #optimum_threshold = len(idx_points) * 0.2
+        #optimum_threshold = coord.shape[0] // desired_size
+        #print("threshold: ", optimum_threshold)
+        
+
+        b_val = getattr(cfg, 'b_val', 2) 
+        global NOISE_LEVEL
+        NOISE_LEVEL = getattr(cfg, 'noise_val', 14) 
+        print(NOISE_LEVEL) 
+        
+        #pre_process_time = -time.time()
+        coord, feat, label, idx_points, voxel_idx, reverse_idx_part, reverse_idx  = data_load_proposed(data_path, cfg, b_val)
+        # print("before: ", coord.shape)
+        # print("before: ", feat.shape)
+        # print("before: ", label.shape)
+        #coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, 100)
+        # print("after: ", coord.shape)
+        # print("after: ", feat.shape)
+        # print("after: ", label.shape)
+
+
+        # print(type(idx_points))   
+        # print(len(idx_points))
+        # print(type(idx_points[0]))
+        # print(idx_points[0].shape)
+        # for sample in idx_points:
+        #     print(sample.shape)
+        #     print(sample)
+
+        # pre_process_time += time.time()
+        # print("Pre PRocessing time: ", pre_process_time)
+
+
+        # fps_time = -time.time()
+        # sampled, idx = farthest_point_sampling(feat, int(feat.shape[0]/8))
+        # fps_time += time.time()
+        # print("FPS Time (1/8): ", fps_time)
+
+
+        # fps_time = -time.time()
+        # sampled, idx = farthest_point_sampling(feat, int(feat.shape[0]/4))
+        # fps_time += time.time()
+        # print("FPS Time (1/4): ", fps_time)
+
+
+        # fps_time = -time.time()
+        # sampled, idx = farthest_point_sampling(feat, int(feat.shape[0]/2))
+        # fps_time += time.time()
+        # print("FPS Time: 1/2", fps_time)
+
+
+
+        # fps_time = -time.time()
+        # sampled, idx = farthest_point_sampling(feat, feat.shape[0])
+        # #sampled, idx = farthest_point_sampling(feat, 300)
+        # # # print(type(idx))
+        # # print(idx)
+        # N = coord.shape[0]
+
+        # # Unique indices present in idx
+        # unique_idx = np.unique(idx.cpu().numpy())
+
+        # print("Number of unique indices:", len(unique_idx))
+        # print("Total points:", N)
+        
+
+        # # Check if every index is present
+        # is_complete = np.array_equal(unique_idx, np.arange(N))
+        # print("Covers all indices:", is_complete)
+
+        # # If not, find the missing indices
+        # missing = np.setdiff1d(np.arange(N), unique_idx)
+        # print("Number of missing indices:", len(missing))
+        # print("First 20 missing indices:", missing[:20])
+
+        # # Check for invalid indices
+        # invalid = unique_idx[(unique_idx < 0) | (unique_idx >= N)]
+        # print("Invalid indices:", invalid)
+        
+        # fps_time += time.time()
+        # print("FPS Time: ", fps_time)
+
+        # idx_np = idx.cpu().numpy()
+
+        # num_chunks = 10
+        # chunk_size = math.ceil(len(idx_np) / num_chunks)
+
+        # idx_points = []
+
+        # for i in range(num_chunks):
+        #     start = i * chunk_size
+        #     end = start + chunk_size
+
+        #     # Shift the last chunk back if necessary
+        #     if end > len(idx_np):
+        #         end = len(idx_np)
+        #         start = end - chunk_size
+
+        #     idx_points.append(idx_np[start:end])
+
+        # print(type(idx_points))
+        # print(len(idx_points))
+        # print(type(idx_points[0]))
+        # print(idx_points[0].shape)
+        # for sample in idx_points:
+        #     print(sample.shape)
+        #     print(sample)
+        #print(coord.shape)
+        #np.save("/mnt/clientshare/samadi/research/temp/count/idx_points_proposed.npy", idx_points)
+        #exit(0)
         if label is not None:
             label = torch.from_numpy(label.astype(np.int).squeeze()).cuda(non_blocking=True)
 
@@ -641,7 +1007,7 @@ def test(model, data_list, cfg, num_votes=1):
                 center_i = torch.sum(all_feat[pred==i,:],dim=0)
                 center_i = F.normalize(center_i,p=2,dim=0)
                 sim_i = torch.mm(all_feat,center_i.reshape(-1,1))
-                np.save(os.path.join('/userhome', f'sim-{i}.npy'), sim_i.cpu().numpy())
+                np.save(os.path.join('/mnt/clientshare/samadi', f'sim-{i}.npy'), sim_i.cpu().numpy())
             gt = label.cpu().numpy().squeeze() if label is not None else None
             pred = pred.cpu().numpy().squeeze()
             gt = cfg.cmap[gt, :] if gt is not None else None
@@ -652,7 +1018,7 @@ def test(model, data_list, cfg, num_votes=1):
             else:
                 file_name = f'{dataset_name}-{cloud_idx}'
             tmp=all_logits.argmax(dim=1)
-            np.save(os.path.join('/userhome', 'area5-22.npy'), np.concatenate((coord,tmp.unsqueeze(dim=1).cpu().numpy()),axis=1))
+            np.save(os.path.join('/mnt/clientshare/samadi', 'area5-22.npy'), np.concatenate((coord,tmp.unsqueeze(dim=1).cpu().numpy()),axis=1))
 
             #write_obj(coord, feat,
             #          os.path.join(cfg.vis_dir, f'input-{file_name}.obj'))
@@ -693,7 +1059,14 @@ def test(model, data_list, cfg, num_votes=1):
                 logging.info(
                     f'[{cloud_idx}]/[{len_data}] cloud,  test_oa , test_macc, test_miou: {oa:.2f} {macc:.2f} {miou:.2f}, '
                     f'\niou per cls is: {ious}')
+            #print("frame tp:", cm.tp)
+            #print("frame union:", cm.union)
             all_cm.value += cm.value
+            tp, union, count = all_cm.tp, all_cm.union, all_cm.count
+            if cfg.distributed:
+                dist.all_reduce(tp), dist.all_reduce(union), dist.all_reduce(count)
+            miou, macc, oa, ious, accs = get_mious(tp, union, count)
+            print("so far miou is: ", miou)
 
     if 'scannet' in cfg.dataset.common.NAME.lower():
         logging.info(f" Please select and zip all the files (DON'T INCLUDE THE FOLDER) in {cfg.save_path} and submit it to"
@@ -704,6 +1077,11 @@ def test(model, data_list, cfg, num_votes=1):
         if cfg.distributed:
             dist.all_reduce(tp), dist.all_reduce(union), dist.all_reduce(count)
         miou, macc, oa, ious, accs = get_mious(tp, union, count)
+        print("FINAL")
+        print("tp =", tp.cpu().numpy())
+        print("union =", union.cpu().numpy())
+        print("ious =", ious)
+        print("miou =", miou)
         return miou, macc, oa, ious, accs, all_cm
     else:
         return None, None, None, None, None, None

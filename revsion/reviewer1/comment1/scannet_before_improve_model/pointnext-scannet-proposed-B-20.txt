@@ -1,0 +1,1004 @@
+===> Anaconda env loaded
+Sat Jun 13 11:25:22 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.58.03              Driver Version: 595.58.03      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA TITAN RTX               On  |   00000000:04:00.0 Off |                  N/A |
+| 41%   35C    P8             11W /  280W |   12646MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   1  NVIDIA TITAN RTX               On  |   00000000:0A:00.0 Off |                  N/A |
+| 41%   32C    P8             15W /  260W |   17402MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   2  NVIDIA TITAN RTX               On  |   00000000:84:00.0 Off |                  N/A |
+| 41%   40C    P8              3W /  280W |   13508MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+|   3  NVIDIA TITAN RTX               On  |   00000000:8A:00.0 Off |                  N/A |
+| 41%   56C    P2             94W /  280W |   17718MiB /  24576MiB |     52%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         3428826      C   /app/llama-server                     12642MiB |
+|    1   N/A  N/A         3435245      C   VLLM::EngineCore                      17398MiB |
+|    2   N/A  N/A         3428826      C   /app/llama-server                     13504MiB |
+|    3   N/A  N/A         2679944      C   python                                 9368MiB |
+|    3   N/A  N/A         3139840      C   python                                 4450MiB |
+|    3   N/A  N/A         3429343      C   python3                                3896MiB |
++-----------------------------------------------------------------------------------------+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2021 NVIDIA Corporation
+Built on Mon_May__3_19:15:13_PDT_2021
+Cuda compilation tools, release 11.3, V11.3.109
+Build cuda_11.3.r11.3/compiler.29920130_0
+ubuntu135
+4
+launch mp with 1 GPUs, current rank: 0
+[32m[06/13 11:25:25 ScanNet]: [0mdist_url: tcp://localhost:8888
+dist_backend: nccl
+multiprocessing_distributed: False
+ngpus_per_node: 1
+world_size: 1
+launcher: mp
+local_rank: 0
+use_gpu: True
+seed: 9371
+epoch: 0
+epochs: 100
+ignore_index: -100
+val_fn: validate
+deterministic: False
+sync_bn: False
+criterion_args:
+  NAME: CrossEntropy
+  label_smoothing: 0.0
+  ignore_index: -100
+use_mask: False
+grad_norm_clip: 10
+layer_decay: 0
+step_per_update: 1
+start_epoch: 1
+sched_on_epoch: True
+wandb:
+  use_wandb: False
+  project: PointNeXt-ScanNet
+  tags: ['test']
+  name: scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B
+use_amp: False
+use_voting: False
+val_freq: 1
+resume: False
+test: False
+finetune: False
+mode: test
+logname: None
+load_path: None
+print_freq: 50
+save_freq: -1
+root_dir: research/DGNet/log/scannet
+pretrained_path: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/checkpoint/model_best.pth
+datatransforms:
+  train: ['RandomRotateZ', 'RandomScale', 'ChromaticAutoContrast', 'RandomDropFeature', 'NumpyChromaticNormalize']
+  val: ['NumpyChromaticNormalize']
+  test: ['PointsToTensor', 'NumpyChromaticNormalize']
+  vote: ['ChromaticDropGPU']
+  kwargs:
+    color_drop: 0.2
+    gravity_dim: 2
+    rotate_dim: 2
+    scale: [0.8, 1.2]
+    mirror: [0.2, -1, -1]
+    angle: 1
+    color_mean: [0.46259782, 0.46253258, 0.46253258]
+    color_std: [0.693565, 0.6852543, 0.68061745]
+feature_keys: pos,x,heights
+dataset:
+  common:
+    NAME: ScanNet
+    data_root: ./data/scannet
+    voxel_size: 0.02
+    rate: 0
+    ignore_index: -100
+  train:
+    split: train
+    voxel_max: 64000
+    presample: True
+    loop: 6
+  val:
+    split: val
+    voxel_max: None
+    presample: True
+  test:
+    split: val
+    voxel_max: None
+no_label: False
+num_classes: 20
+batch_size: 4
+val_batch_size: 1
+dataloader:
+  num_workers: 0
+cls_weighed_loss: False
+optimizer:
+  NAME: adamw
+  weight_decay: 0.0001
+lr: 0.001
+min_lr: None
+sched: multistep
+decay_epochs: [70, 90]
+decay_rate: 0.1
+warmup_epochs: 0
+model:
+  NAME: BaseSeg
+  encoder_args:
+    NAME: PointNextEncoder
+    blocks: [1, 3, 5, 3, 3]
+    strides: [1, 4, 4, 4, 4]
+    sa_layers: 1
+    sa_use_res: False
+    width: 32
+    in_channels: 7
+    expansion: 4
+    radius: 0.05
+    nsample: 32
+    aggr_args:
+      feature_type: dp_fj
+      reduction: max
+    group_args:
+      NAME: ballquery
+      normalize_dp: True
+    conv_args:
+      order: conv-norm-act
+    act_args:
+      act: relu
+    norm_args:
+      norm: bn
+  decoder_args:
+    NAME: PointNextDecoder
+  cls_args:
+    NAME: SegHead
+    global_feat: max
+    num_classes: 20
+    in_channels: None
+    norm_args:
+      norm: bn
+b_val: 20
+rank: 0
+distributed: False
+mp: False
+task_name: scannet
+cfg_basename: pointnext-l
+opts: b_val=20-mode=test
+is_training: False
+run_dir: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B
+log_dir: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B
+run_name: scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B
+ckpt_dir: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/checkpoint
+code_dir: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/code
+log_path: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B20260613-112525-G8ceWhsuQLNP8ThNPiitaa.log
+cfg_path: /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/cfg.yaml
+[32m[06/13 11:25:25 ScanNet]: [0mradius: [[0.05], [0.05, 0.1, 0.1], [0.1, 0.2, 0.2, 0.2, 0.2], [0.2, 0.4, 0.4], [0.4, 0.8, 0.8]],
+ nsample: [[32], [32, 32, 32], [32, 32, 32, 32, 32], [32, 32, 32], [32, 32, 32]]
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.05
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.1
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.1
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.1
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.2
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.4
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[06/13 11:25:25 ScanNet]: [0mNAME: ballquery
+normalize_dp: True
+radius: 0.8
+nsample: 32
+[32m[06/13 11:25:29 ScanNet]: [0mBaseSeg(
+  (encoder): PointNextEncoder(
+    (encoder): Sequential(
+      (0): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(7, 32, kernel_size=(1,), stride=(1,))
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(35, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(64, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(67, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(64, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (2): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(67, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (3): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (4): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(131, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(128, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(512, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (3): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(131, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(256, 1024, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(1024, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(259, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(256, 1024, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(1024, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+      (4): Sequential(
+        (0): SetAbstraction(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv2d(259, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+          (grouper): QueryAndGroup()
+        )
+        (1): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(515, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(512, 2048, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(2048, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+        (2): InvResMLP(
+          (convs): LocalAggregation(
+            (convs): Sequential(
+              (0): Sequential(
+                (0): Conv2d(515, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                (2): ReLU(inplace=True)
+              )
+            )
+            (grouper): QueryAndGroup()
+          )
+          (pwconv): Sequential(
+            (0): Sequential(
+              (0): Conv1d(512, 2048, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(2048, 512, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
+          )
+          (act): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (decoder): PointNextDecoder(
+    (decoder): Sequential(
+      (0): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(96, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(32, 32, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (1): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(192, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (2): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(384, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(128, 128, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+      (3): Sequential(
+        (0): FeaturePropogation(
+          (convs): Sequential(
+            (0): Sequential(
+              (0): Conv1d(768, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+            (1): Sequential(
+              (0): Conv1d(256, 256, kernel_size=(1,), stride=(1,), bias=False)
+              (1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU(inplace=True)
+            )
+          )
+        )
+      )
+    )
+  )
+  (head): SegHead(
+    (head): Sequential(
+      (0): Sequential(
+        (0): Conv1d(64, 64, kernel_size=(1,), stride=(1,), bias=False)
+        (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+      )
+      (1): Dropout(p=0.5, inplace=False)
+      (2): Sequential(
+        (0): Conv1d(64, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+[32m[06/13 11:25:29 ScanNet]: [0mNumber of params: 7.1292 M
+[32m[06/13 11:25:29 ScanNet]: [0mParam groups = {
+  "decay": {
+    "weight_decay": 0.0001,
+    "params": [
+      "encoder.encoder.0.0.convs.0.0.weight",
+      "encoder.encoder.1.0.convs.0.0.weight",
+      "encoder.encoder.1.1.convs.convs.0.0.weight",
+      "encoder.encoder.1.1.pwconv.0.0.weight",
+      "encoder.encoder.1.1.pwconv.1.0.weight",
+      "encoder.encoder.1.2.convs.convs.0.0.weight",
+      "encoder.encoder.1.2.pwconv.0.0.weight",
+      "encoder.encoder.1.2.pwconv.1.0.weight",
+      "encoder.encoder.2.0.convs.0.0.weight",
+      "encoder.encoder.2.1.convs.convs.0.0.weight",
+      "encoder.encoder.2.1.pwconv.0.0.weight",
+      "encoder.encoder.2.1.pwconv.1.0.weight",
+      "encoder.encoder.2.2.convs.convs.0.0.weight",
+      "encoder.encoder.2.2.pwconv.0.0.weight",
+      "encoder.encoder.2.2.pwconv.1.0.weight",
+      "encoder.encoder.2.3.convs.convs.0.0.weight",
+      "encoder.encoder.2.3.pwconv.0.0.weight",
+      "encoder.encoder.2.3.pwconv.1.0.weight",
+      "encoder.encoder.2.4.convs.convs.0.0.weight",
+      "encoder.encoder.2.4.pwconv.0.0.weight",
+      "encoder.encoder.2.4.pwconv.1.0.weight",
+      "encoder.encoder.3.0.convs.0.0.weight",
+      "encoder.encoder.3.1.convs.convs.0.0.weight",
+      "encoder.encoder.3.1.pwconv.0.0.weight",
+      "encoder.encoder.3.1.pwconv.1.0.weight",
+      "encoder.encoder.3.2.convs.convs.0.0.weight",
+      "encoder.encoder.3.2.pwconv.0.0.weight",
+      "encoder.encoder.3.2.pwconv.1.0.weight",
+      "encoder.encoder.4.0.convs.0.0.weight",
+      "encoder.encoder.4.1.convs.convs.0.0.weight",
+      "encoder.encoder.4.1.pwconv.0.0.weight",
+      "encoder.encoder.4.1.pwconv.1.0.weight",
+      "encoder.encoder.4.2.convs.convs.0.0.weight",
+      "encoder.encoder.4.2.pwconv.0.0.weight",
+      "encoder.encoder.4.2.pwconv.1.0.weight",
+      "decoder.decoder.0.0.convs.0.0.weight",
+      "decoder.decoder.0.0.convs.1.0.weight",
+      "decoder.decoder.1.0.convs.0.0.weight",
+      "decoder.decoder.1.0.convs.1.0.weight",
+      "decoder.decoder.2.0.convs.0.0.weight",
+      "decoder.decoder.2.0.convs.1.0.weight",
+      "decoder.decoder.3.0.convs.0.0.weight",
+      "decoder.decoder.3.0.convs.1.0.weight",
+      "head.head.0.0.weight",
+      "head.head.2.0.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "encoder.encoder.0.0.convs.0.0.bias",
+      "encoder.encoder.1.0.convs.0.1.weight",
+      "encoder.encoder.1.0.convs.0.1.bias",
+      "encoder.encoder.1.1.convs.convs.0.1.weight",
+      "encoder.encoder.1.1.convs.convs.0.1.bias",
+      "encoder.encoder.1.1.pwconv.0.1.weight",
+      "encoder.encoder.1.1.pwconv.0.1.bias",
+      "encoder.encoder.1.1.pwconv.1.1.weight",
+      "encoder.encoder.1.1.pwconv.1.1.bias",
+      "encoder.encoder.1.2.convs.convs.0.1.weight",
+      "encoder.encoder.1.2.convs.convs.0.1.bias",
+      "encoder.encoder.1.2.pwconv.0.1.weight",
+      "encoder.encoder.1.2.pwconv.0.1.bias",
+      "encoder.encoder.1.2.pwconv.1.1.weight",
+      "encoder.encoder.1.2.pwconv.1.1.bias",
+      "encoder.encoder.2.0.convs.0.1.weight",
+      "encoder.encoder.2.0.convs.0.1.bias",
+      "encoder.encoder.2.1.convs.convs.0.1.weight",
+      "encoder.encoder.2.1.convs.convs.0.1.bias",
+      "encoder.encoder.2.1.pwconv.0.1.weight",
+      "encoder.encoder.2.1.pwconv.0.1.bias",
+      "encoder.encoder.2.1.pwconv.1.1.weight",
+      "encoder.encoder.2.1.pwconv.1.1.bias",
+      "encoder.encoder.2.2.convs.convs.0.1.weight",
+      "encoder.encoder.2.2.convs.convs.0.1.bias",
+      "encoder.encoder.2.2.pwconv.0.1.weight",
+      "encoder.encoder.2.2.pwconv.0.1.bias",
+      "encoder.encoder.2.2.pwconv.1.1.weight",
+      "encoder.encoder.2.2.pwconv.1.1.bias",
+      "encoder.encoder.2.3.convs.convs.0.1.weight",
+      "encoder.encoder.2.3.convs.convs.0.1.bias",
+      "encoder.encoder.2.3.pwconv.0.1.weight",
+      "encoder.encoder.2.3.pwconv.0.1.bias",
+      "encoder.encoder.2.3.pwconv.1.1.weight",
+      "encoder.encoder.2.3.pwconv.1.1.bias",
+      "encoder.encoder.2.4.convs.convs.0.1.weight",
+      "encoder.encoder.2.4.convs.convs.0.1.bias",
+      "encoder.encoder.2.4.pwconv.0.1.weight",
+      "encoder.encoder.2.4.pwconv.0.1.bias",
+      "encoder.encoder.2.4.pwconv.1.1.weight",
+      "encoder.encoder.2.4.pwconv.1.1.bias",
+      "encoder.encoder.3.0.convs.0.1.weight",
+      "encoder.encoder.3.0.convs.0.1.bias",
+      "encoder.encoder.3.1.convs.convs.0.1.weight",
+      "encoder.encoder.3.1.convs.convs.0.1.bias",
+      "encoder.encoder.3.1.pwconv.0.1.weight",
+      "encoder.encoder.3.1.pwconv.0.1.bias",
+      "encoder.encoder.3.1.pwconv.1.1.weight",
+      "encoder.encoder.3.1.pwconv.1.1.bias",
+      "encoder.encoder.3.2.convs.convs.0.1.weight",
+      "encoder.encoder.3.2.convs.convs.0.1.bias",
+      "encoder.encoder.3.2.pwconv.0.1.weight",
+      "encoder.encoder.3.2.pwconv.0.1.bias",
+      "encoder.encoder.3.2.pwconv.1.1.weight",
+      "encoder.encoder.3.2.pwconv.1.1.bias",
+      "encoder.encoder.4.0.convs.0.1.weight",
+      "encoder.encoder.4.0.convs.0.1.bias",
+      "encoder.encoder.4.1.convs.convs.0.1.weight",
+      "encoder.encoder.4.1.convs.convs.0.1.bias",
+      "encoder.encoder.4.1.pwconv.0.1.weight",
+      "encoder.encoder.4.1.pwconv.0.1.bias",
+      "encoder.encoder.4.1.pwconv.1.1.weight",
+      "encoder.encoder.4.1.pwconv.1.1.bias",
+      "encoder.encoder.4.2.convs.convs.0.1.weight",
+      "encoder.encoder.4.2.convs.convs.0.1.bias",
+      "encoder.encoder.4.2.pwconv.0.1.weight",
+      "encoder.encoder.4.2.pwconv.0.1.bias",
+      "encoder.encoder.4.2.pwconv.1.1.weight",
+      "encoder.encoder.4.2.pwconv.1.1.bias",
+      "decoder.decoder.0.0.convs.0.1.weight",
+      "decoder.decoder.0.0.convs.0.1.bias",
+      "decoder.decoder.0.0.convs.1.1.weight",
+      "decoder.decoder.0.0.convs.1.1.bias",
+      "decoder.decoder.1.0.convs.0.1.weight",
+      "decoder.decoder.1.0.convs.0.1.bias",
+      "decoder.decoder.1.0.convs.1.1.weight",
+      "decoder.decoder.1.0.convs.1.1.bias",
+      "decoder.decoder.2.0.convs.0.1.weight",
+      "decoder.decoder.2.0.convs.0.1.bias",
+      "decoder.decoder.2.0.convs.1.1.weight",
+      "decoder.decoder.2.0.convs.1.1.bias",
+      "decoder.decoder.3.0.convs.0.1.weight",
+      "decoder.decoder.3.0.convs.0.1.bias",
+      "decoder.decoder.3.0.convs.1.1.weight",
+      "decoder.decoder.3.0.convs.1.1.bias",
+      "head.head.0.1.weight",
+      "head.head.0.1.bias",
+      "head.head.2.0.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+val
+this recipt: ------------------------
+
+split = val
+data_root = ./data/scannet
+len(data_list) = 32
+first few = ['./data/scannet/val/scene0030_01_inst_nostuff.pth', './data/scannet/val/scene0050_02_inst_nostuff.pth', './data/scannet/val/scene0081_02_inst_nostuff.pth', './data/scannet/val/scene0077_01_inst_nostuff.pth', './data/scannet/val/scene0046_01_inst_nostuff.pth']
+len(self.data) = 32
+
+------------------------
+[32m[06/13 11:25:29 ScanNet]: [0mTotally 32 samples in val set.
+./data/scannet/processed/scannet_val_0.020.pkl load successfully
+[32m[06/13 11:25:30 ScanNet]: [0mlength of validation dataset: 32
+[32m[06/13 11:25:30 ScanNet]: [0mnumber of classes of the dataset: 20
+[32m[06/13 11:25:30 ScanNet]: [0mSuccessful Loading the ckpt from /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/checkpoint/model_best.pth
+[32m[06/13 11:25:30 ScanNet]: [0mckpts @ 3 epoch( {'best_val': 38.144432067871094} )
+[32m[06/13 11:25:30 ScanNet]: [0mlength of test dataset: 32
+<class 'list'>
+[32m[06/13 11:25:30 ScanNet]: [0mTest [0]/[32] cloud
+create chunks
+[32m[06/13 11:25:33 ScanNet]: [0m[0]/[32] cloud,  test_oa , test_macc, test_miou: 41.10 69.07 64.09, 
+iou per cls is: [ 26.13  55.69 100.   100.     0.   100.     0.     0.     0.     0.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  64.09098815917969
+[32m[06/13 11:25:33 ScanNet]: [0mTest [1]/[32] cloud
+create chunks
+[32m[06/13 11:25:34 ScanNet]: [0m[1]/[32] cloud,  test_oa , test_macc, test_miou: 45.49 64.25 54.28, 
+iou per cls is: [ 45.71  39.82 100.   100.     0.     0.     0.     0.     0.   100.
+ 100.   100.     0.   100.     0.   100.   100.   100.   100.     0.  ]
+so far miou is:  49.35935592651367
+[32m[06/13 11:25:34 ScanNet]: [0mTest [2]/[32] cloud
+create chunks
+[32m[06/13 11:25:35 ScanNet]: [0m[2]/[32] cloud,  test_oa , test_macc, test_miou: 48.85 89.88 83.49, 
+iou per cls is: [  0.    69.76 100.   100.     0.   100.     0.   100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  49.480037689208984
+[32m[06/13 11:25:35 ScanNet]: [0mTest [3]/[32] cloud
+create chunks
+[32m[06/13 11:25:35 ScanNet]: [0m[3]/[32] cloud,  test_oa , test_macc, test_miou: 52.61 69.45 65.50, 
+iou per cls is: [ 43.67  66.36   0.   100.   100.   100.     0.     0.     0.04 100.
+ 100.     0.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  39.59444808959961
+[32m[06/13 11:25:35 ScanNet]: [0mTest [4]/[32] cloud
+create chunks
+[32m[06/13 11:25:36 ScanNet]: [0m[4]/[32] cloud,  test_oa , test_macc, test_miou: 48.31 49.43 44.47, 
+iou per cls is: [ 48.7   40.69 100.     0.     0.   100.     0.     0.   100.   100.
+ 100.   100.   100.     0.   100.     0.     0.     0.     0.     0.  ]
+so far miou is:  9.70348834991455
+[32m[06/13 11:25:36 ScanNet]: [0mTest [5]/[32] cloud
+create chunks
+[32m[06/13 11:25:37 ScanNet]: [0m[5]/[32] cloud,  test_oa , test_macc, test_miou: 67.68 64.05 61.12, 
+iou per cls is: [ 62.42  59.9  100.   100.   100.   100.   100.     0.     0.   100.
+ 100.     0.   100.   100.   100.     0.     0.     0.   100.     0.  ]
+so far miou is:  9.910774230957031
+[32m[06/13 11:25:37 ScanNet]: [0mTest [6]/[32] cloud
+create chunks
+[32m[06/13 11:25:37 ScanNet]: [0m[6]/[32] cloud,  test_oa , test_macc, test_miou: 68.60 64.24 61.40, 
+iou per cls is: [ 63.44  64.66 100.   100.   100.   100.   100.     0.     0.   100.
+ 100.     0.   100.   100.   100.     0.     0.     0.   100.     0.  ]
+so far miou is:  10.08154582977295
+[32m[06/13 11:25:37 ScanNet]: [0mTest [7]/[32] cloud
+create chunks
+[32m[06/13 11:25:38 ScanNet]: [0m[7]/[32] cloud,  test_oa , test_macc, test_miou: 57.11 90.00 83.94, 
+iou per cls is: [  0.    78.84 100.   100.     0.   100.     0.   100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  10.128695487976074
+[32m[06/13 11:25:38 ScanNet]: [0mTest [8]/[32] cloud
+create chunks
+[32m[06/13 11:25:39 ScanNet]: [0m[8]/[32] cloud,  test_oa , test_macc, test_miou: 62.94 74.08 71.02, 
+iou per cls is: [ 48.99  71.42 100.   100.   100.   100.   100.     0.     0.   100.
+ 100.   100.   100.   100.   100.   100.     0.     0.   100.     0.  ]
+so far miou is:  10.202552795410156
+[32m[06/13 11:25:39 ScanNet]: [0mTest [9]/[32] cloud
+create chunks
+[32m[06/13 11:25:40 ScanNet]: [0m[9]/[32] cloud,  test_oa , test_macc, test_miou: 45.31 49.41 44.18, 
+iou per cls is: [ 45.61  38.08   0.     0.     0.   100.   100.     0.   100.   100.
+ 100.   100.     0.     0.   100.   100.     0.     0.     0.     0.  ]
+so far miou is:  10.131265640258789
+[32m[06/13 11:25:40 ScanNet]: [0mTest [10]/[32] cloud
+create chunks
+[32m[06/13 11:25:41 ScanNet]: [0m[10]/[32] cloud,  test_oa , test_macc, test_miou: 69.33 64.29 61.62, 
+iou per cls is: [ 62.88  69.52 100.   100.   100.   100.   100.     0.     0.   100.
+ 100.     0.   100.   100.   100.     0.     0.     0.   100.     0.  ]
+so far miou is:  10.234217643737793
+[32m[06/13 11:25:41 ScanNet]: [0mTest [11]/[32] cloud
+create chunks
+[32m[06/13 11:25:42 ScanNet]: [0m[11]/[32] cloud,  test_oa , test_macc, test_miou: 46.52 39.34 34.49, 
+iou per cls is: [ 45.34  44.36 100.     0.     0.   100.     0.     0.   100.   100.
+   0.   100.     0.     0.   100.     0.     0.     0.     0.     0.  ]
+so far miou is:  5.188086986541748
+[32m[06/13 11:25:42 ScanNet]: [0mTest [12]/[32] cloud
+create chunks
+[32m[06/13 11:25:42 ScanNet]: [0m[12]/[32] cloud,  test_oa , test_macc, test_miou: 59.75 69.37 65.71, 
+iou per cls is: [ 41.7   72.58   0.   100.     0.   100.     0.     0.   100.   100.
+ 100.     0.   100.   100.     0.   100.   100.   100.   100.   100.  ]
+so far miou is:  5.2242865562438965
+[32m[06/13 11:25:42 ScanNet]: [0mTest [13]/[32] cloud
+create chunks
+[32m[06/13 11:25:43 ScanNet]: [0m[13]/[32] cloud,  test_oa , test_macc, test_miou: 56.46 79.11 75.32, 
+iou per cls is: [ 51.96  54.35   0.   100.   100.   100.     0.   100.   100.   100.
+ 100.     0.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  5.22552490234375
+[32m[06/13 11:25:43 ScanNet]: [0mTest [14]/[32] cloud
+create chunks
+[32m[06/13 11:25:44 ScanNet]: [0m[14]/[32] cloud,  test_oa , test_macc, test_miou: 40.66 74.26 58.90, 
+iou per cls is: [ 40.56  37.34 100.   100.     0.     0.     0.     0.     0.   100.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.07]
+so far miou is:  5.117650032043457
+[32m[06/13 11:25:44 ScanNet]: [0mTest [15]/[32] cloud
+create chunks
+[32m[06/13 11:25:45 ScanNet]: [0m[15]/[32] cloud,  test_oa , test_macc, test_miou: 62.78 79.23 76.11, 
+iou per cls is: [ 54.54  67.74 100.   100.     0.     0.   100.     0.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  5.182305812835693
+[32m[06/13 11:25:45 ScanNet]: [0mTest [16]/[32] cloud
+create chunks
+[32m[06/13 11:25:46 ScanNet]: [0m[16]/[32] cloud,  test_oa , test_macc, test_miou: 49.81 89.73 83.56, 
+iou per cls is: [  0.    71.26 100.   100.     0.   100.     0.   100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  5.176175594329834
+[32m[06/13 11:25:46 ScanNet]: [0mTest [17]/[32] cloud
+create chunks
+[32m[06/13 11:25:47 ScanNet]: [0m[17]/[32] cloud,  test_oa , test_macc, test_miou: 44.18 54.39 49.52, 
+iou per cls is: [ 29.27  61.19   0.   100.     0.   100.     0.     0.     0.   100.
+ 100.     0.   100.   100.     0.   100.   100.     0.   100.     0.  ]
+so far miou is:  5.122218608856201
+[32m[06/13 11:25:47 ScanNet]: [0mTest [18]/[32] cloud
+create chunks
+[32m[06/13 11:25:48 ScanNet]: [0m[18]/[32] cloud,  test_oa , test_macc, test_miou: 53.67 64.35 59.96, 
+iou per cls is: [ 56.08  43.21   0.   100.     0.     0.   100.     0.     0.   100.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  5.127012729644775
+[32m[06/13 11:25:48 ScanNet]: [0mTest [19]/[32] cloud
+create chunks
+[32m[06/13 11:25:49 ScanNet]: [0m[19]/[32] cloud,  test_oa , test_macc, test_miou: 32.95 78.98 73.19, 
+iou per cls is: [ 20.21  43.68 100.   100.     0.   100.     0.     0.   100.     0.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  5.00570821762085
+[32m[06/13 11:25:49 ScanNet]: [0mTest [20]/[32] cloud
+create chunks
+[32m[06/13 11:25:50 ScanNet]: [0m[20]/[32] cloud,  test_oa , test_macc, test_miou: 43.05 54.43 49.45, 
+iou per cls is: [ 25.78  63.24   0.   100.     0.   100.     0.     0.     0.   100.
+ 100.     0.   100.   100.     0.   100.   100.     0.   100.     0.  ]
+so far miou is:  4.969233989715576
+[32m[06/13 11:25:50 ScanNet]: [0mTest [21]/[32] cloud
+create chunks
+[32m[06/13 11:25:52 ScanNet]: [0m[21]/[32] cloud,  test_oa , test_macc, test_miou: 62.16 84.25 80.92, 
+iou per cls is: [ 54.12  64.27 100.   100.     0.   100.     0.   100.     0.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  5.030451774597168
+[32m[06/13 11:25:52 ScanNet]: [0mTest [22]/[32] cloud
+create chunks
+[32m[06/13 11:25:53 ScanNet]: [0m[22]/[32] cloud,  test_oa , test_macc, test_miou: 65.36 79.42 76.46, 
+iou per cls is: [ 58.67  70.49 100.   100.     0.     0.   100.     0.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  5.094481945037842
+[32m[06/13 11:25:53 ScanNet]: [0mTest [23]/[32] cloud
+create chunks
+[32m[06/13 11:25:54 ScanNet]: [0m[23]/[32] cloud,  test_oa , test_macc, test_miou: 53.05 69.39 64.71, 
+iou per cls is: [ 58.96  35.31   0.   100.     0.     0.   100.     0.     0.   100.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  5.094196796417236
+[32m[06/13 11:25:54 ScanNet]: [0mTest [24]/[32] cloud
+create chunks
+[32m[06/13 11:25:54 ScanNet]: [0m[24]/[32] cloud,  test_oa , test_macc, test_miou: 62.41 74.03 71.00, 
+iou per cls is: [ 48.7  71.4 100.  100.  100.  100.  100.    0.    0.  100.  100.  100.
+ 100.  100.  100.  100.    0.    0.  100.    0. ]
+so far miou is:  5.119395732879639
+[32m[06/13 11:25:54 ScanNet]: [0mTest [25]/[32] cloud
+create chunks
+[32m[06/13 11:25:56 ScanNet]: [0m[25]/[32] cloud,  test_oa , test_macc, test_miou: 54.38 64.40 59.75, 
+iou per cls is: [ 62.57  32.37   0.   100.     0.     0.     0.     0.     0.   100.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  5.113670349121094
+[32m[06/13 11:25:56 ScanNet]: [0mTest [26]/[32] cloud
+create chunks
+[32m[06/13 11:25:56 ScanNet]: [0m[26]/[32] cloud,  test_oa , test_macc, test_miou: 33.25 84.35 78.06, 
+iou per cls is: [ 16.47  44.72 100.   100.   100.     0.     0.   100.   100.   100.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  5.085251331329346
+[32m[06/13 11:25:56 ScanNet]: [0mTest [27]/[32] cloud
+create chunks
+[32m[06/13 11:25:57 ScanNet]: [0m[27]/[32] cloud,  test_oa , test_macc, test_miou: 26.43 73.72 67.66, 
+iou per cls is: [  5.83  47.33 100.   100.     0.     0.     0.     0.   100.     0.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.   100.  ]
+so far miou is:  4.968774795532227
+[32m[06/13 11:25:57 ScanNet]: [0mTest [28]/[32] cloud
+create chunks
+[32m[06/13 11:25:58 ScanNet]: [0m[28]/[32] cloud,  test_oa , test_macc, test_miou: 47.49 69.33 64.93, 
+iou per cls is: [ 39.54  58.7    0.   100.   100.   100.     0.     0.     0.37 100.
+ 100.     0.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  4.968566417694092
+[32m[06/13 11:25:58 ScanNet]: [0mTest [29]/[32] cloud
+create chunks
+[32m[06/13 11:25:59 ScanNet]: [0m[29]/[32] cloud,  test_oa , test_macc, test_miou: 39.91 69.06 64.00, 
+iou per cls is: [ 26.12  53.95 100.   100.     0.   100.     0.     0.     0.     0.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  4.918797492980957
+[32m[06/13 11:25:59 ScanNet]: [0mTest [30]/[32] cloud
+create chunks
+[32m[06/13 11:26:01 ScanNet]: [0m[30]/[32] cloud,  test_oa , test_macc, test_miou: 40.63 68.93 64.03, 
+iou per cls is: [ 24.8   55.74 100.   100.     0.   100.     0.     0.     0.     0.
+ 100.   100.   100.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  4.878129482269287
+[32m[06/13 11:26:01 ScanNet]: [0mTest [31]/[32] cloud
+create chunks
+[32m[06/13 11:26:02 ScanNet]: [0m[31]/[32] cloud,  test_oa , test_macc, test_miou: 41.21 74.06 69.05, 
+iou per cls is: [ 38.54  42.55 100.   100.     0.     0.   100.     0.   100.   100.
+ 100.   100.     0.   100.   100.   100.   100.   100.   100.     0.  ]
+so far miou is:  4.853339195251465
+[32m[06/13 11:26:02 ScanNet]: [0m Please select and zip all the files (DON'T INCLUDE THE FOLDER) in /mnt/clientshare/samadi/research/DGNet/research/DGNet/log/scannet/scannet-train-pointnext-l-ngpus1-seed1977-20260610-075643-GmrrXZDaoV85vkYZG7A32B/results and submit it to Scannet Benchmark https://kaldir.vc.in.tum.de/scannet_benchmark/. 
+FINAL
+tp = [1004994  978401       0       0       0       0       0       0      21
+       0       0       0       0       0       0       0       0       0
+       0      13]
+union = [2493682 1724576   86670   36139  441746  109373  234752  309476   99032
+  239735     601   32960   48152   74750   30308   22373   17350   14716
+   11018  116888]
+ious = [4.0301609e+01 5.6732845e+01 1.1538019e-13 2.7670937e-13 2.2637443e-14
+ 9.1430241e-14 4.2598148e-14 3.2312684e-14 2.1205267e-02 4.1712724e-14
+ 1.6638935e-11 3.0339804e-13 2.0767569e-13 1.3377926e-13 3.2994590e-13
+ 4.4696733e-13 5.7636887e-13 6.7953249e-13 9.0760570e-13 1.1121757e-02]
+miou = 4.853339195251465
+[32m[06/13 11:26:02 ScanNet]: [0mBest ckpt @E3,  test_oa , test_macc, test_miou: 48.81 9.30 4.85, 
+iou per cls is: [40.3  56.73  0.    0.    0.    0.    0.    0.    0.02  0.    0.    0.
+  0.    0.    0.    0.    0.    0.    0.    0.01]
