@@ -167,7 +167,7 @@ def load_data_orig(data_path, cfg, fake = 0):
     print("1before: ", label.shape)
     global NOISE_LEVEL
     print(NOISE_LEVEL)
-    coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, NOISE_LEVEL)
+    # coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, NOISE_LEVEL)  # Disabled for experiments without synthetic noise
     print("1after: ", coord.shape)
     print("1after: ", feat.shape)
     print("1after: ", label.shape)
@@ -280,7 +280,7 @@ def data_load_proposed(data_path, cfg, suggested_threshold = -1):
     # print(merged.shape)
     # np.save("/mnt/clientshare/samadi/research/frames/scannet_1.npy", np.concatenate((coord, feat), 1))
     
-    coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, NOISE_LEVEL)
+    #coord, feat, label, _, _, _ = add_cluster_with_features_and_labels(coord, feat, label, NOISE_LEVEL)
     coord -= coord.min(0)
     if suggested_threshold == -1:
         optimum_threshold = estimate_max_k(coord.shape[0], int(coord.shape[0]*DOWNSAMPLE_RATE_FOR_CHUNKING))
@@ -289,7 +289,12 @@ def data_load_proposed(data_path, cfg, suggested_threshold = -1):
         #optimum_threshold = 8
     else:
         optimum_threshold = suggested_threshold
-    idx_data, grouping = create_chunks(coord, optimum_threshold)
+    # Build KD-tree chunks and obtain each original point's leaf-bucket spatial size.
+    # The size follows KDTreeNode.get_spatial_size() in kdtree_grouping_split.py
+    # (the surface area of the leaf's bounding box).
+    idx_data, grouping, point_bucket_sizes = create_chunks(
+        coord, optimum_threshold, return_bucket_sizes=True
+    )
 
     idx_points = []
     voxel_max = cfg.dataset.test.voxel_max
@@ -308,7 +313,7 @@ def data_load_proposed(data_path, cfg, suggested_threshold = -1):
     # sample = np.concatenate((coord[idx_points[0]], feat[idx_points[0]]), 1)
     # np.save("/mnt/clientshare/samadi/research/frames/f1.npy", sample)
     # exit(0)
-    return coord, feat, label, idx_points, None, None, None
+    return coord, feat, label, idx_points, None, None, None, point_bucket_sizes
 
 
 
@@ -774,7 +779,7 @@ def validate_sphere(model, val_loader, cfg, num_votes=1, data_transform=None):
 
 # TODO: multi gpu support. Warp to a dataloader.
 @torch.no_grad()
-def test(model, data_list, cfg, num_votes=1):
+def test(model, data_list, cfg, num_votes=1, experiment_folder=None):
     """using a part of original point cloud as input to save memory.
     Args:
         model (_type_): _description_
@@ -800,6 +805,16 @@ def test(model, data_list, cfg, num_votes=1):
 
     dataset_name = cfg.dataset.common.NAME.lower()
     len_data = len(data_list)
+
+    # Folder for per-frame [final predicted label, repetition count] arrays.
+    if experiment_folder is None:
+        experiment_folder = cfg.get('experiment_folder', None)
+    if experiment_folder:
+        experiment_folder = os.path.abspath(os.path.expanduser(str(experiment_folder)))
+        os.makedirs(experiment_folder, exist_ok=True)
+        logging.info(
+            f'Saving per-frame label/repetition/bucket-size arrays to: {experiment_folder}'
+        )
 
     cfg.save_path = cfg.get('save_path', f'{cfg.run_dir}/results')
     if 'semantickitti' in cfg.dataset.common.NAME.lower():
@@ -836,7 +851,23 @@ def test(model, data_list, cfg, num_votes=1):
         print(NOISE_LEVEL) 
         
         #pre_process_time = -time.time()
-        coord, feat, label, idx_points, voxel_idx, reverse_idx_part, reverse_idx  = data_load_proposed(data_path, cfg, b_val)
+        (
+            coord, feat, label, idx_points, voxel_idx,
+            reverse_idx_part, reverse_idx, point_bucket_sizes
+        ) = data_load_proposed(data_path, cfg, b_val)
+
+        # Count how many times each original point occurs in the generated samples.
+        # This must be done before idx_points is flattened/converted to a torch tensor below.
+        repetition_counts = np.zeros(coord.shape[0], dtype=np.int64)
+        for sample_indices in idx_points:
+            np.add.at(repetition_counts, np.asarray(sample_indices, dtype=np.int64), 1)
+
+        # Use the input frame filename as the output name (e.g. 000123.bin -> 000123.npy).
+        frame_path = data_path[0] if isinstance(data_path, (list, tuple)) else data_path
+        frame_id = os.path.splitext(os.path.basename(os.fspath(frame_path)))[0]
+        if not frame_id:
+            frame_id = str(cloud_idx)
+
         # print("before: ", coord.shape)
         # print("before: ", feat.shape)
         # print("before: ", label.shape)
@@ -994,6 +1025,44 @@ def test(model, data_list, cfg, num_votes=1):
             # interpolate logits by nearest neighbor
             all_logits = all_logits[reverse_idx_part][voxel_idx][reverse_idx]
         pred = all_logits.argmax(dim=1)
+
+        # Save an N x 4 array:
+        # column 0 = final predicted label,
+        # column 1 = ground-truth (correct) label,
+        # column 2 = number of sample occurrences,
+        # column 3 = spatial size (surface area) of the point's KD-tree leaf bucket.
+        if experiment_folder:
+            final_labels_np = pred.detach().cpu().numpy().reshape(-1)
+            point_bucket_sizes = np.asarray(point_bucket_sizes, dtype=np.float64).reshape(-1)
+            expected_n = repetition_counts.shape[0]
+            if final_labels_np.shape[0] != expected_n:
+                raise RuntimeError(
+                    f'Frame {frame_id}: prediction count ({final_labels_np.shape[0]}) '
+                    f'does not match point count ({expected_n}).'
+                )
+            if point_bucket_sizes.shape[0] != expected_n:
+                raise RuntimeError(
+                    f'Frame {frame_id}: bucket-size count ({point_bucket_sizes.shape[0]}) '
+                    f'does not match point count ({expected_n}).'
+                )
+            if label is None:
+                raise RuntimeError(
+                    f'Frame {frame_id}: ground-truth labels are unavailable, '
+                    'so the requested four-column output cannot be saved.'
+                )
+            ground_truth_labels_np = label.detach().cpu().numpy().reshape(-1)
+            if ground_truth_labels_np.shape[0] != expected_n:
+                raise RuntimeError(
+                    f'Frame {frame_id}: ground-truth label count ({ground_truth_labels_np.shape[0]}) '
+                    f'does not match point count ({expected_n}).'
+                )
+            frame_result = np.column_stack(
+                (final_labels_np, ground_truth_labels_np, repetition_counts, point_bucket_sizes)
+            )
+            output_path = os.path.join(experiment_folder, frame_id + '.npy')
+            np.save(output_path, frame_result)
+            logging.info(f'Saved frame results: {output_path}, shape={frame_result.shape}')
+
         if label is not None:
             cm.update(pred, label)
         """visualization in debug mode
@@ -1091,10 +1160,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser('Scene segmentation training/testing')
     parser.add_argument('--cfg', type=str, required=True, help='config file')
     parser.add_argument('--profile', action='store_true', default=False, help='set to True to profile speed')
+    parser.add_argument(
+        '--experiment_folder',
+        type=str,
+        default=None,
+        help='folder for per-frame .npy arrays: predicted label, ground-truth label, repetition count, KD-tree bucket spatial size',
+    )
     args, opts = parser.parse_known_args()
     cfg = EasyConfig()
     cfg.load(args.cfg, recursive=True)
     cfg.update(opts)  # overwrite the default arguments in yml
+    if args.experiment_folder is not None:
+        cfg.experiment_folder = args.experiment_folder
 
     if cfg.seed is None:
         cfg.seed = np.random.randint(1, 10000)
